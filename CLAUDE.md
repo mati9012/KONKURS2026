@@ -62,7 +62,7 @@ src/
   store/               store'y Zustand
   lib/                 czyste funkcje (geo, audio, matematyka)
     island/            model wyspy: wysokość terenu, rzeki, klify, rozmieszczenie drzew
-    landmarks/         proceduralne modele zabytków (jeden mesh na miejsce)
+    three/             ładowanie modeli GLB (geometria, materiał, obcinanie podstawy)
 public/
   geo/                 uproszczony GeoJSON gotowy do wczytania
   models/              GLB po kompresji
@@ -77,7 +77,8 @@ e2e/                   testy Playwright
 - Żadnych alokacji (`new Vector3`, `new Material`) w `useFrame`. Obiekty wielokrotnego użytku trzymamy w `useMemo` lub poza komponentem.
 - Powtarzalne obiekty (drzewa, domki) przez instancing.
 - Jakość grafiki sterowana przez `settings.quality` w store: `PerformanceMonitor` obniża ją na słabszych urządzeniach, a przy `low` wyłączamy postprocessing i cienie.
-- Modele: GLB przez `gltf-transform optimize` (Draco + WebP), komponenty przez `gltfjsx --types`.
+- Modele z Tripo: pełne pliki w `assets-src/models/` (poza gitem), wersje webowe w `public/models/` przez `pnpm models:optimize` (meshopt + WebP, budżet trójkątów per rodzaj w `scripts/optimize-models.mjs`). Nazwa pliku = id miejsca z `src/content/places.ts`.
+- Powtarzalne modele (drzewa, domy, klify) renderujemy przez `InstancedModel`, pojedyncze przez `useModelAsset`.
 - `leva` i `StatsGl` tylko w trybie development. Nie dodawaj `r3f-perf`: wywraca Turbopack w `next dev`.
 
 ## Treści i fakty
