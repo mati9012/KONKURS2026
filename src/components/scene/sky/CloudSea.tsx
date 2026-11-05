@@ -57,11 +57,11 @@ const fragmentShader = `
     vec4 puff = texture2D(map, vUv);
     if (puff.a < 0.01) discard;
     float light = clamp(puff.r * 1.05 + vShade * 0.25 - 0.05, 0.0, 1.0);
-    light = smoothstep(-0.1, 1.05, light);
+    light = smoothstep(-0.25, 1.0, light);
     vec3 color = mix(shadowColor, litColor, light);
     color = mix(color, warmColor, smoothstep(0.7, 1.0, light) * 0.5 * vShade);
     float low = 1.0 - smoothstep(-17.0, -5.0, vCenter.y);
-    color *= mix(vec3(1.0), vec3(0.82, 0.84, 0.97), low * (1.0 - light * 0.5));
+    color *= mix(vec3(1.0), vec3(0.88, 0.89, 0.98), low * (1.0 - light * 0.5));
     float sunward = max(dot(normalize(vec3(vCenter.x, 0.0, vCenter.z) + 0.001), normalize(vec3(sunDirection.x, 0.0, sunDirection.z))), 0.0);
     color = mix(color, color * vec3(1.06, 0.97, 0.9), sunward * light * 0.6);
     color = mix(color, hazeColor, smoothstep(hazeNear, hazeFar, vDepth) * 0.6);
@@ -123,7 +123,7 @@ export function CloudPuffs({ puffs, opacity = 1 }: CloudPuffsProps) {
         uniforms: {
           map: { value: createPuffTexture() },
           litColor: { value: new Color('#fffdf8') },
-          shadowColor: { value: new Color('#9097cb') },
+          shadowColor: { value: new Color('#b3b7e2') },
           warmColor: { value: new Color('#ffd9c4') },
           hazeColor: { value: new Color(SKY_COLORS.coolHorizon) },
           hazeNear: { value: 40 },
