@@ -69,8 +69,8 @@ function paintVariant(
       const light = (nx * LIGHT[0] + ny * LIGHT[1] + LIGHT[2]) / length
       const density = at(px, py)
       const vertical = (py + 0.5) / tile
-      const shade = Math.min(1, Math.max(0, 0.45 + light * 0.3 + vertical * 0.3))
-      const alpha = Math.pow(smoothstep(0.05, 0.75, density), 1.3) * 0.72
+      const shade = Math.min(1, Math.max(0, 0.2 + light * 0.55 + vertical * 0.45))
+      const alpha = Math.pow(smoothstep(0.05, 0.7, density), 1.2) * 0.82
       const index = ((offsetY + py) * atlasSize + offsetX + px) * 4
       data[index] = Math.round(shade * 255)
       data[index + 1] = Math.round(shade * 255)
