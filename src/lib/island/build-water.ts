@@ -4,7 +4,7 @@ import { WATER_OFFSET } from '@/lib/island/island-model'
 import type { IslandModel, River } from '@/lib/island/island-model'
 import { hash2 } from '@/lib/island/noise'
 
-const SHORE_MARGIN = 0.14
+const SHORE_MARGIN = 0.32
 
 function keepOnIsland(model: IslandModel, point: Vector3) {
   const inside = model.isInside([point.x, point.z])
@@ -23,8 +23,9 @@ function buildRiverRibbon(model: IslandModel, river: River) {
   const steps = Math.max(8, points.length * 4)
   const samples = curve.getSpacedPoints(steps)
   const protectedFrom = river.exit ? samples.length - 4 : samples.length
+  const protectedTo = river.source ? 4 : 0
   samples.forEach((point, index) => {
-    if (index < protectedFrom) keepOnIsland(model, point)
+    if (index >= protectedTo && index < protectedFrom) keepOnIsland(model, point)
   })
   const positions: number[] = []
   const edges: number[] = []
@@ -41,7 +42,7 @@ function buildRiverRibbon(model: IslandModel, river: River) {
     const half = river.width * 0.5 * (0.85 + hash2(index, river.width * 100) * 0.3)
     const sideX = -tangent.z * half
     const sideZ = tangent.x * half
-    const isExit = river.exit && index === samples.length - 1
+    const isExit = (river.exit && index === samples.length - 1) || (river.source && index === 0)
     const y = isExit ? point.y : Math.min(point.y, model.heightAt(point.x, point.z) + WATER_OFFSET)
     positions.push(
       point.x + sideX,

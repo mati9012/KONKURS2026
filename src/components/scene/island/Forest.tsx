@@ -8,9 +8,9 @@ import type { TreeKind } from '@/lib/island/scatter'
 import type { Quality } from '@/store/game-store'
 
 const TREE_HEIGHT: Record<TreeKind, number> = {
-  pine: 0.42,
-  oak: 0.36,
-  birch: 0.4,
+  pine: 0.56,
+  oak: 0.5,
+  birch: 0.52,
 }
 
 const KINDS: TreeKind[] = ['pine', 'oak', 'birch']
@@ -22,7 +22,7 @@ type ForestProps = {
 
 export function Forest({ model, quality }: ForestProps) {
   const layers = useMemo(() => {
-    const trees = scatterTrees(model, quality === 'high' ? 2600 : 900)
+    const trees = scatterTrees(model, quality === 'high' ? 4800 : 1500)
     return KINDS.map((kind) => ({
       kind,
       instances: trees

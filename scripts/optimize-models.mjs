@@ -7,19 +7,12 @@ const OUTPUT_DIR = 'public/models'
 
 const BUDGETS = {
   landmark: { triangles: 30000, textureSize: 1024 },
-  rock: { triangles: 3000, textureSize: 512 },
-  underside: { triangles: 8000, textureSize: 1024 },
   tree: { triangles: 300, textureSize: 256 },
   house: { triangles: 1500, textureSize: 512 },
   prop: { triangles: 2500, textureSize: 512 },
 }
 
 const KIND_BY_NAME = {
-  'cliff-a': 'rock',
-  'cliff-b': 'rock',
-  'cliff-c': 'rock',
-  'cliff-waterfall': 'rock',
-  'island-underside': 'underside',
   pine: 'tree',
   oak: 'tree',
   birch: 'tree',

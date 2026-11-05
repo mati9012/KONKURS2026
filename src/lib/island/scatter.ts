@@ -40,8 +40,8 @@ export function scatterTrees(model: IslandModel, maxCount: number): TreeInstance
     const z = minZ + random() * (maxZ - minZ)
     if (!model.isInside([x, z])) continue
     const sample = model.sample(x, z)
-    if (sample.edgeDistance < 0.25 || sample.wetness > 0.25) continue
-    if (random() > sample.forest * 0.95 + 0.035) continue
+    if (sample.edgeDistance < 0.25 || sample.wetness > 0.25 || sample.roadDistance < 0.12) continue
+    if (random() > sample.forest * 0.95 + 0.07) continue
     if (!isFreeSpot(model, [x, z], 0.1)) continue
     const conifer = sample.height > 0.7 || random() < 0.35 + sample.forest * 0.3
     trees.push({
@@ -73,6 +73,7 @@ export function scatterFarmSpots(model: IslandModel, options: FarmSpotOptions): 
     if (!model.isInside([x, z])) continue
     const sample = model.sample(x, z)
     if (sample.edgeDistance < 0.6 || sample.wetness > 0.05 || sample.forest > 0.3) continue
+    if (sample.roadDistance < 0.15) continue
     if (!isFreeSpot(model, [x, z], options.clearance)) continue
     if (spots.some(({ position: [sx, , sz] }) => Math.hypot(sx - x, sz - z) < options.spacing)) {
       continue

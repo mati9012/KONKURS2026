@@ -12,19 +12,23 @@ type IslandRimProps = {
 export function IslandRim({ model }: IslandRimProps) {
   const points = useMemo(() => {
     const ring = model.boundary.map(
-      ([x, z]) => [x, RIM_HEIGHT + 0.015, z] as [number, number, number],
+      ([x, z]) => [x, RIM_HEIGHT + 0.02, z] as [number, number, number],
     )
     return [...ring, ring[0]]
   }, [model])
 
   return (
-    <Line
-      points={points}
-      color="#ffd36e"
-      lineWidth={2.2}
-      toneMapped={false}
-      transparent
-      opacity={0.9}
-    />
+    <group>
+      <Line
+        points={points}
+        color="#ffc84f"
+        lineWidth={14}
+        toneMapped={false}
+        transparent
+        opacity={0.4}
+        depthWrite={false}
+      />
+      <Line points={points} color="#fff4c4" lineWidth={4} toneMapped={false} />
+    </group>
   )
 }

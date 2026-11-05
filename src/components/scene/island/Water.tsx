@@ -39,18 +39,18 @@ const fragmentShader = `
   }
 
   void main() {
-    vec3 deep = vec3(0.13, 0.5, 0.78);
-    vec3 shallow = vec3(0.38, 0.82, 0.9);
+    vec3 deep = vec3(0.05, 0.38, 0.6);
+    vec3 shallow = vec3(0.22, 0.68, 0.78);
     vec3 color = mix(deep, shallow, smoothstep(0.15, 0.95, vEdge));
     vec2 drift = vec2(vWorld.x * 3.0, vWorld.z * 3.0) + vec2(time * 0.15, -time * 0.1);
     float ripple = noise(drift) * 0.6 + noise(drift * 2.3 + 7.0) * 0.4;
     float streak = smoothstep(0.62, 0.85, noise(vec2(vFlow * 3.5 - time * 0.9, vEdge * 2.0 + vWorld.x * 0.7)));
     color += vec3(0.1, 0.14, 0.12) * ripple;
-    color += vec3(0.75, 0.9, 0.95) * streak * 0.35;
+    color += vec3(0.7, 0.9, 0.95) * streak * 0.22;
     float sparkle = step(0.965, noise(drift * 6.0 + time * 0.4));
     color += vec3(1.0, 0.95, 0.8) * sparkle * 0.5;
     float foam = smoothstep(0.78, 1.0, vEdge) * (0.55 + 0.45 * noise(drift * 3.0));
-    color = mix(color, vec3(0.92, 0.98, 1.0), foam * 0.75);
+    color = mix(color, vec3(0.85, 0.96, 0.98), foam * 0.45);
     gl_FragColor = vec4(color, 1.0);
     #include <colorspace_fragment>
   }

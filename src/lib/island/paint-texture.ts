@@ -15,7 +15,7 @@ export function createPaintTexture(size = 1024) {
   canvas.height = size
   const context = canvas.getContext('2d')
   if (!context) throw new Error('Brak kontekstu 2D dla tekstury terenu')
-  context.fillStyle = '#e4e4dc'
+  context.fillStyle = '#ececE2'
   context.fillRect(0, 0, size, size)
   const random = createRandom(7)
   const wrapped = (draw: (ox: number, oy: number) => void) => {
@@ -28,7 +28,9 @@ export function createPaintTexture(size = 1024) {
     const radius = 20 + random() * 60
     const light = random() > 0.5
     const alpha = 0.05 + random() * 0.07
-    context.fillStyle = light ? `rgba(255, 250, 215, ${alpha})` : `rgba(80, 100, 50, ${alpha})`
+    context.fillStyle = light
+      ? `rgba(255, 250, 215, ${alpha})`
+      : `rgba(90, 115, 55, ${alpha * 0.7})`
     const rotation = random() * Math.PI
     const squash = 0.35 + random() * 0.4
     wrapped((ox, oy) => {
@@ -51,7 +53,7 @@ export function createPaintTexture(size = 1024) {
         ? `rgba(255, 255, 230, ${0.25 + random() * 0.3})`
         : shade > 0.3
           ? `rgba(120, 150, 70, ${0.18 + random() * 0.2})`
-          : `rgba(55, 80, 35, ${0.2 + random() * 0.2})`
+          : `rgba(70, 100, 40, ${0.12 + random() * 0.14})`
     wrapped((ox, oy) => {
       context.beginPath()
       context.moveTo(x + ox, y + oy)
