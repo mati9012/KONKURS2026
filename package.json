@@ -46,7 +46,6 @@
     "mapshaper": "^0.7.101",
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "r3f-perf": "^7.2.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

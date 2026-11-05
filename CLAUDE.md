@@ -18,7 +18,7 @@ Gra przygodowa 3D po województwie lubelskim na konkurs. Koncepcja, poziomy i ko
 | UI          | Tailwind CSS 4, Motion (`motion/react`)                                      |
 | Dźwięk      | Howler.js                                                                    |
 | Modele      | Blender → GLB, gltfjsx, gltf-transform (Draco, WebP/KTX2)                    |
-| Debug (dev) | leva, r3f-perf                                                               |
+| Debug (dev) | leva, `StatsGl` z drei (r3f-perf wywraca Turbopack w dev)                    |
 | Jakość      | ESLint, Prettier, Playwright, CodeRabbit                                     |
 
 Next.js 16 różni się od tego, co znasz z treningu. Przed użyciem API Next sprawdź `node_modules/next/dist/docs/`.
@@ -75,7 +75,7 @@ e2e/                   testy Playwright
 - Powtarzalne obiekty (drzewa, domki) przez instancing.
 - Jakość grafiki sterowana przez `settings.quality` w store: `PerformanceMonitor` obniża ją na słabszych urządzeniach, a przy `low` wyłączamy postprocessing i cienie.
 - Modele: GLB przez `gltf-transform optimize` (Draco + WebP), komponenty przez `gltfjsx --types`.
-- `leva` i `r3f-perf` tylko w trybie development.
+- `leva` i `StatsGl` tylko w trybie development. Nie dodawaj `r3f-perf`: wywraca Turbopack w `next dev`.
 
 ## Treści i fakty
 
