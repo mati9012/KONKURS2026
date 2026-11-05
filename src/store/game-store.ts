@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import type { StateStorage } from 'zustand/middleware'
 import type { LevelId } from '@/content/levels'
 
 export type Quality = 'high' | 'low'
@@ -21,6 +22,30 @@ type GameState = {
   setQuality: (quality: Quality) => void
   setVolume: (channel: 'musicVolume' | 'sfxVolume', value: number) => void
   reset: () => void
+}
+
+const safeLocalStorage: StateStorage = {
+  getItem: (name) => {
+    try {
+      return localStorage.getItem(name)
+    } catch {
+      return null
+    }
+  },
+  setItem: (name, value) => {
+    try {
+      localStorage.setItem(name, value)
+    } catch (error) {
+      console.warn('Nie udało się zapisać postępu gry', error)
+    }
+  },
+  removeItem: (name) => {
+    try {
+      localStorage.removeItem(name)
+    } catch (error) {
+      console.warn('Nie udało się usunąć zapisu gry', error)
+    }
+  },
 }
 
 const initialState = {
@@ -52,7 +77,7 @@ export const useGameStore = create<GameState>()(
     {
       name: 'czarcia-lapa-paszport',
       version: 1,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => safeLocalStorage),
       skipHydration: true,
       partialize: ({ stamps, settings }) => ({ stamps, settings }),
     },

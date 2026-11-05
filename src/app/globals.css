@@ -12,5 +12,4 @@ body {
   background: var(--color-night);
   color: var(--color-parchment);
   overscroll-behavior: none;
-  touch-action: none;
 }

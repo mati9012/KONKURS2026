@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
+import { SceneErrorBoundary } from '@/components/scene/SceneErrorBoundary'
 import { Hud } from '@/components/ui/Hud'
 import { useGameStore } from '@/store/game-store'
 
@@ -17,7 +18,9 @@ export function GameShell() {
 
   return (
     <main className="relative h-dvh w-full">
-      <IslandScene />
+      <SceneErrorBoundary>
+        <IslandScene />
+      </SceneErrorBoundary>
       <Hud />
     </main>
   )

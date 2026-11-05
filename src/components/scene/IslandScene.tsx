@@ -1,7 +1,7 @@
 'use client'
 
 import { Canvas } from '@react-three/fiber'
-import { AdaptiveDpr, CameraControls, PerformanceMonitor } from '@react-three/drei'
+import { CameraControls, PerformanceMonitor } from '@react-three/drei'
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing'
 import { DevTools } from '@/components/scene/DevTools'
 import { Island } from '@/components/scene/Island'
@@ -13,13 +13,12 @@ export function IslandScene() {
 
   return (
     <Canvas
-      className="absolute inset-0"
+      className="absolute inset-0 touch-none"
       shadows={quality === 'high'}
       dpr={quality === 'high' ? [1, 2] : [1, 1.25]}
       camera={{ position: [0, 6, 10], fov: 45 }}
     >
       <PerformanceMonitor onDecline={() => setQuality('low')} />
-      <AdaptiveDpr pixelated />
       <color attach="background" args={['#0f172a']} />
       <fog attach="fog" args={['#0f172a', 12, 30]} />
       <hemisphereLight args={['#fde68a', '#1e293b', 0.6]} />

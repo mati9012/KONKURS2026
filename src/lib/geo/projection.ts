@@ -9,7 +9,9 @@ export function createSceneProjection(region: GeoPermissibleObjects, size: numbe
 
   return (longitude: number, latitude: number): ScenePoint => {
     const projected = projection([longitude, latitude])
-    if (!projected) throw new Error(`Nie można zrzutować punktu ${longitude}, ${latitude}`)
+    if (!projected || !projected.every(Number.isFinite)) {
+      throw new Error(`Nie można zrzutować punktu ${longitude}, ${latitude}`)
+    }
     const [x, y] = projected
     return [x - half, y - half]
   }
