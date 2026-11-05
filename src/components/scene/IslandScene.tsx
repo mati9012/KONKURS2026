@@ -14,7 +14,7 @@ export function IslandScene() {
   return (
     <Canvas
       className="absolute inset-0 touch-none"
-      shadows={quality === 'high'}
+      shadows={quality === 'high' ? 'percentage' : false}
       dpr={quality === 'high' ? [1, 2] : [1, 1.25]}
       camera={{ position: [0, 6, 10], fov: 45 }}
     >
