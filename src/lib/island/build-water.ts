@@ -27,10 +27,14 @@ function buildRiverRibbon(model: IslandModel, river: River) {
     if (index < protectedFrom) keepOnIsland(model, point)
   })
   const positions: number[] = []
+  const edges: number[] = []
+  const flows: number[] = []
   const indices: number[] = []
   const tangent = new Vector3()
+  let flow = 0
 
   samples.forEach((point, index) => {
+    if (index > 0) flow += point.distanceTo(samples[index - 1])
     const previous = samples[Math.max(0, index - 1)]
     const next = samples[Math.min(samples.length - 1, index + 1)]
     tangent.subVectors(next, previous).setY(0).normalize()
@@ -39,17 +43,33 @@ function buildRiverRibbon(model: IslandModel, river: River) {
     const sideZ = tangent.x * half
     const isExit = river.exit && index === samples.length - 1
     const y = isExit ? point.y : Math.min(point.y, model.heightAt(point.x, point.z) + WATER_OFFSET)
-    positions.push(point.x + sideX, y, point.z + sideZ, point.x - sideX, y, point.z - sideZ)
+    positions.push(
+      point.x + sideX,
+      y,
+      point.z + sideZ,
+      point.x,
+      y,
+      point.z,
+      point.x - sideX,
+      y,
+      point.z - sideZ,
+    )
+    edges.push(1, 0, 1)
+    flows.push(flow, flow, flow)
     if (index < samples.length - 1) {
-      const base = index * 2
-      indices.push(base, base + 1, base + 2, base + 1, base + 3, base + 2)
+      const base = index * 3
+      for (let lane = 0; lane < 2; lane++) {
+        const a = base + lane
+        indices.push(a, a + 1, a + 3, a + 1, a + 4, a + 3)
+      }
     }
   })
 
   const geometry = new BufferGeometry()
   geometry.setAttribute('position', new BufferAttribute(new Float32Array(positions), 3))
+  geometry.setAttribute('edge', new BufferAttribute(new Float32Array(edges), 1))
+  geometry.setAttribute('flow', new BufferAttribute(new Float32Array(flows), 1))
   geometry.setIndex(indices)
-  geometry.computeVertexNormals()
   return geometry
 }
 
@@ -57,17 +77,20 @@ function buildLakeDisc(model: IslandModel, center: [number, number], radius: num
   const segments = 14
   const y = model.heightAt(center[0], center[1]) + WATER_OFFSET * 0.6
   const positions = [center[0], y, center[1]]
+  const edges = [0]
   const indices: number[] = []
   for (let i = 0; i < segments; i++) {
     const angle = (i / segments) * Math.PI * 2
     const r = radius * (0.85 + hash2(center[0] * 10 + i, center[1]) * 0.3)
     positions.push(center[0] + Math.cos(angle) * r, y, center[1] + Math.sin(angle) * r)
+    edges.push(1)
     indices.push(0, 1 + ((i + 1) % segments), 1 + i)
   }
   const geometry = new BufferGeometry()
   geometry.setAttribute('position', new BufferAttribute(new Float32Array(positions), 3))
+  geometry.setAttribute('edge', new BufferAttribute(new Float32Array(edges), 1))
+  geometry.setAttribute('flow', new BufferAttribute(new Float32Array(edges.length), 1))
   geometry.setIndex(indices)
-  geometry.computeVertexNormals()
   return geometry
 }
 

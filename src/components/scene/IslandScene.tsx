@@ -55,8 +55,8 @@ export function IslandScene() {
       >
         <FloatingIsland quality={quality} />
       </Float>
-      <CloudSea quality={quality} />
       <Suspense fallback={null}>
+        <CloudSea quality={quality} />
         <Balloon />
         <Eagle />
       </Suspense>

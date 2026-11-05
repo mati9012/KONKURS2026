@@ -18,7 +18,7 @@ const PALETTE = {
 
 const scratch = new Color()
 
-const TEXTURE_SCALE = 0.6
+const TEXTURE_SCALE = 0.45
 
 type GridVertex = {
   x: number
