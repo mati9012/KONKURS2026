@@ -1,0 +1,43 @@
+language: pl-PL
+reviews:
+  profile: assertive
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  pre_merge_checks:
+    docstrings:
+      mode: off
+  collapse_walkthrough: true
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+  path_filters:
+    - '!pnpm-lock.yaml'
+    - '!public/models/**'
+    - '!public/audio/**'
+    - '!public/geo/**'
+    - '!data/geo/**'
+  path_instructions:
+    - path: 'src/**/*.{ts,tsx}'
+      instructions: >-
+        Kod nie może zawierać komentarzy, console.log, any, @ts-ignore ani martwego kodu.
+        Nazwy po angielsku, teksty dla gracza po polsku. Pilnuj najmniejszej zmiany
+        rozwiązującej zadanie i braku zbędnych abstrakcji.
+    - path: 'src/components/scene/**'
+      instructions: >-
+        Sprawdź wydajność React Three Fiber: brak alokacji w useFrame, instancing dla
+        powtarzalnych obiektów, poprawne zwalnianie zasobów, zachowanie na słabych telefonach.
+    - path: 'src/content/**'
+      instructions: >-
+        Każdy fakt, pytanie quizu i odpowiedź musi mieć źródło zgodne ze schematem Zod.
+        Zwróć uwagę na fakty, które wyglądają na nieprawdziwe lub niepotwierdzone.
+    - path: 'src/app/**'
+      instructions: >-
+        Projekt używa output: 'export'. Zgłoś wszystko, co nie działa w statycznym
+        eksporcie: API routes, server actions, middleware, dynamiczne trasy bez
+        generateStaticParams.
+chat:
+  auto_reply: true
