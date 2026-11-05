@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: var(--font-nunito), system-ui, sans-serif;
+  --color-night: #0f172a;
+  --color-parchment: #f5ecd7;
+  --color-ember: #e4572e;
+}
+
+html,
+body {
+  background: var(--color-night);
+  color: var(--color-parchment);
+  overscroll-behavior: none;
+  touch-action: none;
+}
