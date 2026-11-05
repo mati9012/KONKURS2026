@@ -19,6 +19,16 @@ pnpm build
 
 Dla GitHub Pages ustaw `NEXT_PUBLIC_BASE_PATH=/KONKURS2026` przed buildem.
 
+## Dane mapy
+
+| Dane                                                                   | Źródło                                                                                                                                                       | Licencja                        |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
+| Granica województwa lubelskiego                                        | Państwowy Rejestr Granic (GUGiK), plik GeoJSON z repozytorium [ppatrzyk/polska-geojson](https://github.com/ppatrzyk/polska-geojson), uproszczony w mapshaper | dane PRG udostępniane bez opłat |
+| Rzeki: Wisła, Wieprz, Bystrzyca, Tanew, Krzna, Huczwa, Tyśmienica, Por | © autorzy [OpenStreetMap](https://www.openstreetmap.org/copyright)                                                                                           | ODbL                            |
+| Bug                                                                    | wyznaczony z granicy województwa, która biegnie nurtem rzeki                                                                                                 | jak granica                     |
+
+Rzeźba terenu, lasy i jeziora są przybliżone ręcznie na podstawie głównych krain (Roztocze, Wyżyna Lubelska, Polesie).
+
 ## Jak użyłem AI
 
 | Obszar                | Narzędzie   | Zakres |

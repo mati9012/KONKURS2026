@@ -58,8 +58,11 @@ src/
     ui/                HUD, paszport, dialogi (DOM + Tailwind)
   levels/<id>/         kod mini-gier, jeden folder na poziom
   content/             treści gry + schematy Zod
+    geo/               granica województwa i rzeki (lon/lat) dla wyspy
   store/               store'y Zustand
   lib/                 czyste funkcje (geo, audio, matematyka)
+    island/            model wyspy: wysokość terenu, rzeki, klify, rozmieszczenie drzew
+    landmarks/         proceduralne modele zabytków (jeden mesh na miejsce)
 public/
   geo/                 uproszczony GeoJSON gotowy do wczytania
   models/              GLB po kompresji

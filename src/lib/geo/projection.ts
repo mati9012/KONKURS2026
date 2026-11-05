@@ -1,7 +1,13 @@
-import { geoMercator } from 'd3-geo'
+import { geoArea, geoMercator } from 'd3-geo'
 import type { GeoPermissibleObjects } from 'd3-geo'
 
 export type ScenePoint = [x: number, z: number]
+
+export function toClockwiseRegion(ring: [number, number][]): GeoPermissibleObjects {
+  const region: GeoPermissibleObjects = { type: 'Polygon', coordinates: [ring] }
+  if (geoArea(region) <= 2 * Math.PI) return region
+  return { type: 'Polygon', coordinates: [[...ring].reverse()] }
+}
 
 export function createSceneProjection(region: GeoPermissibleObjects, size: number) {
   const projection = geoMercator().fitSize([size, size], region)
