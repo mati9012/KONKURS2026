@@ -57,7 +57,7 @@ export const SKY_COLORS = {
   middle: '#8d9de0',
   coolHorizon: '#c6b8e6',
   warmHorizon: '#ffd2a6',
-  below: '#a9a6d8',
+  below: '#8e93d0',
 }
 
 export function SkyDome() {
