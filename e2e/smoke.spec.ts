@@ -4,5 +4,5 @@ test('strona startowa pokazuje tytuł i licznik pieczęci', async ({ page }) => 
   await page.goto('/')
   await expect(page.getByRole('heading', { name: 'Czarcia Łapa' })).toBeVisible()
   await expect(page.getByText('Pieczęcie: 0/7')).toBeVisible()
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 30_000 })
+  await expect(page.locator('main canvas')).toBeVisible({ timeout: 30_000 })
 })

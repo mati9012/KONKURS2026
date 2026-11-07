@@ -31,12 +31,13 @@ Rzeźba terenu, lasy i jeziora są przybliżone ręcznie na podstawie głównych
 
 ## Jak użyłem AI
 
-| Obszar                | Narzędzie   | Zakres |
-| --------------------- | ----------- | ------ |
-| Kod                   | Claude Code |        |
-| Tekstury i ilustracje |             |        |
-| Głos Kozła            |             |        |
-| Pomysły i dialogi     |             |        |
+| Obszar                                        | Narzędzie                | Zakres                                                                               |
+| --------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------ |
+| Kod                                           | Claude Code              |                                                                                      |
+| Modele 3D (zabytki, drzewa, zwierzęta, klify) | Tripo (text-to-3D, v3.1) | 26 modeli wygenerowanych z opisów, zoptymalizowanych skryptem `pnpm models:optimize` |
+| Tekstury i ilustracje                         |                          |                                                                                      |
+| Głos Kozła                                    |                          |                                                                                      |
+| Pomysły i dialogi                             |                          |                                                                                      |
 
 ## Weryfikacja faktów
 

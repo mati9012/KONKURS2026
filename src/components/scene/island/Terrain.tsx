@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from 'react'
 import { buildTerrainGeometry } from '@/lib/island/build-terrain'
+import { createPaintTexture } from '@/lib/island/paint-texture'
 import type { IslandModel } from '@/lib/island/island-model'
 import type { Quality } from '@/store/game-store'
 
@@ -16,11 +17,14 @@ export function Terrain({ model, quality }: TerrainProps) {
     [model, quality],
   )
 
+  const paint = useMemo(() => createPaintTexture(), [])
+
   useEffect(() => () => geometry.dispose(), [geometry])
+  useEffect(() => () => paint.dispose(), [paint])
 
   return (
     <mesh geometry={geometry} receiveShadow castShadow>
-      <meshStandardMaterial vertexColors flatShading roughness={0.95} />
+      <meshStandardMaterial vertexColors map={paint} roughness={0.92} />
     </mesh>
   )
 }

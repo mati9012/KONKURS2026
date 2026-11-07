@@ -23,7 +23,15 @@ export type Place = {
   latitude: number
   footprint: number
   scale: number
+  rotation?: number
+  extras?: PlaceExtra[]
   levelId?: LevelId
+}
+
+export type PlaceExtra = {
+  model: string
+  offset: [x: number, z: number]
+  size: number
 }
 
 export const PLACES: Place[] = [
@@ -34,6 +42,7 @@ export const PLACES: Place[] = [
     latitude: 51.2465,
     footprint: 0.9,
     scale: 1.7,
+    extras: [{ model: 'lublin-gate', offset: [1.75, 1.2], size: 0.9 }],
     levelId: 'lublin',
   },
   {

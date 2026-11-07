@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Float, PerformanceMonitor } from '@react-three/drei'
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing'
@@ -55,8 +56,10 @@ export function IslandScene() {
         <FloatingIsland quality={quality} />
       </Float>
       <CloudSea quality={quality} />
-      <Balloon />
-      <Eagle />
+      <Suspense fallback={null}>
+        <Balloon />
+        <Eagle />
+      </Suspense>
       <CameraRig />
       {high && (
         <EffectComposer>
