@@ -13,7 +13,7 @@ import { SkyDome } from '@/components/scene/sky/SkyDome'
 import { useGameStore } from '@/store/game-store'
 
 const SUN_POSITION: [number, number, number] = [26, 19, -6]
-const FOG_COLOR = '#cfd6f2'
+const FOG_COLOR = '#c9c8ec'
 
 export function IslandScene() {
   const quality = useGameStore((state) => state.settings.quality)
@@ -35,7 +35,7 @@ export function IslandScene() {
       <directionalLight
         position={SUN_POSITION}
         intensity={4}
-        color="#ffe9cb"
+        color="#ffe0b8"
         castShadow={high}
         shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-16}
