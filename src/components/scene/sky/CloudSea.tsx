@@ -127,10 +127,10 @@ export function CloudPuffs({ puffs, opacity = 1 }: CloudPuffsProps) {
         uniforms: {
           map: { value: atlas },
           litColor: { value: new Color('#fffaf3') },
-          midColor: { value: new Color('#e9e6f2') },
-          shadowColor: { value: new Color('#9eaad8') },
+          midColor: { value: new Color('#e4e8f7') },
+          shadowColor: { value: new Color('#aeb8e6') },
           warmColor: { value: new Color('#ffc9a0') },
-          deepColor: { value: new Color('#8290c8') },
+          deepColor: { value: new Color('#9aa6dd') },
           hazeColor: { value: new Color(SKY_COLORS.coolHorizon) },
           hazeNear: { value: 40 },
           hazeFar: { value: 200 },

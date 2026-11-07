@@ -53,11 +53,11 @@ const fragmentShader = `
 export const SUN_DIRECTION = new Vector3(0.55, 0.42, -0.72).normalize()
 
 export const SKY_COLORS = {
-  zenith: '#4f68c4',
-  middle: '#8d9de0',
-  coolHorizon: '#c6b8e6',
-  warmHorizon: '#ffd2a6',
-  below: '#8e93d0',
+  zenith: '#aab6ec',
+  middle: '#c2cbf1',
+  coolHorizon: '#d4daf4',
+  warmHorizon: '#e8dcec',
+  below: '#bcc5ee',
 }
 
 export function SkyDome() {
