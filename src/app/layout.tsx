@@ -1,10 +1,16 @@
 import type { Metadata, Viewport } from 'next'
-import { Nunito } from 'next/font/google'
+import { Alegreya, Nunito } from 'next/font/google'
 import './globals.css'
 
 const nunito = Nunito({
   variable: '--font-nunito',
   subsets: ['latin', 'latin-ext'],
+})
+
+const alegreya = Alegreya({
+  variable: '--font-alegreya',
+  subsets: ['latin', 'latin-ext'],
+  weight: ['600', '700'],
 })
 
 export const metadata: Metadata = {
@@ -17,12 +23,12 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#0f172a',
+  themeColor: '#b9a2dd',
 }
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="pl" className={`${nunito.variable} h-full antialiased`}>
+    <html lang="pl" className={`${nunito.variable} ${alegreya.variable} h-full antialiased`}>
       <body className="h-full overflow-hidden">{children}</body>
     </html>
   )

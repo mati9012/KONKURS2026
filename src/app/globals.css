@@ -2,6 +2,7 @@
 
 @theme {
   --font-sans: var(--font-nunito), system-ui, sans-serif;
+  --font-display: var(--font-alegreya), Georgia, serif;
   --color-night: #0f172a;
   --color-parchment: #f5ecd7;
   --color-ember: #e4572e;
