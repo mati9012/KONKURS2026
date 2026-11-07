@@ -4,6 +4,9 @@ import { CameraControls } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
 import type { ComponentRef } from 'react'
+import { Box3, Vector3 } from 'three'
+
+const TARGET_BOUNDS = new Box3(new Vector3(-10, -3.5, -9), new Vector3(10, 1, 9))
 
 function framingFor(aspect: number) {
   if (aspect < 0.6) return 58
@@ -18,6 +21,7 @@ export function CameraRig() {
   const distance = useThree((state) => framingFor(state.viewport.aspect))
 
   useEffect(() => {
+    controlsRef.current?.setBoundary(TARGET_BOUNDS)
     void controlsRef.current?.setLookAt(0, distance * 0.6, distance * 0.8, 0, -3.2, 0.8, false)
   }, [distance])
 
@@ -25,10 +29,12 @@ export function CameraRig() {
     <CameraControls
       ref={controlsRef}
       makeDefault
-      minDistance={6}
+      minDistance={13}
       maxDistance={48}
-      maxPolarAngle={Math.PI / 2.15}
+      maxPolarAngle={Math.PI / 2.8}
       dollySpeed={0.6}
+      dollyToCursor
+      boundaryFriction={0.2}
     />
   )
 }
