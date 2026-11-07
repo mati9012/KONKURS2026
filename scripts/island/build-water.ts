@@ -1,8 +1,8 @@
 import { BufferAttribute, BufferGeometry, CatmullRomCurve3, Vector3 } from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import { WATER_OFFSET } from '@/lib/island/island-model'
-import type { IslandModel, River } from '@/lib/island/island-model'
-import { hash2 } from '@/lib/island/noise'
+import { WATER_OFFSET } from './island-model'
+import type { IslandModel, River } from './island-model'
+import { valueNoise } from '@/lib/noise'
 
 const SHORE_MARGIN = 0.32
 
@@ -20,7 +20,7 @@ function keepOnIsland(model: IslandModel, point: Vector3) {
 function buildRiverRibbon(model: IslandModel, river: River) {
   const points = river.path.map(([x, z]) => new Vector3(x, model.heightAt(x, z) + WATER_OFFSET, z))
   const curve = new CatmullRomCurve3(points, false, 'centripetal')
-  const steps = Math.max(8, points.length * 4)
+  const steps = Math.max(16, points.length * 8)
   const samples = curve.getSpacedPoints(steps)
   const protectedFrom = river.exit ? samples.length - 4 : samples.length
   const protectedTo = river.source ? 4 : 0
@@ -39,7 +39,7 @@ function buildRiverRibbon(model: IslandModel, river: River) {
     const previous = samples[Math.max(0, index - 1)]
     const next = samples[Math.min(samples.length - 1, index + 1)]
     tangent.subVectors(next, previous).setY(0).normalize()
-    const half = river.width * 0.5 * (0.85 + hash2(index, river.width * 100) * 0.3)
+    const half = river.width * 0.5 * (0.9 + valueNoise(index * 0.12, river.width * 50) * 0.2)
     const sideX = -tangent.z * half
     const sideZ = tangent.x * half
     const isExit = (river.exit && index === samples.length - 1) || (river.source && index === 0)
@@ -75,14 +75,14 @@ function buildRiverRibbon(model: IslandModel, river: River) {
 }
 
 function buildLakeDisc(model: IslandModel, center: [number, number], radius: number) {
-  const segments = 14
+  const segments = 28
   const y = model.heightAt(center[0], center[1]) + WATER_OFFSET * 0.6
   const positions = [center[0], y, center[1]]
   const edges = [0]
   const indices: number[] = []
   for (let i = 0; i < segments; i++) {
     const angle = (i / segments) * Math.PI * 2
-    const r = radius * (0.85 + hash2(center[0] * 10 + i, center[1]) * 0.3)
+    const r = radius * (0.9 + valueNoise(center[0] * 10 + i * 0.7, center[1]) * 0.2)
     positions.push(center[0] + Math.cos(angle) * r, y, center[1] + Math.sin(angle) * r)
     edges.push(1)
     indices.push(0, 1 + ((i + 1) % segments), 1 + i)

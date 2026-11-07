@@ -61,7 +61,9 @@ export function IslandScene() {
         floatIntensity={0.25}
         floatingRange={[-0.15, 0.15]}
       >
-        <FloatingIsland quality={quality} />
+        <Suspense fallback={null}>
+          <FloatingIsland quality={quality} />
+        </Suspense>
       </Float>
       <Suspense fallback={null}>
         <CloudSea quality={quality} />
@@ -71,7 +73,7 @@ export function IslandScene() {
       <CameraRig />
       {high && (
         <EffectComposer>
-          <Bloom mipmapBlur luminanceThreshold={0.72} luminanceSmoothing={0.25} intensity={0.85} />
+          <Bloom mipmapBlur luminanceThreshold={0.9} luminanceSmoothing={0.12} intensity={0.55} />
           <HueSaturation saturation={0.22} />
           <BrightnessContrast brightness={0.02} contrast={0.1} />
           <Vignette offset={0.3} darkness={0.5} />

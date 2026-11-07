@@ -12,7 +12,8 @@
     "format:check": "prettier --check .",
     "test:e2e": "playwright test",
     "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm build",
-    "models:optimize": "node scripts/optimize-models.mjs"
+    "models:optimize": "node scripts/optimize-models.mjs",
+    "island:build": "node scripts/build-island.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
@@ -48,6 +49,7 @@
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   },
   "packageManager": "pnpm@12.16.1",

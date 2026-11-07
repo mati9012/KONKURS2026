@@ -1,4 +1,4 @@
-import { createRandom } from '@/lib/island/noise'
+import { createRandom } from '@/lib/noise'
 
 export type CloudPuff = {
   position: [number, number, number]

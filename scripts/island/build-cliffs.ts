@@ -1,7 +1,7 @@
 import { BufferAttribute, BufferGeometry, Color } from 'three'
-import { RIM_HEIGHT } from '@/lib/island/island-model'
-import type { IslandModel } from '@/lib/island/island-model'
-import { hash2, valueNoise } from '@/lib/island/noise'
+import { RIM_HEIGHT } from './island-model'
+import type { IslandModel } from './island-model'
+import { hash2, valueNoise } from '@/lib/noise'
 
 const RINGS = [
   { depth: 0, scale: 1 },

@@ -1,20 +1,14 @@
-'use client'
-
-import { useFrame } from '@react-three/fiber'
-import { useEffect, useMemo } from 'react'
 import { DoubleSide, ShaderMaterial } from 'three'
-import { buildWaterGeometry } from '@/lib/island/build-water'
-import type { IslandModel } from '@/lib/island/island-model'
 
 const vertexShader = `
-  attribute float edge;
-  attribute float flow;
+  attribute float _edge;
+  attribute float _flow;
   varying float vEdge;
   varying float vFlow;
   varying vec3 vWorld;
   void main() {
-    vEdge = edge;
-    vFlow = flow;
+    vEdge = _edge;
+    vFlow = _flow;
     vec4 world = modelMatrix * vec4(position, 1.0);
     vWorld = world.xyz;
     gl_Position = projectionMatrix * viewMatrix * world;
@@ -39,8 +33,8 @@ const fragmentShader = `
   }
 
   void main() {
-    vec3 deep = vec3(0.05, 0.38, 0.6);
-    vec3 shallow = vec3(0.22, 0.68, 0.78);
+    vec3 deep = vec3(0.04, 0.36, 0.56);
+    vec3 shallow = vec3(0.28, 0.76, 0.8);
     vec3 color = mix(deep, shallow, smoothstep(0.15, 0.95, vEdge));
     vec2 drift = vec2(vWorld.x * 3.0, vWorld.z * 3.0) + vec2(time * 0.15, -time * 0.1);
     float ripple = noise(drift) * 0.6 + noise(drift * 2.3 + 7.0) * 0.4;
@@ -56,40 +50,13 @@ const fragmentShader = `
   }
 `
 
-function advanceTime(material: ShaderMaterial, time: number) {
-  material.uniforms.time.value = time
-}
-
-type WaterProps = {
-  model: IslandModel
-}
-
-export function Water({ model }: WaterProps) {
-  const geometry = useMemo(() => buildWaterGeometry(model), [model])
-  const material = useMemo(
-    () =>
-      new ShaderMaterial({
-        uniforms: { time: { value: 0 } },
-        vertexShader,
-        fragmentShader,
-        side: DoubleSide,
-        polygonOffset: true,
-        polygonOffsetFactor: -2,
-      }),
-    [],
-  )
-
-  useEffect(
-    () => () => {
-      geometry.dispose()
-      material.dispose()
-    },
-    [geometry, material],
-  )
-
-  useFrame(({ clock }) => {
-    advanceTime(material, clock.elapsedTime)
+export function createWaterMaterial() {
+  return new ShaderMaterial({
+    uniforms: { time: { value: 0 } },
+    vertexShader,
+    fragmentShader,
+    side: DoubleSide,
+    polygonOffset: true,
+    polygonOffsetFactor: -2,
   })
-
-  return <mesh geometry={geometry} material={material} receiveShadow />
 }

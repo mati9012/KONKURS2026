@@ -12,9 +12,8 @@ import {
 } from 'three'
 import type { Texture } from 'three'
 import { CloudPuffs } from '@/components/scene/sky/CloudSea'
-import { WATER_OFFSET } from '@/lib/island/island-model'
-import type { IslandModel } from '@/lib/island/island-model'
-import { createRandom } from '@/lib/island/noise'
+import { createRandom } from '@/lib/noise'
+import type { IslandAnchor } from '@/lib/three/island-scene'
 import type { CloudPuff } from '@/lib/sky/cloud-field'
 
 const FALL_HEIGHT = 8
@@ -91,33 +90,22 @@ function createMist(width: number, seed: number): CloudPuff[] {
 }
 
 type WaterfallsProps = {
-  model: IslandModel
+  falls: IslandAnchor[]
 }
 
-export function Waterfalls({ model }: WaterfallsProps) {
+export function Waterfalls({ falls: anchors }: WaterfallsProps) {
   const texture = useMemo(() => createStreakTexture(), [])
   const falls = useMemo(
     () =>
-      model.rivers
-        .flatMap((river) =>
-          [river.exit, river.source].flatMap((fall, end) =>
-            fall ? [{ river, fall, id: `${river.id}-${end}` }] : [],
-          ),
-        )
-        .map(({ river, fall, id }, index) => {
-          const [x, z] = fall.point
-          const [ox, oz] = fall.outward
-          const width = Math.max(0.7, river.width * 2.4)
-          return {
-            id,
-            back: createFallGeometry(width * 1.15, 1.2, 0.35),
-            front: createFallGeometry(width, 0.8, 0.5),
-            mist: createMist(width, 50 + index),
-            position: [x + ox * 0.05, model.heightAt(x, z) + WATER_OFFSET, z + oz * 0.05] as const,
-            rotationY: Math.atan2(ox, oz),
-          }
-        }),
-    [model],
+      anchors.map((anchor, index) => ({
+        id: anchor.id,
+        back: createFallGeometry(anchor.width * 1.15, 1.2, 0.35),
+        front: createFallGeometry(anchor.width, 0.8, 0.5),
+        mist: createMist(anchor.width, 50 + index),
+        position: anchor.position,
+        rotationY: anchor.rotation,
+      })),
+    [anchors],
   )
 
   useEffect(
