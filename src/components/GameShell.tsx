@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
 import { SceneErrorBoundary } from '@/components/scene/SceneErrorBoundary'
 import { Hud } from '@/components/ui/Hud'
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { useGameStore } from '@/store/game-store'
 
 const IslandScene = dynamic(
@@ -22,6 +23,7 @@ export function GameShell() {
         <IslandScene />
       </SceneErrorBoundary>
       <Hud />
+      <LoadingScreen />
     </main>
   )
 }

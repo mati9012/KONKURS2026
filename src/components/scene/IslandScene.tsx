@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber'
 import { Float, PerformanceMonitor } from '@react-three/drei'
 import { CameraRig } from '@/components/scene/CameraRig'
 import { DevTools } from '@/components/scene/DevTools'
+import { FrameReporter } from '@/components/scene/FrameReporter'
 import { FloatingIsland } from '@/components/scene/island/FloatingIsland'
 import { Balloon } from '@/components/scene/sky/Balloon'
 import { CloudSea } from '@/components/scene/sky/CloudSea'
@@ -63,6 +64,7 @@ export function IslandScene() {
         <Eagle />
       </Suspense>
       <CameraRig />
+      <FrameReporter />
       <DevTools />
     </Canvas>
   )
