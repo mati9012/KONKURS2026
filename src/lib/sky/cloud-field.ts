@@ -37,47 +37,40 @@ function paintVariant(
   seed: number,
 ) {
   const random = createRandom(seed)
-  const core = Array.from({ length: 14 }, () => {
+  const blobs = Array.from({ length: 46 }, () => {
     const angle = random() * Math.PI * 2
-    const distance = Math.sqrt(random())
+    const distance = Math.pow(random(), 0.7)
     return {
-      x: 0.5 + Math.cos(angle) * distance * 0.2,
-      y: 0.5 + Math.sin(angle) * distance * 0.12,
-      sigma: 0.06 + random() * 0.05,
+      x: 0.5 + Math.cos(angle) * distance * 0.3,
+      y: 0.5 + Math.sin(angle) * distance * 0.2,
+      sigma: 0.022 + random() * 0.055,
     }
   })
-  const bumps = Array.from({ length: 22 }, (_, index) => {
-    const angle = Math.PI * (0.02 + (index / 21) * 0.96) + (random() - 0.5) * 0.15
-    return {
-      x: 0.5 + Math.cos(angle) * (0.22 + random() * 0.06),
-      y: 0.5 + Math.sin(angle) * (0.15 + random() * 0.1),
-      sigma: 0.03 + random() * 0.035,
-    }
-  })
-  const blobs = [...core, ...bumps]
   const field = new Float32Array(tile * tile)
   for (let py = 0; py < tile; py++) {
     for (let px = 0; px < tile; px++) {
       const u = (px + 0.5) / tile
       const v = (py + 0.5) / tile
-      const erosion = 0.8 + 0.4 * fbm(u * 9 + seed, v * 9, 3)
-      const base = smoothstep(0.28, 0.38, v)
-      const edge = 1 - smoothstep(0.38, 0.5, Math.hypot(u - 0.5, (v - 0.5) * 1.15))
-      field[py * tile + px] = fieldValue(blobs, u, v) * erosion * base * edge
+      const warpU = u + fbm(u * 4 + seed, v * 4, 3) * 0.08
+      const warpV = v + fbm(u * 4, v * 4 + seed, 3) * 0.05
+      const wisps = 0.5 + 0.5 * fbm(warpU * 16 + seed, warpV * 22, 5)
+      const base = smoothstep(0.2, 0.36, v)
+      const edge = 1 - smoothstep(0.25, 0.5, Math.hypot(u - 0.5, (v - 0.5) * 1.3))
+      field[py * tile + px] = fieldValue(blobs, warpU, warpV) * 0.45 * wisps * base * edge
     }
   }
   const at = (x: number, y: number) =>
     field[Math.min(tile - 1, Math.max(0, y)) * tile + Math.min(tile - 1, Math.max(0, x))]
   for (let py = 0; py < tile; py++) {
     for (let px = 0; px < tile; px++) {
-      const nx = -(at(px + 2, py) - at(px - 2, py)) * 3
-      const ny = (at(px, py + 2) - at(px, py - 2)) * 3
+      const nx = -(at(px + 3, py) - at(px - 3, py)) * 2
+      const ny = (at(px, py + 3) - at(px, py - 3)) * 2
       const length = Math.hypot(nx, ny, 1)
       const light = (nx * LIGHT[0] + ny * LIGHT[1] + LIGHT[2]) / length
       const density = at(px, py)
       const vertical = (py + 0.5) / tile
-      const shade = Math.min(1, Math.max(0, 0.25 + light * 0.45 + vertical * 0.35))
-      const alpha = smoothstep(0.3, 0.85, density)
+      const shade = Math.min(1, Math.max(0, 0.45 + light * 0.3 + vertical * 0.3))
+      const alpha = Math.pow(smoothstep(0.05, 0.75, density), 1.3) * 0.72
       const index = ((offsetY + py) * atlasSize + offsetX + px) * 4
       data[index] = Math.round(shade * 255)
       data[index + 1] = Math.round(shade * 255)
@@ -111,7 +104,7 @@ export function createPuffTexture(tile = 192) {
 
 function buildBank(bank: CloudBank, random: () => number, puffs: CloudPuff[]) {
   const [cx, cy, cz] = bank.center
-  const baseCount = Math.max(3, Math.round(bank.width * 0.6 * bank.density))
+  const baseCount = Math.max(4, Math.round(bank.width * 1.0 * bank.density))
   for (let i = 0; i < baseCount; i++) {
     const angle = random() * Math.PI * 2
     const distance = Math.sqrt(random())
@@ -122,13 +115,13 @@ function buildBank(bank: CloudBank, random: () => number, puffs: CloudPuff[]) {
         cy + y,
         cz + Math.sin(angle) * distance * bank.width * 0.32,
       ],
-      size: bank.width * (0.45 + random() * 0.25),
+      size: bank.width * (0.4 + random() * 0.3),
       shade: y / bank.height,
       spin: (random() - 0.5) * 0.25,
       variant: Math.floor(random() * 4),
     })
   }
-  const domeCount = Math.max(2, Math.round(bank.width * 0.45 * bank.density))
+  const domeCount = Math.max(3, Math.round(bank.width * 0.8 * bank.density))
   for (let i = 0; i < domeCount; i++) {
     const t = Math.pow(random(), 0.8)
     const spread = (1 - t * 0.75) * bank.width * 0.42
@@ -140,7 +133,7 @@ function buildBank(bank: CloudBank, random: () => number, puffs: CloudPuff[]) {
         cy + y,
         cz + Math.sin(angle) * spread * 0.5 * random(),
       ],
-      size: bank.width * (0.35 + random() * 0.2) * (1 - t * 0.35),
+      size: bank.width * (0.3 + random() * 0.25) * (1 - t * 0.3),
       shade: y / bank.height,
       spin: (random() - 0.5) * 0.25,
       variant: Math.floor(random() * 4),
