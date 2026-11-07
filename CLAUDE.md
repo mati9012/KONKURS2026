@@ -60,14 +60,16 @@ src/
   content/             treści gry + schematy Zod
     geo/               granica województwa i rzeki (lon/lat) dla wyspy
   store/               store'y Zustand
-  lib/                 czyste funkcje (geo, audio, matematyka)
-    island/            model wyspy: wysokość terenu, rzeki, klify, rozmieszczenie drzew
-    three/             ładowanie modeli GLB (geometria, materiał, obcinanie podstawy)
+  lib/                 czyste funkcje (szum, audio, matematyka)
+    three/             ładowanie GLB: modele miejsc, wyspa, materiał wody
 public/
   geo/                 uproszczony GeoJSON gotowy do wczytania
   models/              GLB po kompresji
   audio/               muzyka, efekty, głos narratora
 data/geo/              surowe dane GUGiK (nie trafiają do builda)
+scripts/
+  island/              generator bazy wyspy: kształt, rzeki, pola, rozmieszczenie drzew
+  blender/             budowa wyspy w Blenderze (teren, roślinność, eksport GLB)
 e2e/                   testy Playwright
 ```
 
@@ -78,7 +80,8 @@ e2e/                   testy Playwright
 - Powtarzalne obiekty (drzewa, domki) przez instancing.
 - Jakość grafiki sterowana przez `settings.quality` w store: `PerformanceMonitor` obniża ją na słabszych urządzeniach, a przy `low` wyłączamy postprocessing i cienie.
 - Modele z Tripo: pełne pliki w `assets-src/models/` (poza gitem), wersje webowe w `public/models/` przez `pnpm models:optimize` (meshopt + WebP, budżet trójkątów per rodzaj w `scripts/optimize-models.mjs`). Nazwa pliku = id miejsca z `src/content/places.ts`.
-- Powtarzalne modele (drzewa, domy, klify) renderujemy przez `InstancedModel`, pojedyncze przez `useModelAsset`.
+- Wyspa (teren, klify, woda, drzewa, roślinność) to jeden plik `public/models/island.glb` plus lżejszy `island-low.glb`, budowane przez `pnpm island:build`: generator z `scripts/island` → Blender (`scripts/blender/build-island.py`) → `EXT_mesh_gpu_instancing` + meshopt + WebP. Nie edytujemy GLB ręcznie, tylko skrypty. Wymaga Blendera (ścieżka w `BLENDER`, domyślnie `/Applications/Blender.app`).
+- Pozycje miejsc i wodospadów przychodzą z wyspy jako puste węzły `place-<id>` i `waterfall-<id>`. Modele miejsc ładujemy osobno przez `useModelAsset`.
 - `leva` i `StatsGl` tylko w trybie development. Nie dodawaj `r3f-perf`: wywraca Turbopack w `next dev`.
 
 ## Treści i fakty
@@ -100,4 +103,5 @@ pnpm check          # lint + typy + format + build (wymagane przed pushem)
 pnpm format         # formatowanie Prettier
 pnpm test:e2e       # testy Playwright (desktop + mobile)
 pnpm build          # statyczny build do out/
+pnpm island:build   # przebudowa wyspy w Blenderze do public/models/island*.glb
 ```

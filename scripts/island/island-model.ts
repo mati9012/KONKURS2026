@@ -1,8 +1,8 @@
 import mapData from '@/content/geo/lubelskie.json'
 import { PLACES } from '@/content/places'
 import type { Place } from '@/content/places'
-import { createSceneProjection, toClockwiseRegion } from '@/lib/geo/projection'
-import { fbm, gaussian, smoothstep, valueNoise } from '@/lib/island/noise'
+import { createSceneProjection, toClockwiseRegion } from './projection'
+import { fbm, gaussian, smoothstep, valueNoise } from '@/lib/noise'
 import {
   closestPointOnPath,
   distanceToPath,
@@ -10,8 +10,8 @@ import {
   polygonBounds,
   polygonCentroid,
   SegmentIndex,
-} from '@/lib/island/polygon'
-import type { ClosestPoint, Vec2 } from '@/lib/island/polygon'
+} from './polygon'
+import type { ClosestPoint, Vec2 } from './polygon'
 
 export const ISLAND_SIZE = 22
 export const RIM_HEIGHT = 0.05

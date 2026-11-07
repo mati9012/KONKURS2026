@@ -1,7 +1,7 @@
 import { BufferAttribute, BufferGeometry, Color } from 'three'
-import { fbm, hash2, smoothstep } from '@/lib/island/noise'
-import { RIM_HEIGHT } from '@/lib/island/island-model'
-import type { IslandModel, TerrainSample } from '@/lib/island/island-model'
+import { fbm, hash2, smoothstep } from '@/lib/noise'
+import { RIM_HEIGHT } from './island-model'
+import type { IslandModel, TerrainSample } from './island-model'
 
 export const SURFACE = {
   grass: 0,

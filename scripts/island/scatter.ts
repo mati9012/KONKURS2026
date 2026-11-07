@@ -1,6 +1,6 @@
-import type { IslandModel } from '@/lib/island/island-model'
-import { createRandom } from '@/lib/island/noise'
-import type { Vec2 } from '@/lib/island/polygon'
+import type { IslandModel } from './island-model'
+import { createRandom } from '@/lib/noise'
+import type { Vec2 } from './polygon'
 
 export type TreeKind = 'pine' | 'oak' | 'birch'
 
