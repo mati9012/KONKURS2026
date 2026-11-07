@@ -19,6 +19,8 @@ export const WATER_OFFSET = 0.045
 
 const EDGE_REACH = 2
 const RIVER_REACH = 1.3
+const ROAD_REACH = 0.6
+const SOURCE_FALL_REACH = 0.8
 
 type GeoPoint = [longitude: number, latitude: number]
 
@@ -29,15 +31,15 @@ type RiverStyle = {
 }
 
 const RIVER_STYLES: Record<string, RiverStyle> = {
-  wisla: { width: 0.3, depth: 0.16, exitsIsland: true },
-  bug: { width: 0.24, depth: 0.15, exitsIsland: true },
-  wieprz: { width: 0.15, depth: 0.12, exitsIsland: false },
-  tanew: { width: 0.11, depth: 0.1, exitsIsland: true },
-  bystrzyca: { width: 0.09, depth: 0.09, exitsIsland: false },
-  krzna: { width: 0.09, depth: 0.09, exitsIsland: false },
-  huczwa: { width: 0.08, depth: 0.08, exitsIsland: false },
-  tysmienica: { width: 0.08, depth: 0.08, exitsIsland: false },
-  por: { width: 0.07, depth: 0.08, exitsIsland: false },
+  wisla: { width: 0.5, depth: 0.16, exitsIsland: true },
+  bug: { width: 0.4, depth: 0.15, exitsIsland: true },
+  wieprz: { width: 0.26, depth: 0.12, exitsIsland: false },
+  tanew: { width: 0.18, depth: 0.1, exitsIsland: true },
+  bystrzyca: { width: 0.15, depth: 0.09, exitsIsland: false },
+  krzna: { width: 0.15, depth: 0.09, exitsIsland: false },
+  huczwa: { width: 0.13, depth: 0.08, exitsIsland: false },
+  tysmienica: { width: 0.13, depth: 0.08, exitsIsland: false },
+  por: { width: 0.12, depth: 0.08, exitsIsland: false },
 }
 
 const UPLANDS = [
@@ -72,11 +74,11 @@ const FORESTS = [
 ]
 
 const LAKES = [
-  { at: [23.03, 51.4] as GeoPoint, radius: 0.26 },
-  { at: [23.17, 51.37] as GeoPoint, radius: 0.2 },
-  { at: [23.38, 51.55] as GeoPoint, radius: 0.22 },
-  { at: [23.28, 51.47] as GeoPoint, radius: 0.15 },
-  { at: [22.53, 51.18] as GeoPoint, radius: 0.2 },
+  { at: [23.03, 51.4] as GeoPoint, radius: 0.42 },
+  { at: [23.17, 51.37] as GeoPoint, radius: 0.32 },
+  { at: [23.38, 51.55] as GeoPoint, radius: 0.36 },
+  { at: [23.28, 51.47] as GeoPoint, radius: 0.26 },
+  { at: [22.53, 51.18] as GeoPoint, radius: 0.3 },
 ]
 
 export type River = {
@@ -85,7 +87,13 @@ export type River = {
   width: number
   depth: number
   path: Vec2[]
-  exit?: { point: Vec2; outward: Vec2 }
+  exit?: RiverFall
+  source?: RiverFall
+}
+
+export type RiverFall = {
+  point: Vec2
+  outward: Vec2
 }
 
 export type Lake = {
@@ -103,6 +111,7 @@ export type TerrainSample = {
   forest: number
   lowland: number
   edgeDistance: number
+  roadDistance: number
 }
 
 export type IslandModel = {
@@ -113,6 +122,7 @@ export type IslandModel = {
   rivers: River[]
   lakes: Lake[]
   places: PlacedLandmark[]
+  roads: Vec2[][]
   isInside: (point: Vec2) => boolean
   edgeDistance: (point: Vec2) => number
   closestEdge: (point: Vec2, maxDistance: number) => ClosestPoint | null
@@ -123,6 +133,36 @@ export type IslandModel = {
 function normalize([x, z]: Vec2): Vec2 {
   const length = Math.hypot(x, z) || 1
   return [x / length, z / length]
+}
+
+function buildRoadNetwork(stops: Vec2[]): Vec2[][] {
+  const connected = [0]
+  const roads: Vec2[][] = []
+  while (connected.length < stops.length) {
+    let best = { from: 0, to: 0, distance: Infinity }
+    for (const from of connected) {
+      stops.forEach((stop, to) => {
+        if (connected.includes(to)) return
+        const distance = Math.hypot(stop[0] - stops[from][0], stop[1] - stops[from][1])
+        if (distance < best.distance) best = { from, to, distance }
+      })
+    }
+    connected.push(best.to)
+    const [ax, az] = stops[best.from]
+    const [bx, bz] = stops[best.to]
+    const nx = -(bz - az) / best.distance
+    const nz = (bx - ax) / best.distance
+    const steps = Math.max(8, Math.round(best.distance * 4))
+    roads.push(
+      Array.from({ length: steps + 1 }, (_, step) => {
+        const t = step / steps
+        const sway =
+          Math.sin(t * Math.PI) * fbm(t * 3 + best.to, best.from, 2) * best.distance * 0.25
+        return [ax + (bx - ax) * t + nx * sway, az + (bz - az) * t + nz * sway] as Vec2
+      }),
+    )
+  }
+  return roads
 }
 
 function createModel(): IslandModel {
@@ -137,14 +177,25 @@ function createModel(): IslandModel {
     const style = RIVER_STYLES[river.id]
     const path = (river.points as GeoPoint[]).map(toScene)
     if (!style.exitsIsland) return { ...river, ...style, path }
-    const last = path[path.length - 1]
-    const closest = closestPointOnPath(last, boundary, true)
-    const outward = normalize([closest.point[0] - last[0], closest.point[1] - last[1]])
+    const fallAt = (end: Vec2): RiverFall => {
+      const closest = closestPointOnPath(end, boundary, true)
+      return {
+        point: closest.point,
+        outward: normalize([closest.point[0] - end[0], closest.point[1] - end[1]]),
+      }
+    }
+    const exit = fallAt(path[path.length - 1])
+    const first = path[0]
+    const source =
+      closestPointOnPath(first, boundary, true).distance < SOURCE_FALL_REACH
+        ? fallAt(first)
+        : undefined
     return {
       ...river,
       ...style,
-      path: [...path, closest.point],
-      exit: { point: closest.point, outward },
+      path: [...(source ? [source.point] : []), ...path, exit.point],
+      exit,
+      source,
     }
   })
 
@@ -209,6 +260,11 @@ function createModel(): IslandModel {
     position: toScene([place.longitude, place.latitude]),
   }))
   const plateaus = places.map((place) => rawSample(place.position[0], place.position[1]).height)
+  const roads = buildRoadNetwork(places.map((place) => place.position))
+  const roadIndex = new SegmentIndex(
+    0.5,
+    roads.map((points, group) => ({ points, closed: false, group })),
+  )
 
   const sample = (x: number, z: number): TerrainSample => {
     const raw = rawSample(x, z)
@@ -221,7 +277,8 @@ function createModel(): IslandModel {
     })
     const distanceToEdge = edgeDistance([x, z])
     height = RIM_HEIGHT + (height - RIM_HEIGHT) * smoothstep(0, 0.9, distanceToEdge)
-    return { ...raw, height, edgeDistance: distanceToEdge }
+    const roadDistance = roadIndex.closest([x, z], ROAD_REACH)?.distance ?? ROAD_REACH
+    return { ...raw, height, edgeDistance: distanceToEdge, roadDistance }
   }
 
   return {
@@ -232,6 +289,7 @@ function createModel(): IslandModel {
     rivers,
     lakes,
     places,
+    roads,
     isInside,
     edgeDistance,
     closestEdge,

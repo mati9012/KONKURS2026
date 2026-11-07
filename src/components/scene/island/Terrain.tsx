@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from 'react'
 import { buildTerrainGeometry } from '@/lib/island/build-terrain'
 import { createPaintTexture } from '@/lib/island/paint-texture'
+import { applyTerrainShading } from '@/lib/island/terrain-shader'
 import type { IslandModel } from '@/lib/island/island-model'
 import type { Quality } from '@/store/game-store'
 
@@ -24,7 +25,12 @@ export function Terrain({ model, quality }: TerrainProps) {
 
   return (
     <mesh geometry={geometry} receiveShadow castShadow>
-      <meshStandardMaterial vertexColors map={paint} roughness={0.92} />
+      <meshStandardMaterial
+        vertexColors
+        map={paint}
+        roughness={0.92}
+        onBeforeCompile={applyTerrainShading}
+      />
     </mesh>
   )
 }

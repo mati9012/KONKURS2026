@@ -14,41 +14,69 @@ const vertexShader = `
 const fragmentShader = `
   uniform vec3 zenith;
   uniform vec3 middle;
-  uniform vec3 horizon;
+  uniform vec3 coolHorizon;
+  uniform vec3 warmHorizon;
   uniform vec3 below;
   uniform vec3 sunDirection;
   uniform vec3 sunColor;
   varying vec3 vDirection;
+
+  float hash(float n) {
+    return fract(sin(n) * 43758.5453);
+  }
+
   void main() {
-    float h = vDirection.y;
-    vec3 color = mix(horizon, middle, smoothstep(0.0, 0.25, h));
-    color = mix(color, zenith, smoothstep(0.25, 0.85, h));
-    color = mix(color, below, smoothstep(0.0, -0.35, h));
-    float sun = max(dot(normalize(vDirection), normalize(sunDirection)), 0.0);
-    color += sunColor * (pow(sun, 18.0) * 0.55 + pow(sun, 400.0) * 1.4);
+    vec3 direction = normalize(vDirection);
+    vec3 sun = normalize(sunDirection);
+    float h = direction.y;
+    float facing = max(dot(normalize(vec3(direction.x, 0.0, direction.z)), normalize(vec3(sun.x, 0.0, sun.z))), 0.0);
+    vec3 horizon = mix(coolHorizon, warmHorizon, pow(facing, 2.0));
+    vec3 color = mix(horizon, middle, smoothstep(0.02, 0.32, h));
+    color = mix(color, zenith, smoothstep(0.32, 0.9, h));
+    color = mix(color, below, smoothstep(0.0, -0.4, h));
+    float alignment = max(dot(direction, sun), 0.0);
+    color += sunColor * (pow(alignment, 6.0) * 0.35 + pow(alignment, 60.0) * 0.6 + pow(alignment, 900.0) * 2.5);
+    vec3 tangent = normalize(cross(sun, vec3(0.0, 1.0, 0.0)));
+    vec3 bitangent = normalize(cross(tangent, sun));
+    float angle = atan(dot(direction, bitangent), dot(direction, tangent));
+    float ray = 0.0;
+    for (int i = 0; i < 3; i++) {
+      float frequency = 9.0 + float(i) * 7.0;
+      ray += smoothstep(0.55, 1.0, sin(angle * frequency + hash(float(i)) * 6.28) * 0.5 + 0.5);
+    }
+    color += sunColor * ray * 0.12 * pow(alignment, 3.0) * smoothstep(0.995, 0.9, alignment);
     gl_FragColor = vec4(color, 1.0);
     #include <colorspace_fragment>
   }
 `
 
-export const SUN_DIRECTION = new Vector3(-0.5, 0.6, -0.6).normalize()
+export const SUN_DIRECTION = new Vector3(0.55, 0.42, -0.72).normalize()
+
+export const SKY_COLORS = {
+  zenith: '#4f68c4',
+  middle: '#8d9de0',
+  coolHorizon: '#c6b8e6',
+  warmHorizon: '#ffd2a6',
+  below: '#a9a6d8',
+}
 
 export function SkyDome() {
   const uniforms = useMemo(
     () => ({
-      zenith: { value: new Color('#5e72c4') },
-      middle: { value: new Color('#b9a2dd') },
-      horizon: { value: new Color('#ffcfa3') },
-      below: { value: new Color('#e7b8d6') },
+      zenith: { value: new Color(SKY_COLORS.zenith) },
+      middle: { value: new Color(SKY_COLORS.middle) },
+      coolHorizon: { value: new Color(SKY_COLORS.coolHorizon) },
+      warmHorizon: { value: new Color(SKY_COLORS.warmHorizon) },
+      below: { value: new Color(SKY_COLORS.below) },
       sunDirection: { value: SUN_DIRECTION },
-      sunColor: { value: new Color('#ffe6b0') },
+      sunColor: { value: new Color('#ffe2b0') },
     }),
     [],
   )
 
   return (
-    <mesh scale={160} renderOrder={-1}>
-      <sphereGeometry args={[1, 32, 16]} />
+    <mesh scale={300} renderOrder={-1}>
+      <sphereGeometry args={[1, 48, 24]} />
       <shaderMaterial
         uniforms={uniforms}
         vertexShader={vertexShader}

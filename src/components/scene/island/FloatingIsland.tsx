@@ -6,7 +6,6 @@ import { Countryside } from '@/components/scene/island/Countryside'
 import { Forest } from '@/components/scene/island/Forest'
 import { IslandRim } from '@/components/scene/island/IslandRim'
 import { Landmarks } from '@/components/scene/island/Landmarks'
-import { RockyRim } from '@/components/scene/island/RockyRim'
 import { Terrain } from '@/components/scene/island/Terrain'
 import { Water } from '@/components/scene/island/Water'
 import { Waterfalls } from '@/components/scene/island/Waterfalls'
@@ -27,9 +26,6 @@ export function FloatingIsland({ quality }: FloatingIslandProps) {
       <IslandRim model={model} />
       <Water model={model} />
       <Waterfalls model={model} />
-      <Suspense fallback={null}>
-        <RockyRim model={model} quality={quality} />
-      </Suspense>
       <Suspense fallback={null}>
         <Landmarks model={model} />
       </Suspense>
