@@ -104,4 +104,5 @@ pnpm format         # formatowanie Prettier
 pnpm test:e2e       # testy Playwright (desktop + mobile)
 pnpm build          # statyczny build do out/
 pnpm island:build   # przebudowa wyspy w Blenderze do public/models/island*.glb
+pnpm koziol:build   # rig i animacje Kozła-narratora z modelu Tripo do public/models/koziol.glb
 ```
