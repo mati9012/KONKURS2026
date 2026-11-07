@@ -10,14 +10,14 @@ import type { Quality } from '@/store/game-store'
 
 const VARIANTS = ['cliff-a', 'cliff-b', 'cliff-c']
 const CHUNK_WIDTH = 1.25
-const CHUNK_DEPTH = 1.9
+const CHUNK_DEPTH = 3.6
 const CHUNK_TOP = RIM_HEIGHT - 0.07
 const INSET = 0.3
 
 const UNDERSIDE_OFFSETS: [number, number, number, number][] = [
-  [0, 0, 12, 0],
-  [-0.5, -4.5, 9, 1.4],
-  [0.8, 4.2, 9, 2.6],
+  [0, 0, 15, 0],
+  [-1.5, -4.5, 11, 1.4],
+  [1.8, 4.2, 11, 2.6],
 ]
 
 type RockyRimProps = {
@@ -55,9 +55,9 @@ export function RockyRim({ model, quality }: RockyRimProps) {
       scale: [CHUNK_WIDTH, CHUNK_DEPTH, CHUNK_WIDTH],
     }))
     const undersides = UNDERSIDE_OFFSETS.map<ModelInstance>(([dx, dz, width, rotation]) => ({
-      position: [model.centroid[0] + dx, RIM_HEIGHT - 0.25 - width * 0.55, model.centroid[1] + dz],
+      position: [model.centroid[0] + dx, RIM_HEIGHT - 1.2 - width * 0.75, model.centroid[1] + dz],
       rotation,
-      scale: [width, width * 0.55, width * 1.15],
+      scale: [width, width * 0.75, width * 1.1],
     }))
     return { byVariant, waterfalls, undersides }
   }, [model, quality])

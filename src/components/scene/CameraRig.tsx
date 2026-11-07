@@ -6,10 +6,11 @@ import { useEffect, useRef } from 'react'
 import type { ComponentRef } from 'react'
 
 function framingFor(aspect: number) {
-  if (aspect < 0.8) return 40
-  if (aspect < 1.2) return 37
-  if (aspect < 1.5) return 33
-  return 29
+  if (aspect < 0.6) return 58
+  if (aspect < 0.8) return 42
+  if (aspect < 1.2) return 34
+  if (aspect < 1.5) return 30
+  return 27
 }
 
 export function CameraRig() {
@@ -17,7 +18,7 @@ export function CameraRig() {
   const distance = useThree((state) => framingFor(state.viewport.aspect))
 
   useEffect(() => {
-    void controlsRef.current?.setLookAt(0, distance * 0.6, distance * 0.78, 0, -2.6, 0.6, false)
+    void controlsRef.current?.setLookAt(0, distance * 0.6, distance * 0.8, 0, -3.2, 0.8, false)
   }, [distance])
 
   return (

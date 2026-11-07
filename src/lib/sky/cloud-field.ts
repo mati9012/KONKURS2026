@@ -1,5 +1,4 @@
-import { DataTexture, LinearFilter, RGBAFormat, UnsignedByteType } from 'three'
-import { createRandom, fbm, smoothstep } from '@/lib/island/noise'
+import { createRandom } from '@/lib/island/noise'
 
 export type CloudPuff = {
   position: [number, number, number]
@@ -14,92 +13,6 @@ type CloudBank = {
   width: number
   height: number
   density: number
-}
-
-const LIGHT: [number, number, number] = [0.55, -0.7, 0.45]
-
-function fieldValue(blobs: { x: number; y: number; sigma: number }[], u: number, v: number) {
-  let value = 0
-  for (const blob of blobs) {
-    const dx = u - blob.x
-    const dy = v - blob.y
-    value += Math.exp(-(dx * dx + dy * dy) / (2 * blob.sigma * blob.sigma))
-  }
-  return value
-}
-
-function paintVariant(
-  data: Uint8Array,
-  atlasSize: number,
-  tile: number,
-  offsetX: number,
-  offsetY: number,
-  seed: number,
-) {
-  const random = createRandom(seed)
-  const blobs = Array.from({ length: 46 }, () => {
-    const angle = random() * Math.PI * 2
-    const distance = Math.pow(random(), 0.7)
-    return {
-      x: 0.5 + Math.cos(angle) * distance * 0.3,
-      y: 0.5 + Math.sin(angle) * distance * 0.2,
-      sigma: 0.022 + random() * 0.055,
-    }
-  })
-  const field = new Float32Array(tile * tile)
-  for (let py = 0; py < tile; py++) {
-    for (let px = 0; px < tile; px++) {
-      const u = (px + 0.5) / tile
-      const v = (py + 0.5) / tile
-      const warpU = u + fbm(u * 4 + seed, v * 4, 3) * 0.08
-      const warpV = v + fbm(u * 4, v * 4 + seed, 3) * 0.05
-      const wisps = 0.5 + 0.5 * fbm(warpU * 16 + seed, warpV * 22, 5)
-      const base = smoothstep(0.2, 0.36, v)
-      const edge = 1 - smoothstep(0.25, 0.5, Math.hypot(u - 0.5, (v - 0.5) * 1.3))
-      field[py * tile + px] = fieldValue(blobs, warpU, warpV) * 0.45 * wisps * base * edge
-    }
-  }
-  const at = (x: number, y: number) =>
-    field[Math.min(tile - 1, Math.max(0, y)) * tile + Math.min(tile - 1, Math.max(0, x))]
-  for (let py = 0; py < tile; py++) {
-    for (let px = 0; px < tile; px++) {
-      const nx = -(at(px + 3, py) - at(px - 3, py)) * 2
-      const ny = (at(px, py + 3) - at(px, py - 3)) * 2
-      const length = Math.hypot(nx, ny, 1)
-      const light = (nx * LIGHT[0] + ny * LIGHT[1] + LIGHT[2]) / length
-      const density = at(px, py)
-      const vertical = (py + 0.5) / tile
-      const shade = Math.min(1, Math.max(0, 0.2 + light * 0.55 + vertical * 0.45))
-      const alpha = Math.pow(smoothstep(0.05, 0.7, density), 1.2) * 0.82
-      const index = ((offsetY + py) * atlasSize + offsetX + px) * 4
-      data[index] = Math.round(shade * 255)
-      data[index + 1] = Math.round(shade * 255)
-      data[index + 2] = Math.round(shade * 255)
-      data[index + 3] = Math.round(alpha * 255)
-    }
-  }
-}
-
-export function createPuffTexture(tile = 192) {
-  const atlasSize = tile * 2
-  const data = new Uint8Array(atlasSize * atlasSize * 4)
-  for (let variant = 0; variant < 4; variant++) {
-    paintVariant(
-      data,
-      atlasSize,
-      tile,
-      (variant % 2) * tile,
-      Math.floor(variant / 2) * tile,
-      11 + variant * 7,
-    )
-  }
-  const texture = new DataTexture(data, atlasSize, atlasSize, RGBAFormat, UnsignedByteType)
-  texture.flipY = false
-  texture.minFilter = LinearFilter
-  texture.magFilter = LinearFilter
-  texture.generateMipmaps = false
-  texture.needsUpdate = true
-  return texture
 }
 
 function buildBank(bank: CloudBank, random: () => number, puffs: CloudPuff[]) {

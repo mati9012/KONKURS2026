@@ -1,5 +1,6 @@
 'use client'
 
+import { useTexture } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import {
@@ -12,8 +13,9 @@ import {
 } from 'three'
 import type { InstancedMesh } from 'three'
 import { SKY_COLORS, SUN_DIRECTION } from '@/components/scene/sky/SkyDome'
-import { createCloudField, createPuffTexture } from '@/lib/sky/cloud-field'
+import { createCloudField } from '@/lib/sky/cloud-field'
 import type { CloudPuff } from '@/lib/sky/cloud-field'
+import { textureUrl } from '@/lib/three/texture-url'
 import type { Quality } from '@/store/game-store'
 
 const vertexShader = `
@@ -62,7 +64,7 @@ const fragmentShader = `
     vec3 color = mix(shadowColor, midColor, smoothstep(0.0, 0.5, light));
     color = mix(color, litColor, smoothstep(0.45, 0.95, light));
     float sunward = max(dot(normalize(vec3(vCenter.x, 0.0, vCenter.z) + 0.001), normalize(vec3(sunDirection.x, 0.0, sunDirection.z))), 0.0);
-    color = mix(color, warmColor, smoothstep(0.55, 1.0, light) * (0.25 + 0.55 * sunward) * (0.4 + 0.6 * vShade));
+    color = mix(color, warmColor, smoothstep(0.6, 1.0, light) * (0.1 + 0.4 * sunward) * (0.3 + 0.7 * vShade));
     float low = 1.0 - smoothstep(-18.0, -6.0, vCenter.y);
     color = mix(color, deepColor, low * (1.0 - light) * 0.75);
     color = mix(color, hazeColor, smoothstep(hazeNear, hazeFar, vDepth) * 0.45);
@@ -111,6 +113,7 @@ export function CloudPuffs({ puffs, opacity = 1 }: CloudPuffsProps) {
   const meshRef = useRef<InstancedMesh>(null)
   const lastSort = useRef(new Vector3(Infinity, 0, 0))
   const camera = useThree((state) => state.camera)
+  const atlas = useTexture(textureUrl('cloud-atlas.webp'))
   const geometry = useMemo(() => {
     const plane = new PlaneGeometry(1, 1)
     plane.setAttribute('shade', new InstancedBufferAttribute(new Float32Array(puffs.length), 1))
@@ -122,12 +125,12 @@ export function CloudPuffs({ puffs, opacity = 1 }: CloudPuffsProps) {
     () =>
       new ShaderMaterial({
         uniforms: {
-          map: { value: createPuffTexture() },
-          litColor: { value: new Color('#fff7ec') },
-          midColor: { value: new Color('#d7c7e6') },
-          shadowColor: { value: new Color('#8a8ccc') },
-          warmColor: { value: new Color('#ffbf94') },
-          deepColor: { value: new Color('#6c74b8') },
+          map: { value: atlas },
+          litColor: { value: new Color('#fffaf3') },
+          midColor: { value: new Color('#e9e6f2') },
+          shadowColor: { value: new Color('#9eaad8') },
+          warmColor: { value: new Color('#ffc9a0') },
+          deepColor: { value: new Color('#8290c8') },
           hazeColor: { value: new Color(SKY_COLORS.coolHorizon) },
           hazeNear: { value: 40 },
           hazeFar: { value: 200 },
@@ -139,7 +142,7 @@ export function CloudPuffs({ puffs, opacity = 1 }: CloudPuffsProps) {
         transparent: true,
         depthWrite: false,
       }),
-    [opacity],
+    [atlas, opacity],
   )
 
   useLayoutEffect(() => {
@@ -152,7 +155,6 @@ export function CloudPuffs({ puffs, opacity = 1 }: CloudPuffsProps) {
   useEffect(
     () => () => {
       geometry.dispose()
-      material.uniforms.map.value.dispose()
       material.dispose()
     },
     [geometry, material],

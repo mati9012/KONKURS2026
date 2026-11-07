@@ -22,12 +22,14 @@ export function FloatingIsland({ quality }: FloatingIslandProps) {
 
   return (
     <group position={[-model.centroid[0], 0, -model.centroid[1]]}>
-      <Terrain model={model} quality={quality} />
+      <Suspense fallback={null}>
+        <Terrain model={model} quality={quality} />
+      </Suspense>
       <Cliffs model={model} />
       <IslandRim model={model} />
       <Water model={model} />
-      <Waterfalls model={model} />
       <Suspense fallback={null}>
+        <Waterfalls model={model} />
         <RockyRim model={model} quality={quality} />
       </Suspense>
       <Suspense fallback={null}>
