@@ -21,14 +21,14 @@ export function IslandRim({ model }: IslandRimProps) {
     <group>
       <Line
         points={points}
-        color="#ffc84f"
-        lineWidth={14}
+        color="#ffb43c"
+        lineWidth={7}
         toneMapped={false}
         transparent
-        opacity={0.4}
+        opacity={0.45}
         depthWrite={false}
       />
-      <Line points={points} color="#fff4c4" lineWidth={4} toneMapped={false} />
+      <Line points={points} color="#ffeaa8" lineWidth={2.2} toneMapped={false} />
     </group>
   )
 }

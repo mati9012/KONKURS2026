@@ -19,7 +19,7 @@ import { Eagle } from '@/components/scene/sky/Eagle'
 import { SkyDome } from '@/components/scene/sky/SkyDome'
 import { useGameStore } from '@/store/game-store'
 
-const SUN_POSITION: [number, number, number] = [22, 26, 14]
+const SUN_POSITION: [number, number, number] = [26, 19, -6]
 const FOG_COLOR = '#c9c1ea'
 
 export function IslandScene() {
@@ -38,12 +38,12 @@ export function IslandScene() {
       <PerformanceMonitor onDecline={() => setQuality('low')} />
       <fog attach="fog" args={[FOG_COLOR, 70, 260]} />
       <SkyDome />
-      <hemisphereLight args={['#c9dcff', '#b38b6e', 1.15]} />
-      <ambientLight intensity={0.25} color="#fff0e0" />
+      <hemisphereLight args={['#d6d8ff', '#a8794f', 1.0]} />
+      <ambientLight intensity={0.2} color="#ffe6cc" />
       <directionalLight
         position={SUN_POSITION}
-        intensity={3.4}
-        color="#ffd59a"
+        intensity={3.8}
+        color="#ffc98a"
         castShadow={high}
         shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-16}

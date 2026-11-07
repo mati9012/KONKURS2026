@@ -1,5 +1,5 @@
 import { BufferAttribute, BufferGeometry, Color } from 'three'
-import { hash2, smoothstep } from '@/lib/island/noise'
+import { fbm, hash2, smoothstep } from '@/lib/island/noise'
 import { RIM_HEIGHT } from '@/lib/island/island-model'
 import type { IslandModel, TerrainSample } from '@/lib/island/island-model'
 
@@ -11,8 +11,8 @@ export const SURFACE = {
 }
 
 const PALETTE = {
-  meadow: new Color('#97c83c'),
-  meadowDeep: new Color('#6eab2e'),
+  meadow: new Color('#9acb3e'),
+  meadowDeep: new Color('#5f9f2a'),
   upland: new Color('#6aa52d'),
   forestFloor: new Color('#4a8a26'),
   marsh: new Color('#86a84a'),
@@ -61,7 +61,9 @@ function fieldSurface(x: number, z: number, target: Color) {
 }
 
 function faceSurface(x: number, z: number, sample: TerrainSample, target: Color) {
-  target.copy(PALETTE.meadow).lerp(PALETTE.meadowDeep, hash2(Math.floor(x * 2), Math.floor(z * 2)))
+  target
+    .copy(PALETTE.meadow)
+    .lerp(PALETTE.meadowDeep, smoothstep(-0.35, 0.45, fbm(x * 0.55, z * 0.55, 3)))
   target.lerp(PALETTE.upland, smoothstep(0.75, 1.15, sample.height))
   target.lerp(PALETTE.marsh, sample.lowland * 0.5)
   let surface = SURFACE.grass
@@ -78,7 +80,6 @@ function faceSurface(x: number, z: number, sample: TerrainSample, target: Color)
     target.copy(PALETTE.road)
     surface = SURFACE.road
   }
-  target.multiplyScalar(0.95 + hash2(x * 13.1, z * 7.7) * 0.1)
   return surface
 }
 
