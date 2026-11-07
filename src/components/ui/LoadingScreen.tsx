@@ -2,6 +2,13 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useMemo, useState } from 'react'
+import {
+  PAPER_GRAIN,
+  PARCHMENT_FILL,
+  PARCHMENT_SHADOW,
+  TORN_EDGES,
+} from '@/components/ui/parchment'
+import { ScrollRod } from '@/components/ui/ScrollRod'
 import { useSceneReady } from '@/components/ui/useSceneReady'
 import { createRandom } from '@/lib/noise'
 import { textureUrl } from '@/lib/three/texture-url'
@@ -9,11 +16,6 @@ import { textureUrl } from '@/lib/three/texture-url'
 const OPEN_EASE = [0.65, 0, 0.25, 1] as const
 const EXIT_EASE = [0.5, 0, 0.9, 0.4] as const
 const OPEN_MS = 2200
-
-const PAPER_GRAIN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.3 0 0 0 0 0.12 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")`
-
-const TORN_EDGES =
-  'polygon(0% 0%, 100% 0%, 99% 6%, 100% 13%, 98.6% 21%, 100% 29%, 99.2% 37%, 100% 46%, 98.8% 55%, 100% 63%, 99.1% 72%, 100% 80%, 98.7% 89%, 100% 100%, 0% 100%, 1.2% 92%, 0% 84%, 1% 75%, 0% 66%, 1.4% 57%, 0% 49%, 0.9% 40%, 0% 31%, 1.3% 22%, 0% 14%, 1% 6%)'
 
 function statusFor(progress: number) {
   if (progress < 0.35) return 'Rozwijamy mapę województwa'
@@ -122,15 +124,6 @@ function Curtain({ side, layer, open, reduceMotion }: CurtainProps) {
   )
 }
 
-function ScrollRod() {
-  return (
-    <div className="relative z-10 mx-[-14px] h-4 rounded-full bg-[linear-gradient(180deg,#a8693a_0%,#7a4523_55%,#4f2b14_100%)] shadow-[0_3px_6px_rgba(40,20,10,0.45)]">
-      <span className="absolute top-1/2 -left-1.5 size-5 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_35%_35%,#f3d38a,#b8894f_60%,#7a5326)] shadow-sm" />
-      <span className="absolute top-1/2 -right-1.5 size-5 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_35%_35%,#f3d38a,#b8894f_60%,#7a5326)] shadow-sm" />
-    </div>
-  )
-}
-
 function Parchment({ progress }: { progress: number }) {
   const percent = Math.round(progress * 100)
 
@@ -147,8 +140,8 @@ function Parchment({ progress }: { progress: number }) {
         className="relative -my-1 px-8 pt-8 pb-7 text-center shadow-[0_24px_60px_rgba(40,25,70,0.4)]"
         style={{
           clipPath: TORN_EDGES,
-          backgroundImage: `${PAPER_GRAIN}, radial-gradient(ellipse at 50% 45%, #fbf1da 0%, #f1dfb8 55%, #dcbf8c 100%)`,
-          boxShadow: 'inset 0 0 46px rgba(130, 85, 35, 0.45)',
+          backgroundImage: `${PAPER_GRAIN}, ${PARCHMENT_FILL}`,
+          boxShadow: PARCHMENT_SHADOW,
         }}
       >
         <p className="font-display text-xs font-semibold tracking-[0.32em] text-[#8a5a2b] uppercase">
