@@ -47,6 +47,7 @@ const fragmentShader = `
   uniform vec3 midColor;
   uniform vec3 shadowColor;
   uniform vec3 warmColor;
+  uniform vec3 blushColor;
   uniform vec3 deepColor;
   uniform vec3 hazeColor;
   uniform float hazeNear;
@@ -64,10 +65,12 @@ const fragmentShader = `
     vec3 color = mix(shadowColor, midColor, smoothstep(0.0, 0.5, light));
     color = mix(color, litColor, smoothstep(0.45, 0.95, light));
     float sunward = max(dot(normalize(vec3(vCenter.x, 0.0, vCenter.z) + 0.001), normalize(vec3(sunDirection.x, 0.0, sunDirection.z))), 0.0);
-    color = mix(color, warmColor, smoothstep(0.6, 1.0, light) * (0.1 + 0.4 * sunward) * (0.3 + 0.7 * vShade));
+    float midtone = smoothstep(0.25, 0.65, light) * (1.0 - smoothstep(0.7, 1.0, light));
+    color = mix(color, blushColor, midtone * (0.18 + 0.32 * sunward));
+    color = mix(color, warmColor, smoothstep(0.55, 1.0, light) * (0.18 + 0.55 * sunward) * (0.35 + 0.65 * vShade));
     float low = 1.0 - smoothstep(-18.0, -6.0, vCenter.y);
     color = mix(color, deepColor, low * (1.0 - light) * 0.75);
-    color = mix(color, hazeColor, smoothstep(hazeNear, hazeFar, vDepth) * 0.45);
+    color = mix(color, hazeColor, smoothstep(hazeNear, hazeFar, vDepth) * 0.32);
     gl_FragColor = vec4(color, puff.a * opacity);
     #include <colorspace_fragment>
   }
@@ -126,11 +129,12 @@ export function CloudPuffs({ puffs, opacity = 1 }: CloudPuffsProps) {
       new ShaderMaterial({
         uniforms: {
           map: { value: atlas },
-          litColor: { value: new Color('#fffaf3') },
-          midColor: { value: new Color('#e9e6f2') },
-          shadowColor: { value: new Color('#9eaad8') },
-          warmColor: { value: new Color('#ffc9a0') },
-          deepColor: { value: new Color('#8290c8') },
+          litColor: { value: new Color('#fff1e4') },
+          midColor: { value: new Color('#d7d3ee') },
+          shadowColor: { value: new Color('#7482c4') },
+          warmColor: { value: new Color('#ffab84') },
+          blushColor: { value: new Color('#efb5cc') },
+          deepColor: { value: new Color('#5f6fb6') },
           hazeColor: { value: new Color(SKY_COLORS.coolHorizon) },
           hazeNear: { value: 40 },
           hazeFar: { value: 200 },

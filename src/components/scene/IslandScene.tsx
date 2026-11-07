@@ -3,13 +3,6 @@
 import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Float, PerformanceMonitor } from '@react-three/drei'
-import {
-  Bloom,
-  BrightnessContrast,
-  EffectComposer,
-  HueSaturation,
-  Vignette,
-} from '@react-three/postprocessing'
 import { CameraRig } from '@/components/scene/CameraRig'
 import { DevTools } from '@/components/scene/DevTools'
 import { FloatingIsland } from '@/components/scene/island/FloatingIsland'
@@ -20,7 +13,7 @@ import { SkyDome } from '@/components/scene/sky/SkyDome'
 import { useGameStore } from '@/store/game-store'
 
 const SUN_POSITION: [number, number, number] = [26, 19, -6]
-const FOG_COLOR = '#c9c1ea'
+const FOG_COLOR = '#c9c8ec'
 
 export function IslandScene() {
   const quality = useGameStore((state) => state.settings.quality)
@@ -33,17 +26,16 @@ export function IslandScene() {
       shadows={high ? 'percentage' : false}
       dpr={high ? [1, 2] : [1, 1.25]}
       camera={{ position: [0, 22, 22], fov: 40, near: 0.1, far: 700 }}
-      gl={{ toneMappingExposure: 1.08 }}
+      flat
     >
       <PerformanceMonitor onDecline={() => setQuality('low')} />
       <fog attach="fog" args={[FOG_COLOR, 70, 260]} />
       <SkyDome />
-      <hemisphereLight args={['#d6d8ff', '#a8794f', 1.0]} />
-      <ambientLight intensity={0.2} color="#ffe6cc" />
+      <ambientLight intensity={0.9} color="#cfd6f2" />
       <directionalLight
         position={SUN_POSITION}
-        intensity={3.8}
-        color="#ffc98a"
+        intensity={4}
+        color="#ffe0b8"
         castShadow={high}
         shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-16}
@@ -71,14 +63,6 @@ export function IslandScene() {
         <Eagle />
       </Suspense>
       <CameraRig />
-      {high && (
-        <EffectComposer>
-          <Bloom mipmapBlur luminanceThreshold={0.9} luminanceSmoothing={0.12} intensity={0.55} />
-          <HueSaturation saturation={0.22} />
-          <BrightnessContrast brightness={0.02} contrast={0.1} />
-          <Vignette offset={0.3} darkness={0.5} />
-        </EffectComposer>
-      )}
       <DevTools />
     </Canvas>
   )

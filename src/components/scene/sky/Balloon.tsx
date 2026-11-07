@@ -7,7 +7,7 @@ import { useModelAsset } from '@/components/scene/useModelAsset'
 
 export function Balloon() {
   const groupRef = useRef<Group>(null)
-  const asset = useModelAsset('balloon', 0.26)
+  const asset = useModelAsset('balloon')
 
   useFrame(({ clock }) => {
     const group = groupRef.current
