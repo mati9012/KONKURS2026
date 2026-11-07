@@ -133,25 +133,32 @@ def split_lips(body):
     return len(seam)
 
 
-def mouth_interior(body):
-    material = bpy.data.materials.new("mouth")
+def mouth_part(name, color, location, scale, bone):
+    material = bpy.data.materials.new(name)
     material.use_nodes = True
     shader = material.node_tree.nodes["Principled BSDF"]
-    shader.inputs["Base Color"].default_value = (0.09, 0.02, 0.025, 1)
-    shader.inputs["Roughness"].default_value = 0.9
+    shader.inputs["Base Color"].default_value = (*color, 1)
+    shader.inputs["Roughness"].default_value = 0.7
     bm = bmesh.new()
     bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=12, radius=1)
-    bmesh.ops.transform(
-        bm, matrix=Matrix.Translation((0, -0.118, 0.733)) @ Matrix.Diagonal((0.042, 0.044, 0.012, 1)), verts=bm.verts
-    )
-    mesh = bpy.data.meshes.new("mouth")
+    bmesh.ops.transform(bm, matrix=Matrix.Translation(location) @ Matrix.Diagonal((*scale, 1)), verts=bm.verts)
+    mesh = bpy.data.meshes.new(name)
     bm.to_mesh(mesh)
     bm.free()
     mesh.materials.append(material)
     mesh.shade_smooth()
-    mouth = bpy.data.objects.new("mouth", mesh)
-    bpy.context.scene.collection.objects.link(mouth)
-    return mouth
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.scene.collection.objects.link(obj)
+    group = obj.vertex_groups.new(name=bone)
+    group.add(list(range(len(mesh.vertices))), 1.0, "REPLACE")
+    return obj
+
+
+def mouth_interior():
+    return [
+        mouth_part("mouth", (0.32, 0.06, 0.07), (0, -0.118, 0.733), (0.042, 0.044, 0.012), "head"),
+        mouth_part("tongue", (0.72, 0.28, 0.3), (0, -0.13, 0.724), (0.028, 0.034, 0.009), "jaw"),
+    ]
 
 
 def build_armature():
@@ -171,7 +178,7 @@ def build_armature():
     return rig
 
 
-def skin(body, mouth, rig):
+def skin(body, mouth_parts, rig):
     for obj in bpy.context.view_layer.objects:
         obj.select_set(False)
     body.select_set(True)
@@ -189,12 +196,11 @@ def skin(body, mouth, rig):
                 continue
             group = body.vertex_groups.get(bone) or body.vertex_groups.new(name=bone)
             group.add([vertex.index], weight, "REPLACE")
-    head = mouth.vertex_groups.new(name="head")
-    head.add(list(range(len(mouth.data.vertices))), 1.0, "REPLACE")
     for obj in bpy.context.view_layer.objects:
         obj.select_set(False)
     body.select_set(True)
-    mouth.select_set(True)
+    for part in mouth_parts:
+        part.select_set(True)
     bpy.context.view_layer.objects.active = body
     bpy.ops.object.join()
     return body
@@ -287,7 +293,7 @@ def talk_action(rig):
     frames = 2 * FPS
     new_action(rig, "talk")
     for i, openness in enumerate((0, 1, 0.3, 0.9, 0.1, 0.7, 0.2, 1, 0.4, 0.8, 0)):
-        key(rig, round(i / 10 * frames), "jaw", (14 * openness, 0, 0))
+        key(rig, round(i / 10 * frames), "jaw", (6 * openness, 0, 0))
     for t in (0, 0.25, 0.5, 0.75, 1):
         frame = round(t * frames)
         phase = math.sin(t * math.tau)
@@ -308,7 +314,7 @@ def present_action(rig):
         breathe(rig, frame, phase, 0.6)
         key(rig, frame, "neck", (0, 0, 0))
         key(rig, frame, "head", (-3 + 2 * phase, 4, 12))
-        key(rig, frame, "jaw", (8, 0, 0))
+        key(rig, frame, "jaw", (3, 0, 0))
         relaxed(rig, frame, "R")
         arm(rig, frame, "L", (1, -0.55, -0.15 + 0.04 * phase), (1, -0.75, 0.2), (1, -0.6, 0.45))
     ears(rig, frames, 0.4)
@@ -327,7 +333,7 @@ def wave_action(rig):
     for t, amount in ((0, 0), (0.25, 1), (0.8, 1), (1, 0)):
         key(rig, round(t * frames), "head", (-4 * amount, 7 * amount, -8 * amount))
         key(rig, round(t * frames), "neck", (0, 0, 0))
-        key(rig, round(t * frames), "jaw", (10 * amount, 0, 0))
+        key(rig, round(t * frames), "jaw", (4 * amount, 0, 0))
     ears(rig, frames, 0.3)
 
 
@@ -361,7 +367,7 @@ def cheer_action(rig):
         arm(rig, frame, "R", (-0.6, -0.55, -0.45), (-0.15, -0.45, 1), (-0.05, -0.35, 1))
         key(rig, frame, "head", (0, -8, -6))
         key(rig, frame, "neck", (0, 0, 0))
-        key(rig, frame, "jaw", (9, 0, 0))
+        key(rig, frame, "jaw", (4, 0, 0))
     ears(rig, frames, 0.35)
 
 
@@ -427,7 +433,7 @@ def build():
     args = scene_args()
     body = import_goat()
     seam = split_lips(body)
-    mouth = mouth_interior(body)
+    mouth = mouth_interior()
     rig = build_armature()
     skin(body, mouth, rig)
     print("SEAM_EDGES", seam, "TRIANGLES", sum(len(p.vertices) - 2 for p in body.data.polygons))

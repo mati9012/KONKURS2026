@@ -28,14 +28,19 @@ export const quizQuestionSchema = z
     path: ['correctIndex'],
   })
 
+export const NARRATOR_GESTURES = ['idle', 'talk', 'present', 'think', 'wave', 'cheer'] as const
+
 export const dialogueLineSchema = z.object({
   id: z.string().min(1),
   speaker: z.enum(['koziol', 'diabel', 'gracz']),
   text: z.string().min(1),
+  gesture: z.enum(NARRATOR_GESTURES).default('talk'),
   audio: z.string().optional(),
+  sources: z.array(sourceSchema).min(1).optional(),
 })
 
 export type Source = z.infer<typeof sourceSchema>
 export type Fact = z.infer<typeof factSchema>
 export type QuizQuestion = z.infer<typeof quizQuestionSchema>
 export type DialogueLine = z.infer<typeof dialogueLineSchema>
+export type NarratorGesture = (typeof NARRATOR_GESTURES)[number]

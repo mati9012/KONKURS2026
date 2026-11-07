@@ -18,7 +18,9 @@ type Settings = {
 type GameState = {
   stamps: Partial<Record<LevelId, Stamp>>
   settings: Settings
+  introSeen: boolean
   earnStamp: (levelId: LevelId) => void
+  markIntroSeen: () => void
   setQuality: (quality: Quality) => void
   setVolume: (channel: 'musicVolume' | 'sfxVolume', value: number) => void
   reset: () => void
@@ -55,7 +57,8 @@ const initialState = {
     musicVolume: 0.6,
     sfxVolume: 0.8,
   },
-} satisfies Pick<GameState, 'stamps' | 'settings'>
+  introSeen: false,
+} satisfies Pick<GameState, 'stamps' | 'settings' | 'introSeen'>
 
 export const useGameStore = create<GameState>()(
   persist(
@@ -67,6 +70,7 @@ export const useGameStore = create<GameState>()(
             ? state
             : { stamps: { ...state.stamps, [levelId]: { earnedAt: new Date().toISOString() } } },
         ),
+      markIntroSeen: () => set({ introSeen: true }),
       setQuality: (quality) => set((state) => ({ settings: { ...state.settings, quality } })),
       setVolume: (channel, value) =>
         set((state) => ({
@@ -79,7 +83,7 @@ export const useGameStore = create<GameState>()(
       version: 1,
       storage: createJSONStorage(() => safeLocalStorage),
       skipHydration: true,
-      partialize: ({ stamps, settings }) => ({ stamps, settings }),
+      partialize: ({ stamps, settings, introSeen }) => ({ stamps, settings, introSeen }),
     },
   ),
 )
