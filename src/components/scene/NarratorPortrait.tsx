@@ -5,10 +5,11 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { Suspense, useEffect, useRef } from 'react'
 import { Quaternion, Vector3 } from 'three'
 import type { AnimationAction, Group, Object3D } from 'three'
-import type { NarratorGesture } from '@/content/schema'
+import type { DialogueLine, NarratorGesture } from '@/content/schema'
 import { modelUrl } from '@/lib/three/model-asset'
 
 const MODEL = modelUrl('koziol')
+const DEVIL_MODEL = modelUrl('devil')
 const FADE_SECONDS = 0.35
 const JAW_OPEN = 0.09
 const JAW_EASE = 14
@@ -22,6 +23,38 @@ const jawWritten = new Quaternion()
 type GoatProps = {
   gesture: NarratorGesture
   speaking: boolean
+}
+
+type NarratorPortraitProps = GoatProps & {
+  speaker: DialogueLine['speaker']
+}
+
+const DEVIL_CLIPS: Record<NarratorGesture, string> = {
+  idle: 'Idle',
+  talk: 'Talk',
+  present: 'Talk',
+  think: 'Talk',
+  wave: 'Laugh',
+  cheer: 'Laugh',
+  laugh: 'Laugh',
+  angry: 'Angry',
+}
+
+function useClip(actions: Record<string, AnimationAction | null>, clip: string) {
+  const current = useRef<AnimationAction | null>(null)
+
+  useEffect(() => {
+    const next = actions[clip]
+    if (!next) return
+    const previous = current.current
+    if (previous === next && next.isRunning()) return
+    next.reset().play()
+    if (previous && previous !== next && previous.isRunning()) {
+      next.fadeIn(FADE_SECONDS)
+      previous.fadeOut(FADE_SECONDS)
+    }
+    current.current = next
+  }, [actions, clip])
 }
 
 function chatter(time: number) {
@@ -46,24 +79,12 @@ function Goat({ gesture, speaking }: GoatProps) {
   const { actions } = useAnimations(animations, group)
   const jaw = useRef<Object3D | null>(null)
   const mouth = useRef(0)
-  const current = useRef<AnimationAction | null>(null)
 
   useEffect(() => {
     jaw.current = scene.getObjectByName('jaw') ?? null
   }, [scene])
 
-  useEffect(() => {
-    const next = actions[gesture]
-    if (!next) return
-    const previous = current.current
-    if (previous === next && next.isRunning()) return
-    next.reset().play()
-    if (previous && previous !== next && previous.isRunning()) {
-      next.fadeIn(FADE_SECONDS)
-      previous.fadeOut(FADE_SECONDS)
-    }
-    current.current = next
-  }, [actions, gesture])
+  useClip(actions, gesture)
 
   useFrame(({ clock }, delta) => {
     const target = speaking && gesture !== 'talk' ? chatter(clock.elapsedTime) : 0
@@ -78,7 +99,22 @@ function Goat({ gesture, speaking }: GoatProps) {
   )
 }
 
-export function NarratorPortrait(props: GoatProps) {
+function Devil({ gesture, speaking }: GoatProps) {
+  const group = useRef<Group>(null)
+  const { scene, animations } = useGLTF(DEVIL_MODEL)
+  const { actions } = useAnimations(animations, group)
+  useClip(actions, speaking || gesture !== 'idle' ? DEVIL_CLIPS[gesture] : DEVIL_CLIPS.idle)
+
+  return (
+    <group ref={group}>
+      <primitive object={scene} />
+    </group>
+  )
+}
+
+export function NarratorPortrait({ speaker, gesture, speaking }: NarratorPortraitProps) {
+  const devil = speaker === 'diabel'
+
   return (
     <Canvas
       flat
@@ -91,10 +127,16 @@ export function NarratorPortrait(props: GoatProps) {
       <directionalLight position={[1.5, 2.5, 2]} intensity={2.6} color="#ffe6c8" />
       <directionalLight position={[-2, 1, -1]} intensity={0.8} color="#b9c6ff" />
       <Suspense fallback={null}>
-        <Goat {...props} />
+        <group visible={!devil}>
+          <Goat gesture={devil ? 'idle' : gesture} speaking={!devil && speaking} />
+        </group>
+        <group visible={devil}>
+          <Devil gesture={devil ? gesture : 'idle'} speaking={devil && speaking} />
+        </group>
       </Suspense>
     </Canvas>
   )
 }
 
 useGLTF.preload(MODEL)
+useGLTF.preload(DEVIL_MODEL)

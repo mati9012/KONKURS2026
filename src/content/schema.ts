@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { LEVEL_IDS } from '@/content/levels'
+import { PLACE_IDS } from '@/content/places'
 
 export const sourceSchema = z.object({
   title: z.string().min(1),
@@ -9,7 +9,7 @@ export const sourceSchema = z.object({
 
 export const factSchema = z.object({
   id: z.string().min(1),
-  levelId: z.enum(LEVEL_IDS),
+  placeId: z.enum(PLACE_IDS),
   text: z.string().min(1),
   sources: z.array(sourceSchema).min(1),
 })
@@ -17,7 +17,7 @@ export const factSchema = z.object({
 export const quizQuestionSchema = z
   .object({
     id: z.string().min(1),
-    levelId: z.enum(LEVEL_IDS),
+    placeId: z.enum(PLACE_IDS),
     question: z.string().min(1),
     answers: z.array(z.string().min(1)).min(2),
     correctIndex: z.number().int().nonnegative(),
@@ -28,7 +28,16 @@ export const quizQuestionSchema = z
     path: ['correctIndex'],
   })
 
-export const NARRATOR_GESTURES = ['idle', 'talk', 'present', 'think', 'wave', 'cheer'] as const
+export const NARRATOR_GESTURES = [
+  'idle',
+  'talk',
+  'present',
+  'think',
+  'wave',
+  'cheer',
+  'laugh',
+  'angry',
+] as const
 
 export const dialogueLineSchema = z.object({
   id: z.string().min(1),

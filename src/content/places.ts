@@ -1,5 +1,3 @@
-import type { LevelId } from '@/content/levels'
-
 export const PLACE_IDS = [
   'lublin',
   'zamosc',
@@ -25,7 +23,6 @@ export type Place = {
   scale: number
   rotation?: number
   extras?: PlaceExtra[]
-  levelId?: LevelId
 }
 
 export type PlaceExtra = {
@@ -43,7 +40,6 @@ export const PLACES: Place[] = [
     footprint: 0.9,
     scale: 1.7,
     extras: [{ model: 'lublin-gate', offset: [1.75, 1.2], size: 0.9 }],
-    levelId: 'lublin',
   },
   {
     id: 'zamosc',
@@ -52,7 +48,6 @@ export const PLACES: Place[] = [
     latitude: 50.7231,
     footprint: 0.9,
     scale: 1.45,
-    levelId: 'zamosc',
   },
   {
     id: 'kazimierz-dolny',
@@ -61,7 +56,6 @@ export const PLACES: Place[] = [
     latitude: 51.3214,
     footprint: 0.65,
     scale: 0.85,
-    levelId: 'kazimierz-dolny',
   },
   {
     id: 'chelm',
@@ -70,7 +64,6 @@ export const PLACES: Place[] = [
     latitude: 51.1431,
     footprint: 0.6,
     scale: 1.35,
-    levelId: 'chelm',
   },
   {
     id: 'pulawy',
@@ -103,7 +96,6 @@ export const PLACES: Place[] = [
     latitude: 50.5,
     footprint: 0.6,
     scale: 1.35,
-    levelId: 'roztocze',
   },
   {
     id: 'zwierzyniec',
@@ -120,7 +112,6 @@ export const PLACES: Place[] = [
     latitude: 50.5413,
     footprint: 0.5,
     scale: 1.25,
-    levelId: 'bilgoraj',
   },
   { id: 'kock', name: 'Kock', longitude: 22.4485, latitude: 51.6413, footprint: 0.5, scale: 1.25 },
 ]
