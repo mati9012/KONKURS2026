@@ -12,6 +12,7 @@ import { CloudSea } from '@/components/scene/sky/CloudSea'
 import { Eagle } from '@/components/scene/sky/Eagle'
 import { SkyDome } from '@/components/scene/sky/SkyDome'
 import { useGameStore } from '@/store/game-store'
+import { useJourneyStore } from '@/store/journey-store'
 
 const SUN_POSITION: [number, number, number] = [26, 19, -6]
 const FOG_COLOR = '#c9c8ec'
@@ -20,6 +21,7 @@ export function IslandScene() {
   const quality = useGameStore((state) => state.settings.quality)
   const setQuality = useGameStore((state) => state.setQuality)
   const high = quality === 'high'
+  const playing = useJourneyStore((state) => state.placeId !== null && state.phase === 'play')
 
   return (
     <Canvas
@@ -28,6 +30,7 @@ export function IslandScene() {
       dpr={high ? [1, 2] : [1, 1.25]}
       camera={{ position: [0, 22, 22], fov: 40, near: 0.1, far: 700 }}
       flat
+      frameloop={playing ? 'demand' : 'always'}
     >
       <PerformanceMonitor onDecline={() => setQuality('low')} />
       <fog attach="fog" args={[FOG_COLOR, 70, 260]} />

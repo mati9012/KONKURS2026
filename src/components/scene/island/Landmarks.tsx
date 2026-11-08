@@ -5,9 +5,34 @@ import { Vector3 } from 'three'
 import { PlaceLabel } from '@/components/scene/island/PlaceLabel'
 import { useModelAsset } from '@/components/scene/useModelAsset'
 import { PLACES } from '@/content/places'
+import type { Place } from '@/content/places'
+import { placeAccess, stampedPlaces } from '@/lib/journey'
 import type { IslandAnchor } from '@/lib/three/island-scene'
+import { useGameStore } from '@/store/game-store'
+import { useJourneyStore } from '@/store/journey-store'
 
 const BASE_SINK = 0.035
+
+function Label({ place, position }: { place: Place; position: [number, number, number] }) {
+  const stamps = useGameStore((state) => state.stamps)
+  const introSeen = useGameStore((state) => state.introSeen)
+  const visiting = useJourneyStore((state) => state.placeId !== null)
+  const visit = useJourneyStore((state) => state.visit)
+  const access = placeAccess(place.id, stampedPlaces(stamps))
+  const state = stamps[place.id] ? 'stamped' : access === 'open' ? 'open' : 'locked'
+
+  if (visiting) return null
+
+  return (
+    <PlaceLabel
+      name={place.name}
+      major={place.id === 'lublin'}
+      state={state}
+      position={position}
+      onSelect={introSeen ? () => visit(place.id, position) : undefined}
+    />
+  )
+}
 
 function Landmark({ anchor }: { anchor: IslandAnchor }) {
   const asset = useModelAsset(anchor.model)
@@ -31,13 +56,7 @@ function Landmark({ anchor }: { anchor: IslandAnchor }) {
         castShadow
         receiveShadow
       />
-      {place && (
-        <PlaceLabel
-          name={place.name}
-          major={place.id === 'lublin'}
-          position={[x, placement.top + 0.3, z]}
-        />
-      )}
+      {place && <Label place={place} position={[x, placement.top + 0.3, z]} />}
     </group>
   )
 }

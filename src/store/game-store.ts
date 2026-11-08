@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import type { StateStorage } from 'zustand/middleware'
-import type { LevelId } from '@/content/levels'
+import type { PlaceId } from '@/content/places'
 
 export type Quality = 'high' | 'low'
 
@@ -16,10 +16,10 @@ type Settings = {
 }
 
 type GameState = {
-  stamps: Partial<Record<LevelId, Stamp>>
+  stamps: Partial<Record<PlaceId, Stamp>>
   settings: Settings
   introSeen: boolean
-  earnStamp: (levelId: LevelId) => void
+  earnStamp: (placeId: PlaceId) => void
   markIntroSeen: () => void
   setQuality: (quality: Quality) => void
   setVolume: (channel: 'musicVolume' | 'sfxVolume', value: number) => void
@@ -64,11 +64,11 @@ export const useGameStore = create<GameState>()(
   persist(
     (set) => ({
       ...initialState,
-      earnStamp: (levelId) =>
+      earnStamp: (placeId) =>
         set((state) =>
-          state.stamps[levelId]
+          state.stamps[placeId]
             ? state
-            : { stamps: { ...state.stamps, [levelId]: { earnedAt: new Date().toISOString() } } },
+            : { stamps: { ...state.stamps, [placeId]: { earnedAt: new Date().toISOString() } } },
         ),
       markIntroSeen: () => set({ introSeen: true }),
       setQuality: (quality) => set((state) => ({ settings: { ...state.settings, quality } })),
