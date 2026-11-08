@@ -35,63 +35,73 @@ async function playRound(page: Page, direction: string, played: number) {
   throw new Error(`Hejnał na ${direction} się nie udał`)
 }
 
-test('Zamość: budowa miasta i hejnał dają pieczęć w paszporcie', async ({ page }, testInfo) => {
-  test.skip(
-    testInfo.project.name === 'mobile',
-    'Emulacja telefonu renderuje WebGL programowo, ekran ładowania nie zdąży się otworzyć',
-  )
-  test.setTimeout(300_000)
-  await page.addInitScript(() => {
-    const settings = { quality: 'low', musicVolume: 0.6, sfxVolume: 0 }
-    const state = { stamps: {}, settings, introSeen: true }
-    localStorage.setItem('czarcia-lapa-paszport', JSON.stringify({ state, version: 1 }))
-  })
+test(
+  'Zamość: budowa miasta i hejnał dają pieczęć w paszporcie',
+  { tag: '@scene' },
+  async ({ page }, testInfo) => {
+    test.skip(
+      testInfo.project.name === 'mobile',
+      'Emulacja telefonu renderuje WebGL programowo, ekran ładowania nie zdąży się otworzyć',
+    )
+    test.setTimeout(300_000)
+    await page.addInitScript(() => {
+      const settings = { quality: 'low', musicVolume: 0.6, sfxVolume: 0 }
+      const state = { stamps: {}, settings, introSeen: true }
+      localStorage.setItem('czarcia-lapa-paszport', JSON.stringify({ state, version: 1 }))
+    })
 
-  await page.goto('/')
-  await expect(page.getByRole('status', { name: 'Ładowanie gry' })).toBeHidden({ timeout: 90_000 })
-  await expect(page.getByRole('button', { name: 'Chełm, zablokowane' })).toBeAttached()
+    await page.goto('/')
+    await expect(page.getByRole('status', { name: 'Ładowanie gry' })).toBeHidden({
+      timeout: 90_000,
+    })
+    await expect(page.getByRole('button', { name: 'Chełm, zablokowane' })).toBeAttached()
 
-  await page.getByRole('button', { name: 'Zamość', exact: true }).dispatchEvent('click')
-  const narrator = page.getByRole('dialog', { name: 'Szaro mówi' })
-  await expect(narrator.getByText('renesansowe miasto idealne')).toBeAttached()
-  await narrator.getByRole('button', { name: 'Pomiń' }).click()
-
-  await expect(narrator.getByText('Rozrzuciłem plany')).toBeAttached({ timeout: 60_000 })
-  await narrator.getByRole('button', { name: 'Pomiń' }).click()
-
-  const build = page.getByRole('region', { name: 'Budowa miasta' })
-  await build.getByRole('button', { name: 'Ratusz' }).click()
-  await page
-    .getByRole('button', { name: 'Miejsce na makiecie: zachodni kraniec miasta' })
-    .dispatchEvent('click')
-  await expect(build.getByText('To nie ta budowla')).toBeVisible()
-
-  for (const [index, [card, place]] of BUILD.entries()) {
-    await build.getByRole('button', { name: card, exact: true }).click()
-    await page.getByRole('button', { name: `Miejsce na makiecie: ${place}` }).dispatchEvent('click')
-    await expect(narrator).toBeVisible({ timeout: 15_000 })
-    if (index === 3) await page.screenshot({ path: testInfo.outputPath('zamosc-build.png') })
+    await page.getByRole('button', { name: 'Zamość', exact: true }).dispatchEvent('click')
+    const narrator = page.getByRole('dialog', { name: 'Szaro mówi' })
+    await expect(narrator.getByText('renesansowe miasto idealne')).toBeAttached()
     await narrator.getByRole('button', { name: 'Pomiń' }).click()
-  }
 
-  await expect(narrator.getByText('Miasto idealne stoi')).toBeAttached({ timeout: 15_000 })
-  await narrator.getByRole('button', { name: 'Pomiń' }).click()
+    await expect(narrator.getByText('Rozrzuciłem plany')).toBeAttached({ timeout: 60_000 })
+    await narrator.getByRole('button', { name: 'Pomiń' }).click()
 
-  const hejnal = page.getByRole('region', { name: 'Hejnał z wieży ratusza' })
-  await hejnal.getByRole('button', { name: 'Zachód' }).click()
-  await expect(hejnal.getByText('Nie na zachód!')).toBeVisible()
-  await page.screenshot({ path: testInfo.outputPath('zamosc-hejnal.png') })
+    const build = page.getByRole('region', { name: 'Budowa miasta' })
+    await build.getByRole('button', { name: 'Ratusz' }).click()
+    await page
+      .getByRole('button', { name: 'Miejsce na makiecie: zachodni kraniec miasta' })
+      .dispatchEvent('click')
+    await expect(build.getByText('To nie ta budowla')).toBeVisible()
 
-  await playRound(page, 'Północ', 0)
-  await playRound(page, 'Wschód', 1)
-  await playRound(page, 'Południe', 2)
+    for (const [index, [card, place]] of BUILD.entries()) {
+      await build.getByRole('button', { name: card, exact: true }).click()
+      await page
+        .getByRole('button', { name: `Miejsce na makiecie: ${place}` })
+        .dispatchEvent('click')
+      await expect(narrator).toBeVisible({ timeout: 15_000 })
+      if (index === 3) await page.screenshot({ path: testInfo.outputPath('zamosc-build.png') })
+      await narrator.getByRole('button', { name: 'Pomiń' }).click()
+    }
 
-  await expect(page.getByRole('img', { name: 'Pieczęć: Zamość' })).toBeVisible({ timeout: 15_000 })
-  await expect(page.getByText('Pieczęcie: 1/11')).toBeVisible()
-  await narrator.getByRole('button', { name: 'Pomiń' }).click()
-  const passport = page.getByRole('dialog', { name: 'Paszport Lubelski' })
-  await expect(passport.getByText('Zebrane pieczęcie: 1 / 11')).toBeVisible()
-  await passport.getByRole('button', { name: 'Zamknij' }).click()
-  await expect(page.getByRole('button', { name: 'Zamość, pieczęć zdobyta' })).toBeAttached()
-  await expect(page.getByRole('button', { name: 'Kock', exact: true })).toBeAttached()
-})
+    await expect(narrator.getByText('Miasto idealne stoi')).toBeAttached({ timeout: 15_000 })
+    await narrator.getByRole('button', { name: 'Pomiń' }).click()
+
+    const hejnal = page.getByRole('region', { name: 'Hejnał z wieży ratusza' })
+    await hejnal.getByRole('button', { name: 'Zachód' }).click()
+    await expect(hejnal.getByText('Nie na zachód!')).toBeVisible()
+    await page.screenshot({ path: testInfo.outputPath('zamosc-hejnal.png') })
+
+    await playRound(page, 'Północ', 0)
+    await playRound(page, 'Wschód', 1)
+    await playRound(page, 'Południe', 2)
+
+    await expect(page.getByRole('img', { name: 'Pieczęć: Zamość' })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText('Pieczęcie: 1/11')).toBeVisible()
+    await narrator.getByRole('button', { name: 'Pomiń' }).click()
+    const passport = page.getByRole('dialog', { name: 'Paszport Lubelski' })
+    await expect(passport.getByText('Zebrane pieczęcie: 1 / 11')).toBeVisible()
+    await passport.getByRole('button', { name: 'Zamknij' }).click()
+    await expect(page.getByRole('button', { name: 'Zamość, pieczęć zdobyta' })).toBeAttached()
+    await expect(page.getByRole('button', { name: 'Kock', exact: true })).toBeAttached()
+  },
+)
