@@ -28,7 +28,16 @@ export const quizQuestionSchema = z
     path: ['correctIndex'],
   })
 
-export const NARRATOR_GESTURES = ['idle', 'talk', 'present', 'think', 'wave', 'cheer'] as const
+export const NARRATOR_GESTURES = [
+  'idle',
+  'talk',
+  'present',
+  'think',
+  'wave',
+  'cheer',
+  'laugh',
+  'angry',
+] as const
 
 export const dialogueLineSchema = z.object({
   id: z.string().min(1),

@@ -94,8 +94,9 @@ export function NarratorConversation({ lines, doneLabel, onDone }: NarratorConve
       <div className="relative flex w-full max-w-4xl flex-col items-start sm:flex-row sm:items-end">
         <div className="pointer-events-none relative z-10 -mb-8 h-48 w-40 shrink-0 sm:-mr-14 sm:mb-0 sm:h-80 sm:w-64">
           <NarratorPortrait
-            gesture={settled || devil ? 'idle' : line.gesture}
-            speaking={!done && !devil}
+            speaker={line.speaker}
+            gesture={settled ? 'idle' : line.gesture}
+            speaking={!done}
           />
         </div>
         <div

@@ -99,7 +99,7 @@ export const ZAMOSC_PROLOGUE = lines.parse([
   {
     id: 'zamosc-devil-plans',
     speaker: 'diabel',
-    gesture: 'idle',
+    gesture: 'laugh',
     text: 'Ha! Rozrzuciłem plany waszego architekta na cztery wiatry. Nikt już nie postawi tego miasta jak należy!',
   },
   {
@@ -346,7 +346,7 @@ export const BUILD_FINALE = lines.parse([
   {
     id: 'zamosc-devil-tower',
     speaker: 'diabel',
-    gesture: 'idle',
+    gesture: 'laugh',
     text: 'Phi! Ale trębacza na wieży ratusza i tak wam pomieszałem. Niech gra hejnał na Kraków, ha!',
   },
   {
@@ -421,7 +421,7 @@ export const ZAMOSC_OUTRO = lines.parse([
   {
     id: 'zamosc-devil-flees',
     speaker: 'diabel',
-    gesture: 'idle',
+    gesture: 'angry',
     text: 'Grrr! Następnym razem tak łatwo wam nie pójdzie!',
   },
   {
