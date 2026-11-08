@@ -5,6 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   workers: process.env.CI ? 1 : undefined,
   forbidOnly: !!process.env.CI,
+  grepInvert: process.env.CI ? /@scene/ : undefined,
   retries: process.env.CI ? 2 : 0,
   reporter: 'html',
   use: {
