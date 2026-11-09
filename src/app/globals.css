@@ -14,3 +14,57 @@ body {
   color: var(--color-parchment);
   overscroll-behavior: none;
 }
+
+@keyframes zw-ripple {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateX(8px);
+  }
+}
+
+@keyframes zw-sway {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes zw-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.zw-ripples path {
+  animation: zw-ripple 5.5s ease-in-out infinite;
+}
+
+.zw-pulse {
+  animation: zw-glow 1.4s ease-in-out infinite;
+}
+
+.zw-sway > g {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: zw-sway 4.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zw-ripples path,
+  .zw-pulse,
+  .zw-sway > g {
+    animation: none;
+  }
+}
