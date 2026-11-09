@@ -79,7 +79,6 @@ export const SOCKET_NAMES: Record<BuildingId, string> = {
 const buildStepSchema = z.object({
   building: z.enum(BUILDING_IDS),
   task: dialogueLineSchema,
-  wrongBuilding: z.string().min(1),
   wrongPlace: z.string().min(1),
   facts: lines.min(1),
 })
@@ -138,9 +137,8 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       id: 'task-palace',
       speaker: 'koziol',
       gesture: 'think',
-      text: 'Zacznijmy od głowy miasta. To prywatna rezydencja założyciela, na zachodnim końcu miasta.',
+      text: 'Głowa miasta to prywatna rezydencja założyciela, na zachodnim końcu miasta.',
     },
-    wrongBuilding: 'To nie ta budowla. Głową miasta była rezydencja samego Zamoyskiego.',
     wrongPlace: 'Głowa jest na zachodnim krańcu miasta. Zerknijcie na różę wiatrów.',
     facts: [
       {
@@ -158,9 +156,8 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       id: 'task-grodzka',
       speaker: 'koziol',
       gesture: 'think',
-      text: 'Teraz kręgosłup: ulica, która biegnie od pałacu prosto na wschód, przez całe miasto.',
+      text: 'Kręgosłup miasta to ulica, która biegnie od pałacu prosto na wschód, przez całe miasto.',
     },
-    wrongBuilding: 'Szukamy ulicy, nie budynku.',
     wrongPlace: 'Kręgosłup zaczyna się przy pałacu i prowadzi na wschód.',
     facts: [
       {
@@ -180,7 +177,6 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       gesture: 'think',
       text: 'Każde porządne miasto potrzebuje serca handlu. Wielki kwadratowy plac stanie na kręgosłupie, we wschodniej części miasta.',
     },
-    wrongBuilding: 'Potrzebujemy placu, na którym kupcy rozłożą towary.',
     wrongPlace: 'Plac leży na ulicy Grodzkiej, bliżej wschodniej strony.',
     facts: [
       {
@@ -207,7 +203,6 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       gesture: 'think',
       text: 'Gdzie obradują rajcy? Ich budynek z wysoką wieżą stoi przy północnej pierzei Rynku Wielkiego.',
     },
-    wrongBuilding: 'Rajcy obradują w budynku z wieżą zegarową.',
     wrongPlace:
       'Szukajcie miejsca na północnym brzegu rynku. Róża wiatrów pokaże, gdzie jest północ.',
     facts: [
@@ -235,7 +230,6 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       gesture: 'think',
       text: 'Kupcy potrzebują domów. Kolorowe kamienice z podcieniami otoczą rynek.',
     },
-    wrongBuilding: 'Szukamy domów kupców, z łukami na parterze.',
     wrongPlace: 'Kamienice obejmują rynek, tuż przy jego brzegach.',
     facts: [
       {
@@ -260,9 +254,8 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       id: 'task-collegiate',
       speaker: 'koziol',
       gesture: 'think',
-      text: 'Teraz świątynia ufundowana przez Zamoyskiego. Stanie na południe od ulicy Grodzkiej, między pałacem a rynkiem.',
+      text: 'Świątynia ufundowana przez Zamoyskiego stanie na południe od ulicy Grodzkiej, między pałacem a rynkiem.',
     },
-    wrongBuilding: 'Szukamy kościoła, a nie szkoły ani domu.',
     wrongPlace: 'To miejsce jest na południe od Grodzkiej, między pałacem a rynkiem.',
     facts: [
       {
@@ -289,7 +282,6 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       gesture: 'think',
       text: 'Zamoyski chciał kształcić młodzież. Szkoła stanie naprzeciw kolegiaty, po północnej stronie Grodzkiej.',
     },
-    wrongBuilding: 'Szukamy uczelni, w której wykładali profesorowie.',
     wrongPlace: 'Szkoła stoi na północ od Grodzkiej, naprzeciw kolegiaty.',
     facts: [
       {
@@ -314,9 +306,8 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       id: 'task-fortress',
       speaker: 'koziol',
       gesture: 'think',
-      text: 'Na koniec obrona! Mury z bastionami muszą otoczyć całe miasto. Przeciągnijcie je na sam skraj planu.',
+      text: 'Obrona! Mury z bastionami muszą otoczyć całe miasto. Przeciągnijcie je na sam skraj planu.',
     },
-    wrongBuilding: 'Bez murów diabeł wejdzie do miasta. Wybierzcie fortyfikacje.',
     wrongPlace: 'Mury biegną wokół całego miasta, po jego krawędzi.',
     facts: [
       {

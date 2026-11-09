@@ -20,7 +20,6 @@ import { CitySockets } from '@/levels/zamosc/CitySockets'
 import { HejnalPanel } from '@/levels/zamosc/HejnalPanel'
 
 const CURTAIN_HOLD_MS = 700
-const RISE_TO_FACTS_MS = 1500
 const SHAKE_MS = 450
 const NOTE_LIFE_MS = 1400
 const DRAG_THRESHOLD = 8
@@ -45,15 +44,13 @@ function socketAt(x: number, y: number) {
 
 type Stage =
   | { kind: 'prologue' }
-  | { kind: 'task'; step: number }
-  | { kind: 'rising'; step: number }
-  | { kind: 'facts'; step: number }
+  | { kind: 'task' }
+  | { kind: 'facts'; building: BuildingId }
   | { kind: 'finale' }
   | { kind: 'hejnal' }
 
 function focusOf(stage: Stage): BuildingId | null {
-  if (stage.kind === 'rising' || stage.kind === 'facts') return BUILD_STEPS[stage.step].building
-  return null
+  return stage.kind === 'facts' ? stage.building : null
 }
 
 export function ZamoscLevel({ onComplete }: LevelGameProps) {
@@ -82,12 +79,6 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
   }, [])
 
   useEffect(() => {
-    if (stage.kind !== 'rising') return
-    const timer = setTimeout(() => setStage({ kind: 'facts', step: stage.step }), RISE_TO_FACTS_MS)
-    return () => clearTimeout(timer)
-  }, [stage])
-
-  useEffect(() => {
     if (!shaking) return
     const timer = setTimeout(() => setShaking(null), SHAKE_MS)
     return () => clearTimeout(timer)
@@ -103,28 +94,31 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
   const sockets = stage.kind === 'task' ? remaining : []
   const cityArt = useMemo(() => <CityArt layout={layout} built={built} />, [layout, built])
 
-  function startTask(step: number) {
+  function stepOf(building: BuildingId) {
+    return BUILD_STEPS.find((step) => step.building === building) ?? BUILD_STEPS[0]
+  }
+
+  function startTask() {
     setSelected(null)
-    setHint(BUILD_STEPS[step].task.text)
-    setStage({ kind: 'task', step })
+    setHint(FIRST_HINT)
+    setStage({ kind: 'task' })
+  }
+
+  function choose(card: BuildingId) {
+    setHint(stepOf(card).task.text)
   }
 
   function place(card: BuildingId, socket: BuildingId) {
-    if (stage.kind !== 'task') return
-    const step = BUILD_STEPS[stage.step]
-    if (card !== step.building) {
+    if (stage.kind !== 'task' || built.includes(card)) return
+    if (card !== socket) {
       setShaking(card)
       setSelected(null)
-      setHint(step.wrongBuilding)
+      setHint(stepOf(card).wrongPlace)
       return
     }
-    if (socket !== step.building) {
-      setHint(step.wrongPlace)
-      return
-    }
-    setBuilt((current) => [...current, step.building])
+    setBuilt((current) => [...current, card])
     setSelected(null)
-    setStage({ kind: 'rising', step: stage.step })
+    setStage({ kind: 'facts', building: card })
   }
 
   function pick(socket: BuildingId) {
@@ -137,6 +131,7 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
     const { clientX: x, clientY: y } = event
     dragging.current = { id, startX: x, startY: y, x, y, moved: false }
     setDrag(dragging.current)
+    choose(id)
   }
 
   function moveDrag(event: ReactPointerEvent<HTMLDivElement>) {
@@ -168,8 +163,8 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
     if (socket) place(current.id, socket)
   }
 
-  function afterFacts(step: number) {
-    if (step + 1 < BUILD_STEPS.length) startTask(step + 1)
+  function afterFacts() {
+    if (built.length < BUILD_STEPS.length) startTask()
     else setStage({ kind: 'finale' })
   }
 
@@ -226,7 +221,7 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
             key="prologue"
             lines={ZAMOSC_PROLOGUE}
             doneLabel="Budujemy!"
-            onDone={() => startTask(0)}
+            onDone={startTask}
           />
         )}
         {stage.kind === 'task' && (
@@ -239,16 +234,19 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
             selected={selected}
             shaking={shaking}
             dragged={drag?.moved ? drag.id : null}
-            onSelect={(id) => setSelected((current) => (current === id ? null : id))}
+            onSelect={(id) => {
+              choose(id)
+              setSelected((current) => (current === id ? null : id))
+            }}
             onDragStart={startDrag}
           />
         )}
         {stage.kind === 'facts' && (
           <NarratorConversation
-            key={`facts-${stage.step}`}
-            lines={BUILD_STEPS[stage.step].facts}
-            doneLabel={stage.step + 1 < BUILD_STEPS.length ? 'Budujemy dalej' : 'Dalej'}
-            onDone={() => afterFacts(stage.step)}
+            key={`facts-${stage.building}`}
+            lines={stepOf(stage.building).facts}
+            doneLabel={built.length < BUILD_STEPS.length ? 'Budujemy dalej' : 'Dalej'}
+            onDone={afterFacts}
           />
         )}
         {stage.kind === 'finale' && (
