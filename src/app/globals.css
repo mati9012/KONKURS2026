@@ -116,6 +116,42 @@ body {
   animation: zw-glow 2.6s ease-in-out infinite;
 }
 
+@keyframes bj-slam {
+  0%,
+  8% {
+    transform: translateY(0);
+  }
+  4% {
+    transform: translateY(6px);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes bj-beat {
+  0% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+  30%,
+  100% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+}
+
+.bj-slam {
+  animation: bj-slam 1s ease-in-out infinite;
+}
+
+.bj-beat {
+  animation: bj-beat 1s ease-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rz-hop,
   .rz-breathe,
