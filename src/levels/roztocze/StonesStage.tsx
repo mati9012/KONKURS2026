@@ -17,7 +17,6 @@ import { placeSpots } from '@/levels/roztocze/scene-layout'
 import type { SceneLayout, Spot } from '@/levels/roztocze/scene-layout'
 
 const PIECE_TOTAL = STONE_PIECES.length
-const PLACE_MS = 1100
 const DIG_STEP = 0.34
 const UNCOVERED = 0.22
 const TAP_SLOP = 6
@@ -190,7 +189,7 @@ export function StonesStage({ layout, playing, onPiece }: StonesStageProps) {
     setPlaced((current) => [...current, { x: mound.x, y: mound.y }])
     take(mound.id)
     setHint(STONE_HINTS.piece)
-    setTimeout(() => onPiece(count), PLACE_MS)
+    onPiece(count)
   }
 
   return (
