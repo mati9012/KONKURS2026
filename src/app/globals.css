@@ -61,7 +61,49 @@ body {
   animation: zw-sway 4.5s ease-in-out infinite;
 }
 
+@keyframes rz-hop {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(6deg);
+  }
+}
+
+@keyframes rz-flicker {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  40% {
+    transform: scaleY(1.25);
+  }
+  70% {
+    transform: scaleY(0.85);
+  }
+}
+
+.rz-hop {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: rz-hop 0.7s ease-in-out infinite;
+}
+
+.rz-flicker {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: rz-flicker 0.5s ease-in-out infinite;
+}
+
+.rz-twinkle {
+  animation: zw-glow 2.6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .rz-hop,
+  .rz-flicker,
+  .rz-twinkle,
   .zw-ripples path,
   .zw-pulse,
   .zw-sway > g {
