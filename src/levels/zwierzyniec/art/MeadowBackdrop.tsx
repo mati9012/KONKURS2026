@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { createRandom } from '@/lib/noise'
-import { blobPath, ridgePath, scatter } from '@/levels/zwierzyniec/art/paint'
+import { blobPath, ridgePath, scatter } from '@/components/watercolor/paint'
 import { PenFence } from '@/levels/zwierzyniec/art/PenFence'
-import { TreeLine } from '@/levels/zwierzyniec/art/TreeLine'
-import { PAINT, PAINT_SOFT, PAINT_WASH } from '@/levels/zwierzyniec/art/WatercolorDefs'
+import { TreeLine } from '@/components/watercolor/TreeLine'
+import { PAINT, PAINT_SOFT, PAINT_WASH } from '@/components/watercolor/WatercolorDefs'
 import type { HerdLayout } from '@/levels/zwierzyniec/herd-layout'
 
 const FAR_FOREST = {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { RefObject } from 'react'
-import type { World } from '@/levels/zwierzyniec/herd-layout'
+
+export type World = { width: number; height: number }
 
 const MIN_WIDTH = 600
 const MAX_WIDTH = 1800

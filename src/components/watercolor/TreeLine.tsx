@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { createRandom } from '@/lib/noise'
-import { blobPath } from '@/levels/zwierzyniec/art/paint'
+import { blobPath } from '@/components/watercolor/paint'
 
 type Palette = {
   fir: readonly string[]

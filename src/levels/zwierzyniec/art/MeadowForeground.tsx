@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { scatter } from '@/levels/zwierzyniec/art/paint'
+import { scatter } from '@/components/watercolor/paint'
 import type { HerdLayout } from '@/levels/zwierzyniec/herd-layout'
 
 const BLADES = ['#55763a', '#6a8a45', '#4a6a34', '#7c9a4e']
