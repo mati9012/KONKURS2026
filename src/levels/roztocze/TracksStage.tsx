@@ -8,7 +8,7 @@ import { toWorld } from '@/components/watercolor/useWorld'
 import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { ANIMAL_IDS, ANIMAL_NAMES, TRACK_HINTS, TRACKS } from '@/content/roztocze'
 import type { AnimalId } from '@/content/roztocze'
-import { AnimalSilhouette } from '@/levels/roztocze/art/AnimalSilhouette'
+import { AnimalArt } from '@/levels/roztocze/art/AnimalArt'
 import { NightBackdrop } from '@/levels/roztocze/art/NightBackdrop'
 import { RoztoczeIcon } from '@/levels/roztocze/art/RoztoczeIcon'
 import { TrackSign } from '@/levels/roztocze/art/TrackSign'
@@ -62,6 +62,15 @@ type TracksStageProps = {
   onFound: (count: number, animal: AnimalId) => void
 }
 
+type Perch = Spot & { flip: boolean }
+
+function animalPerch(sign: Sign, layout: SceneLayout): Perch {
+  const { unit, world } = layout
+  if (sign.kind === 'owl') return { x: sign.x, y: sign.y - 112 * unit, flip: false }
+  const side = sign.x > world.width * 0.62 ? -1 : 1
+  return { x: sign.x + side * 140 * unit, y: sign.y + 10 * unit, flip: side === 1 }
+}
+
 function signLabel(kind: SignKind, id: number) {
   if (kind === 'devil') return `Dziwne odciski ${id + 1}`
   return TRACKS.find((track) => track.animal === kind)?.sign ?? kind
@@ -79,7 +88,7 @@ export function TracksStage({ layout, playing, onFound }: TracksStageProps) {
   const [found, setFound] = useState<AnimalId[]>([])
   const [gone, setGone] = useState<number[]>([])
   const [chosen, setChosen] = useState<Sign | null>(null)
-  const [revealed, setRevealed] = useState<Sign | null>(null)
+  const [revealed, setRevealed] = useState(false)
   const [hint, setHint] = useState<string>(TRACK_HINTS.start)
   const backdrop = useMemo(
     () => <NightBackdrop layout={layout} stream={signs[BEAVER]} />,
@@ -89,7 +98,10 @@ export function TracksStage({ layout, playing, onFound }: TracksStageProps) {
     x: world.width / 2,
     y: layout.horizon + (world.height - layout.horizon) / 2,
   }
-  const busy = !playing || revealed !== null
+  const busy = !playing || revealed
+  const spotted = signs
+    .filter((sign) => sign.kind !== 'devil' && found.includes(sign.kind))
+    .map((sign) => ({ sign, perch: animalPerch(sign, layout) }))
 
   function aim(event: ReactPointerEvent<SVGSVGElement>) {
     if (!svg.current) return
@@ -120,14 +132,13 @@ export function TracksStage({ layout, playing, onFound }: TracksStageProps) {
       setHint(TRACK_HINTS.wrong)
       return
     }
-    const sign = chosen
     const count = found.length + 1
     setFound((current) => [...current, animal])
     setChosen(null)
-    setRevealed(sign)
+    setRevealed(true)
     setHint(TRACK_HINTS.right)
     setTimeout(() => {
-      setRevealed(null)
+      setRevealed(false)
       onFound(count, animal)
     }, REVEAL_MS)
   }
@@ -164,17 +175,15 @@ export function TracksStage({ layout, playing, onFound }: TracksStageProps) {
           >
             <rect width={world.width} height={world.height} fill="#fff" />
             <circle cx={light.x} cy={light.y} r={radius} fill="url(#rz-lamp-hole)" />
-            {signs
-              .filter((sign) => sign.kind !== 'devil' && found.includes(sign.kind))
-              .map((sign) => (
-                <circle
-                  key={sign.id}
-                  cx={sign.x}
-                  cy={sign.y - 30 * unit}
-                  r={radius * 0.6}
-                  fill="url(#rz-lamp-hole)"
-                />
-              ))}
+            {spotted.map(({ sign, perch }) => (
+              <circle
+                key={sign.id}
+                cx={(sign.x + perch.x) / 2}
+                cy={Math.min(sign.y, perch.y) - 60 * unit}
+                r={radius * 0.95}
+                fill="url(#rz-lamp-hole)"
+              />
+            ))}
           </mask>
         </defs>
         {backdrop}
@@ -214,6 +223,21 @@ export function TracksStage({ layout, playing, onFound }: TracksStageProps) {
               )}
             </g>
           ))}
+        {spotted.map(({ sign, perch }) => (
+          <motion.g
+            key={sign.id}
+            initial={{ opacity: 0, x: perch.x + (perch.flip ? 40 : -40) * unit, y: perch.y }}
+            animate={{ opacity: 1, x: perch.x, y: perch.y }}
+            transition={{ duration: 0.9, ease: 'easeOut' }}
+            pointerEvents="none"
+          >
+            <g transform={`scale(${unit * (perch.flip ? -1.25 : 1.25)} ${unit * 1.25})`}>
+              <g className="rz-breathe">
+                <AnimalArt animal={sign.kind as AnimalId} />
+              </g>
+            </g>
+          </motion.g>
+        ))}
         <rect
           width={world.width}
           height={world.height}
@@ -229,22 +253,6 @@ export function TracksStage({ layout, playing, onFound }: TracksStageProps) {
           fill="url(#rz-lamp-glow)"
           pointerEvents="none"
         />
-        <AnimatePresence>
-          {revealed && revealed.kind !== 'devil' && (
-            <motion.g
-              key={revealed.id}
-              initial={{ opacity: 0, x: revealed.x + 80 * unit, y: revealed.y }}
-              animate={{ opacity: 1, x: revealed.x + 110 * unit, y: revealed.y }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6 }}
-              pointerEvents="none"
-            >
-              <g transform={`scale(${unit * 1.1})`}>
-                <AnimalSilhouette animal={revealed.kind} />
-              </g>
-            </motion.g>
-          )}
-        </AnimatePresence>
       </svg>
       <AnimatePresence>
         {playing && (

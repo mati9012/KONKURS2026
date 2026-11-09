@@ -96,12 +96,29 @@ body {
   animation: rz-flicker 0.5s ease-in-out infinite;
 }
 
+.rz-breathe {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: rz-breathe 3.2s ease-in-out infinite;
+}
+
+@keyframes rz-breathe {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.025);
+  }
+}
+
 .rz-twinkle {
   animation: zw-glow 2.6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .rz-hop,
+  .rz-breathe,
   .rz-flicker,
   .rz-twinkle,
   .zw-ripples path,
