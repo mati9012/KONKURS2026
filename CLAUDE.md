@@ -105,5 +105,4 @@ pnpm test:e2e       # testy Playwright (desktop + mobile); testy z tagiem @scene
 pnpm build          # statyczny build do out/
 pnpm island:build   # przebudowa wyspy w Blenderze do public/models/island*.glb
 pnpm koziol:build   # rig i animacje Kozła-narratora z modelu Tripo do public/models/koziol.glb
-pnpm zamosc:build   # makieta Zamościa z Blendera do public/models/zamosc-city.glb
 ```

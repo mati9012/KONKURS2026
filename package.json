@@ -14,8 +14,7 @@
     "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm build",
     "models:optimize": "node scripts/optimize-models.mjs",
     "island:build": "node scripts/build-island.mjs",
-    "koziol:build": "node scripts/build-koziol.mjs",
-    "zamosc:build": "node scripts/build-zamosc.mjs"
+    "koziol:build": "node scripts/build-koziol.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",

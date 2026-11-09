@@ -127,7 +127,7 @@ export const ZAMOSC_PROLOGUE = lines.parse([
     id: 'zamosc-rules',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Wybierzcie budowlę z kart na dole, a potem kliknijcie świecące miejsce na makiecie, gdzie ma stanąć.',
+    text: 'Wybierzcie budowlę z kart na dole, a potem kliknijcie świecące miejsce na planie, gdzie ma stanąć.',
   },
 ])
 
@@ -141,7 +141,7 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       text: 'Zacznijmy od głowy miasta. To prywatna rezydencja założyciela, na zachodnim końcu miasta.',
     },
     wrongBuilding: 'To nie ta budowla. Głową miasta była rezydencja samego Zamoyskiego.',
-    wrongPlace: 'Głowa jest na zachodnim krańcu, po lewej stronie makiety.',
+    wrongPlace: 'Głowa jest na zachodnim krańcu miasta. Zerknijcie na różę wiatrów.',
     facts: [
       {
         id: 'fact-palace',
@@ -208,7 +208,8 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       text: 'Gdzie obradują rajcy? Ich budynek z wysoką wieżą stoi przy północnej pierzei Rynku Wielkiego.',
     },
     wrongBuilding: 'Rajcy obradują w budynku z wieżą zegarową.',
-    wrongPlace: 'Szukajcie miejsca na północnym brzegu rynku, tego dalej od nas.',
+    wrongPlace:
+      'Szukajcie miejsca na północnym brzegu rynku. Róża wiatrów pokaże, gdzie jest północ.',
     facts: [
       {
         id: 'fact-townhall-tower',
@@ -262,7 +263,7 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       text: 'Teraz świątynia ufundowana przez Zamoyskiego. Stanie na południe od ulicy Grodzkiej, między pałacem a rynkiem.',
     },
     wrongBuilding: 'Szukamy kościoła, a nie szkoły ani domu.',
-    wrongPlace: 'To miejsce jest na południe od Grodzkiej, bliżej nas, między pałacem a rynkiem.',
+    wrongPlace: 'To miejsce jest na południe od Grodzkiej, między pałacem a rynkiem.',
     facts: [
       {
         id: 'fact-collegiate',
@@ -313,7 +314,7 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       id: 'task-fortress',
       speaker: 'koziol',
       gesture: 'think',
-      text: 'Na koniec obrona! Mury z bastionami muszą otoczyć całe miasto. Kliknijcie miejsce na samym skraju makiety.',
+      text: 'Na koniec obrona! Mury z bastionami muszą otoczyć całe miasto. Kliknijcie miejsce na samym skraju planu.',
     },
     wrongBuilding: 'Bez murów diabeł wejdzie do miasta. Wybierzcie fortyfikacje.',
     wrongPlace: 'Mury biegną wokół całego miasta, po jego krawędzi.',

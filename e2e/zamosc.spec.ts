@@ -67,15 +67,13 @@ test(
     const build = page.getByRole('region', { name: 'Budowa miasta' })
     await build.getByRole('button', { name: 'Ratusz' }).click()
     await page
-      .getByRole('button', { name: 'Miejsce na makiecie: zachodni kraniec miasta' })
+      .getByRole('button', { name: 'Miejsce na planie: zachodni kraniec miasta' })
       .dispatchEvent('click')
     await expect(build.getByText('To nie ta budowla')).toBeVisible()
 
     for (const [index, [card, place]] of BUILD.entries()) {
       await build.getByRole('button', { name: card, exact: true }).click()
-      await page
-        .getByRole('button', { name: `Miejsce na makiecie: ${place}` })
-        .dispatchEvent('click')
+      await page.getByRole('button', { name: `Miejsce na planie: ${place}` }).dispatchEvent('click')
       await expect(narrator).toBeVisible({ timeout: 15_000 })
       if (index === 3) await page.screenshot({ path: testInfo.outputPath('zamosc-build.png') })
       await narrator.getByRole('button', { name: 'Pomiń' }).click()

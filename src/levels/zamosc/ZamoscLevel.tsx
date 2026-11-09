@@ -1,25 +1,26 @@
 'use client'
 
-import { Canvas } from '@react-three/fiber'
-import { AnimatePresence, useReducedMotion } from 'motion/react'
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { CloudCurtain } from '@/components/ui/CloudCurtain'
 import { NarratorConversation } from '@/components/ui/NarratorConversation'
+import { PAPER_GRAIN } from '@/components/ui/parchment'
+import { useWorld } from '@/components/watercolor/useWorld'
+import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { BUILD_FINALE, BUILD_STEPS, BUILDING_IDS, ZAMOSC_PROLOGUE } from '@/content/zamosc'
 import type { BuildingId, HejnalDirection } from '@/content/zamosc'
 import type { LevelGameProps } from '@/levels/level-game'
+import { CityArt } from '@/levels/zamosc/art/CityArt'
+import { TowerScene } from '@/levels/zamosc/art/TowerScene'
 import { BuildPanel } from '@/levels/zamosc/BuildPanel'
-import { CityModel } from '@/levels/zamosc/CityModel'
+import { cityLayout } from '@/levels/zamosc/city-layout'
+import { CitySockets } from '@/levels/zamosc/CitySockets'
 import { HejnalPanel } from '@/levels/zamosc/HejnalPanel'
-import { ZamoscCamera } from '@/levels/zamosc/ZamoscCamera'
-import type { CityShot } from '@/levels/zamosc/ZamoscCamera'
-import { useZamoscCity } from '@/levels/zamosc/useZamoscCity'
-import { useGameStore } from '@/store/game-store'
 
-const CURTAIN_HOLD_MS = 1300
+const CURTAIN_HOLD_MS = 700
 const RISE_TO_FACTS_MS = 1500
 const SHAKE_MS = 450
-const TURN_SETTLE_MS = 700
+const NOTE_LIFE_MS = 1400
 const FIRST_HINT = 'Wybierzcie budowlę z kart na dole, a potem kliknijcie świecące miejsce.'
 
 type Stage =
@@ -30,62 +31,32 @@ type Stage =
   | { kind: 'finale' }
   | { kind: 'hejnal' }
 
-function shotFor(stage: Stage): CityShot {
-  if (stage.kind === 'rising' || stage.kind === 'facts') {
-    return { kind: 'building', id: BUILD_STEPS[stage.step].building }
-  }
-  if (stage.kind === 'hejnal' || stage.kind === 'finale') return { kind: 'tower' }
-  return { kind: 'overview' }
-}
-
-type CitySceneProps = {
-  stage: Stage
-  built: readonly BuildingId[]
-  sockets: readonly BuildingId[]
-  facing: HejnalDirection
-  onPick: (id: BuildingId) => void
-  onReady: () => void
-}
-
-function CityScene({ stage, built, sockets, facing, onPick, onReady }: CitySceneProps) {
-  const city = useZamoscCity()
-  const shot = useMemo(() => shotFor(stage), [stage])
-
-  useEffect(onReady, [onReady])
-
-  return (
-    <>
-      <CityModel city={city} built={built} sockets={sockets} facing={facing} onPick={onPick} />
-      <ZamoscCamera city={city} shot={shot} />
-    </>
-  )
+function focusOf(stage: Stage): BuildingId | null {
+  if (stage.kind === 'rising' || stage.kind === 'facts') return BUILD_STEPS[stage.step].building
+  return null
 }
 
 export function ZamoscLevel({ onComplete }: LevelGameProps) {
   const reduceMotion = useReducedMotion() ?? false
-  const high = useGameStore((state) => state.settings.quality === 'high')
-  const [ready, setReady] = useState(false)
+  const container = useRef<HTMLDivElement>(null)
+  const world = useWorld(container)
+  const layout = useMemo(() => cityLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
   const [stage, setStage] = useState<Stage>({ kind: 'prologue' })
   const [built, setBuilt] = useState<BuildingId[]>([])
   const [selected, setSelected] = useState<BuildingId | null>(null)
   const [shaking, setShaking] = useState<BuildingId | null>(null)
   const [hint, setHint] = useState(FIRST_HINT)
-  const [facing, setFacing] = useState<HejnalDirection>('west')
-  const [rhythmActive, setRhythmActive] = useState(false)
-  const [sceneResting, setSceneResting] = useState(false)
-  const markReady = useCallback(() => setReady(true), [])
+  const [facing, setFacing] = useState<HejnalDirection>('south')
+  const [playing, setPlaying] = useState(false)
+  const [notes, setNotes] = useState<{ id: number }[]>([])
+  const noteId = useRef(0)
+  const onTower = stage.kind === 'hejnal'
 
   useEffect(() => {
-    const timer = setTimeout(() => setSceneResting(rhythmActive), rhythmActive ? TURN_SETTLE_MS : 0)
-    return () => clearTimeout(timer)
-  }, [rhythmActive])
-
-  useEffect(() => {
-    if (!ready) return
     const timer = setTimeout(() => setCurtainOpen(true), CURTAIN_HOLD_MS)
     return () => clearTimeout(timer)
-  }, [ready])
+  }, [])
 
   useEffect(() => {
     if (stage.kind !== 'rising') return
@@ -99,8 +70,15 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
     return () => clearTimeout(timer)
   }, [shaking])
 
+  const blow = useCallback(() => {
+    const id = ++noteId.current
+    setNotes((current) => [...current, { id }])
+    setTimeout(() => setNotes((current) => current.filter((note) => note.id !== id)), NOTE_LIFE_MS)
+  }, [])
+
   const remaining = useMemo(() => BUILDING_IDS.filter((id) => !built.includes(id)), [built])
   const sockets = stage.kind === 'task' ? remaining : []
+  const cityArt = useMemo(() => <CityArt layout={layout} built={built} />, [layout, built])
 
   function startTask(step: number) {
     setSelected(null)
@@ -136,42 +114,39 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
   }
 
   return (
-    <div className="absolute inset-0 overflow-hidden bg-[#a9b8e6]">
-      <Canvas
-        className="absolute inset-0 touch-none"
-        shadows={high ? 'percentage' : false}
-        dpr={high ? [1, 2] : [1, 1.25]}
-        flat
-        frameloop={sceneResting ? 'demand' : 'always'}
-        camera={{ position: [0, 15, 16], fov: 40, near: 0.1, far: 200 }}
-      >
-        <color attach="background" args={['#b9c3ec']} />
-        <fog attach="fog" args={['#c9c8ec', 30, 70]} />
-        <hemisphereLight args={['#eef0ff', '#7d6a4f', 1.4]} />
-        <directionalLight
-          position={[10, 16, 8]}
-          intensity={3.2}
-          color="#ffe6c4"
-          castShadow={high}
-          shadow-mapSize={[2048, 2048]}
-          shadow-camera-left={-14}
-          shadow-camera-right={14}
-          shadow-camera-top={14}
-          shadow-camera-bottom={-14}
-          shadow-bias={-0.0004}
-          shadow-normalBias={0.02}
-        />
-        <Suspense fallback={null}>
-          <CityScene
-            stage={stage}
-            built={built}
-            sockets={sockets}
-            facing={facing}
-            onPick={pick}
-            onReady={markReady}
-          />
-        </Suspense>
-      </Canvas>
+    <div ref={container} className="absolute inset-0 overflow-hidden bg-[#e9dfbf]">
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={onTower ? 'tower' : 'city'}
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.9 }}
+        >
+          {onTower ? (
+            <TowerScene world={world} facing={facing} playing={playing} notes={notes} />
+          ) : (
+            <>
+              <svg
+                viewBox={`0 0 ${world.width} ${world.height}`}
+                className="absolute inset-0 size-full"
+                aria-hidden="true"
+              >
+                <WatercolorDefs />
+                {cityArt}
+              </svg>
+              <CitySockets layout={layout} sockets={sockets} focus={focusOf(stage)} onPick={pick} />
+            </>
+          )}
+        </motion.div>
+      </AnimatePresence>
+      <div
+        className="pointer-events-none absolute inset-0 mix-blend-multiply"
+        style={{
+          backgroundImage: `${PAPER_GRAIN}, radial-gradient(ellipse at center, transparent 55%, rgba(90, 60, 30, 0.28) 100%)`,
+        }}
+      />
 
       <AnimatePresence mode="wait">
         {curtainOpen && stage.kind === 'prologue' && (
@@ -214,7 +189,8 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
           <HejnalPanel
             key="hejnal"
             onFace={setFacing}
-            onRoundChange={setRhythmActive}
+            onRoundChange={setPlaying}
+            onBlow={blow}
             onComplete={onComplete}
           />
         )}
