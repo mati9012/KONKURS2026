@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import { BILGORAJ_ARRIVAL, BILGORAJ_OUTRO } from '@/content/bilgoraj'
 import { ROZTOCZE_ARRIVAL, ROZTOCZE_OUTRO } from '@/content/roztocze'
 import { ZAMOSC_ARRIVAL, ZAMOSC_OUTRO } from '@/content/zamosc'
 import { ZWIERZYNIEC_ARRIVAL, ZWIERZYNIEC_OUTRO } from '@/content/zwierzyniec'
@@ -26,6 +27,14 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
     outro: ROZTOCZE_OUTRO,
     Game: dynamic(
       () => import('@/levels/roztocze/RoztoczeLevel').then((mod) => mod.RoztoczeLevel),
+      { ssr: false },
+    ),
+  },
+  bilgoraj: {
+    intro: BILGORAJ_ARRIVAL,
+    outro: BILGORAJ_OUTRO,
+    Game: dynamic(
+      () => import('@/levels/bilgoraj/BilgorajLevel').then((mod) => mod.BilgorajLevel),
       { ssr: false },
     ),
   },
