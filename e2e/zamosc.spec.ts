@@ -13,6 +13,32 @@ const BUILD = [
 ] as const
 
 const BEATS = [0, 1, 2, 3, 4.5, 5, 6, 7]
+const RING_PLACES = ['pierzeje wokół placu', 'skraj miasta']
+
+async function dragCard(page: Page, card: string, place: string) {
+  const build = page.getByRole('region', { name: 'Budowa miasta' })
+  const from = await build.getByRole('button', { name: card, exact: true }).boundingBox()
+  const socket = page.getByRole('button', { name: `Miejsce na planie: ${place}` })
+  const target = await socket
+    .locator('path')
+    .first()
+    .evaluate((path, ring) => {
+      const shape = path as SVGPathElement
+      const box = shape.getBBox()
+      const local = ring
+        ? shape.getPointAtLength(shape.getTotalLength() * 0.1)
+        : new DOMPoint(box.x + box.width / 2, box.y + box.height / 2)
+      const matrix = shape.getScreenCTM()
+      if (!matrix) return null
+      const point = new DOMPoint(local.x, local.y).matrixTransform(matrix)
+      return { x: point.x, y: point.y }
+    }, RING_PLACES.includes(place))
+  if (!from || !target) throw new Error(`Brak karty ${card} albo miejsca ${place}`)
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(target.x, target.y, { steps: 12 })
+  await page.mouse.up()
+}
 
 async function playRound(page: Page, direction: string, played: number) {
   const panel = page.getByRole('region', { name: 'Hejnał z wieży ratusza' })
@@ -72,8 +98,7 @@ test(
     await expect(build.getByText('To nie ta budowla')).toBeVisible()
 
     for (const [index, [card, place]] of BUILD.entries()) {
-      await build.getByRole('button', { name: card, exact: true }).click()
-      await page.getByRole('button', { name: `Miejsce na planie: ${place}` }).dispatchEvent('click')
+      await dragCard(page, card, place)
       await expect(narrator).toBeVisible({ timeout: 15_000 })
       if (index === 3) await page.screenshot({ path: testInfo.outputPath('zamosc-build.png') })
       await narrator.getByRole('button', { name: 'Pomiń' }).click()

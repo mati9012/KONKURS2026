@@ -9,9 +9,9 @@ import type { CityLayout } from '@/levels/zamosc/city-layout'
 
 const SOCKET_ORDER: readonly BuildingId[] = [
   'fortress',
+  'houses',
   'grodzka',
   'market',
-  'houses',
   'townhall',
   'palace',
   'collegiate',
@@ -22,10 +22,11 @@ type CitySocketsProps = {
   layout: CityLayout
   sockets: readonly BuildingId[]
   focus: BuildingId | null
+  hovered: BuildingId | null
   onPick: (id: BuildingId) => void
 }
 
-export function CitySockets({ layout, sockets, focus, onPick }: CitySocketsProps) {
+export function CitySockets({ layout, sockets, focus, hovered, onPick }: CitySocketsProps) {
   const { width, height } = layout.world
   const glow = focus ? project(layout, SPOTS[focus]) : null
   const hit = layout.scale * 0.06
@@ -56,6 +57,7 @@ export function CitySockets({ layout, sockets, focus, onPick }: CitySocketsProps
             key={id}
             role="button"
             tabIndex={0}
+            data-socket={id}
             aria-label={`Miejsce na planie: ${SOCKET_NAMES[id]}`}
             className="pointer-events-auto cursor-pointer outline-none"
             onClick={() => onPick(id)}
@@ -67,18 +69,18 @@ export function CitySockets({ layout, sockets, focus, onPick }: CitySocketsProps
           >
             <path
               d={path}
-              fill={ring ? 'none' : 'transparent'}
+              fill="transparent"
               stroke="transparent"
               strokeWidth={ring ? hit : 0}
-              pointerEvents={ring ? 'stroke' : 'all'}
+              pointerEvents="all"
             />
             <path
-              className="zw-pulse"
+              className={hovered === id ? undefined : 'zw-pulse'}
               d={path}
               fill={ring ? 'none' : '#ffe7a3'}
-              fillOpacity={0.35}
-              stroke="#f2b84b"
-              strokeWidth={ring ? 5 : 3}
+              fillOpacity={hovered === id ? 0.7 : 0.35}
+              stroke={hovered === id ? '#1f5c50' : '#f2b84b'}
+              strokeWidth={(ring ? 5 : 3) * (hovered === id ? 1.6 : 1)}
               strokeDasharray="10 7"
               strokeLinejoin="round"
               pointerEvents="none"

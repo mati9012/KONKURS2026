@@ -127,7 +127,7 @@ export const ZAMOSC_PROLOGUE = lines.parse([
     id: 'zamosc-rules',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Wybierzcie budowlę z kart na dole, a potem kliknijcie świecące miejsce na planie, gdzie ma stanąć.',
+    text: 'Przeciągnijcie budowlę z kart na dole na świecące miejsce na planie, gdzie ma stanąć.',
   },
 ])
 
@@ -314,7 +314,7 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       id: 'task-fortress',
       speaker: 'koziol',
       gesture: 'think',
-      text: 'Na koniec obrona! Mury z bastionami muszą otoczyć całe miasto. Kliknijcie miejsce na samym skraju planu.',
+      text: 'Na koniec obrona! Mury z bastionami muszą otoczyć całe miasto. Przeciągnijcie je na sam skraj planu.',
     },
     wrongBuilding: 'Bez murów diabeł wejdzie do miasta. Wybierzcie fortyfikacje.',
     wrongPlace: 'Mury biegną wokół całego miasta, po jego krawędzi.',

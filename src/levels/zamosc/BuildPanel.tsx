@@ -1,6 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'motion/react'
+import type { PointerEvent as ReactPointerEvent } from 'react'
 import { StagePanel } from '@/components/ui/StagePanel'
 import { BUILDING_NAMES } from '@/content/zamosc'
 import type { BuildingId } from '@/content/zamosc'
@@ -13,7 +14,9 @@ type BuildPanelProps = {
   cards: readonly BuildingId[]
   selected: BuildingId | null
   shaking: BuildingId | null
+  dragged: BuildingId | null
   onSelect: (id: BuildingId) => void
+  onDragStart: (id: BuildingId, event: ReactPointerEvent<HTMLButtonElement>) => void
 }
 
 export function BuildPanel({
@@ -23,7 +26,9 @@ export function BuildPanel({
   cards,
   selected,
   shaking,
+  dragged,
   onSelect,
+  onDragStart,
 }: BuildPanelProps) {
   return (
     <motion.section
@@ -52,12 +57,15 @@ export function BuildPanel({
               animate={
                 shaking === id
                   ? { opacity: 1, y: 0, x: [0, -10, 10, -6, 6, 0] }
-                  : { opacity: 1, y: selected === id ? -8 : 0, x: 0 }
+                  : { opacity: dragged === id ? 0.35 : 1, y: selected === id ? -8 : 0, x: 0 }
               }
               exit={{ opacity: 0, scale: 0.6 }}
               transition={{ duration: 0.35 }}
-              className={`flex w-[5.6rem] flex-col items-center gap-0.5 rounded-xl border-2 px-1.5 pt-1.5 pb-1 font-display text-[0.7rem] leading-tight font-bold shadow-md select-none sm:w-28 sm:text-sm ${selected === id ? 'border-[#1f5c50] bg-[#e3efe0] text-[#1f3f36] shadow-[0_0_0_3px_rgba(242,184,75,0.8)]' : 'border-[#b8894f] bg-[#fbf0d6] text-[#4a2f1a] hover:bg-[#fff6e2]'}`}
-              onClick={() => onSelect(id)}
+              className={`flex w-[5.6rem] cursor-grab touch-none flex-col items-center gap-0.5 rounded-xl border-2 px-1.5 pt-1.5 pb-1 font-display text-[0.7rem] leading-tight font-bold shadow-md select-none active:cursor-grabbing sm:w-28 sm:text-sm ${selected === id ? 'border-[#1f5c50] bg-[#e3efe0] text-[#1f3f36] shadow-[0_0_0_3px_rgba(242,184,75,0.8)]' : 'border-[#b8894f] bg-[#fbf0d6] text-[#4a2f1a] hover:bg-[#fff6e2]'}`}
+              onPointerDown={(event) => onDragStart(id, event)}
+              onClick={(event) => {
+                if (event.detail === 0) onSelect(id)
+              }}
             >
               <BuildingIcon id={id} className="size-10 sm:size-12" />
               <span aria-hidden="true">{BUILDING_NAMES[id]}</span>
