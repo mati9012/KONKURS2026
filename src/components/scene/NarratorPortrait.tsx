@@ -17,8 +17,6 @@ const HINGE = new Vector3(1, 0, 0)
 const parentTurn = new Quaternion()
 const hinge = new Vector3()
 const jawTurn = new Quaternion()
-const jawBase = new Quaternion()
-const jawWritten = new Quaternion()
 
 type GoatProps = {
   gesture: NarratorGesture
@@ -61,36 +59,48 @@ function chatter(time: number) {
   return (0.5 + 0.5 * Math.sin(time * 13)) * (0.65 + 0.35 * Math.sin(time * 3.1))
 }
 
-function openJaw(jaw: Object3D, amount: number) {
-  if (!jaw.quaternion.equals(jawWritten)) jawBase.copy(jaw.quaternion)
-  jaw.quaternion.copy(jawBase)
-  if (jaw.parent && amount > 0.001) {
-    jaw.parent.getWorldQuaternion(parentTurn)
+type JawState = { bone: Object3D | null; base: Quaternion; written: Quaternion; open: number }
+
+function openJaw(jaw: JawState, amount: number) {
+  const bone = jaw.bone
+  if (!bone) return
+  if (!bone.quaternion.equals(jaw.written)) jaw.base.copy(bone.quaternion)
+  bone.quaternion.copy(jaw.base)
+  if (bone.parent && amount > 0.001) {
+    bone.parent.getWorldQuaternion(parentTurn)
     hinge.copy(HINGE).applyQuaternion(parentTurn.invert())
     jawTurn.setFromAxisAngle(hinge, amount * JAW_OPEN)
-    jaw.quaternion.premultiply(jawTurn)
+    bone.quaternion.premultiply(jawTurn)
   }
-  jawWritten.copy(jaw.quaternion)
+  jaw.written.copy(bone.quaternion)
+}
+
+function useJaw(scene: Object3D, chattering: boolean) {
+  const jaw = useRef<JawState>({
+    bone: null,
+    base: new Quaternion(),
+    written: new Quaternion(),
+    open: 0,
+  })
+
+  useEffect(() => {
+    jaw.current.bone = scene.getObjectByName('jaw') ?? null
+  }, [scene])
+
+  useFrame(({ clock }, delta) => {
+    const state = jaw.current
+    const target = chattering ? chatter(clock.elapsedTime) : 0
+    state.open += (target - state.open) * Math.min(1, delta * JAW_EASE)
+    openJaw(state, state.open)
+  })
 }
 
 function Goat({ gesture, speaking }: GoatProps) {
   const group = useRef<Group>(null)
   const { scene, animations } = useGLTF(MODEL)
   const { actions } = useAnimations(animations, group)
-  const jaw = useRef<Object3D | null>(null)
-  const mouth = useRef(0)
-
-  useEffect(() => {
-    jaw.current = scene.getObjectByName('jaw') ?? null
-  }, [scene])
-
   useClip(actions, gesture)
-
-  useFrame(({ clock }, delta) => {
-    const target = speaking && gesture !== 'talk' ? chatter(clock.elapsedTime) : 0
-    mouth.current += (target - mouth.current) * Math.min(1, delta * JAW_EASE)
-    if (jaw.current) openJaw(jaw.current, mouth.current)
-  })
+  useJaw(scene, speaking && gesture !== 'talk')
 
   return (
     <group ref={group}>
@@ -103,7 +113,9 @@ function Devil({ gesture, speaking }: GoatProps) {
   const group = useRef<Group>(null)
   const { scene, animations } = useGLTF(DEVIL_MODEL)
   const { actions } = useAnimations(animations, group)
-  useClip(actions, speaking || gesture !== 'idle' ? DEVIL_CLIPS[gesture] : DEVIL_CLIPS.idle)
+  const clip = speaking || gesture !== 'idle' ? DEVIL_CLIPS[gesture] : DEVIL_CLIPS.idle
+  useClip(actions, clip)
+  useJaw(scene, speaking && clip !== 'Talk')
 
   return (
     <group ref={group}>
