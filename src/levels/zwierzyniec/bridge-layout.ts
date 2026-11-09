@@ -1,4 +1,4 @@
-import type { World } from '@/levels/zwierzyniec/herd-layout'
+import type { World } from '@/components/watercolor/useWorld'
 
 export const PLANK_LENGTHS = ['short', 'medium', 'long'] as const
 

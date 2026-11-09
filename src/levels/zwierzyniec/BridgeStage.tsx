@@ -17,8 +17,8 @@ import {
 } from '@/levels/zwierzyniec/bridge-puzzle'
 import type { Card, Effect, Point } from '@/levels/zwierzyniec/bridge-puzzle'
 import { Icon } from '@/levels/zwierzyniec/art/Icon'
-import { StagePanel } from '@/levels/zwierzyniec/StagePanel'
-import { toWorld } from '@/levels/zwierzyniec/useWorld'
+import { StagePanel } from '@/components/ui/StagePanel'
+import { toWorld } from '@/components/watercolor/useWorld'
 
 const TICK_MS = 100
 const SECTION_DONE_MS = 900
@@ -530,7 +530,7 @@ export function BridgeStage({
       >
         <StagePanel
           title="Kościółek na wodzie"
-          icon="plank"
+          icon={<Icon name="plank" className="size-6" />}
           counter={`Kładki: ${placedCount} / ${layout.gaps.length}`}
           hint={hint}
         >

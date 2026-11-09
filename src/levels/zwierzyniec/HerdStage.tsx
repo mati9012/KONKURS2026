@@ -11,7 +11,7 @@ import { depthScale } from '@/levels/zwierzyniec/herd-layout'
 import type { HerdLayout } from '@/levels/zwierzyniec/herd-layout'
 import { scatterFrom, spawnHorses, stepHerd } from '@/levels/zwierzyniec/herd-sim'
 import type { HerdEvent, HerdState, Mover } from '@/levels/zwierzyniec/herd-sim'
-import { toWorld } from '@/levels/zwierzyniec/useWorld'
+import { toWorld } from '@/components/watercolor/useWorld'
 
 const GOAT = 'goat'
 const FENCE = 'fence'

@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
-import { blobPath, ridgePath, scatter } from '@/levels/zwierzyniec/art/paint'
+import { blobPath, ridgePath, scatter } from '@/components/watercolor/paint'
 import { ChurchArt } from '@/levels/zwierzyniec/art/ChurchArt'
-import { TreeLine } from '@/levels/zwierzyniec/art/TreeLine'
-import { PAINT, PAINT_SOFT, PAINT_WASH } from '@/levels/zwierzyniec/art/WatercolorDefs'
+import { TreeLine } from '@/components/watercolor/TreeLine'
+import { PAINT, PAINT_SOFT, PAINT_WASH } from '@/components/watercolor/WatercolorDefs'
 import type { BridgeLayout } from '@/levels/zwierzyniec/bridge-layout'
 
 const FAR_FOREST = {

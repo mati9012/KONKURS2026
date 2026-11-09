@@ -3,12 +3,10 @@
 import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { PAPER_GRAIN, PARCHMENT_FILL, PARCHMENT_SHADOW } from '@/components/ui/parchment'
-import { Icon } from '@/levels/zwierzyniec/art/Icon'
-import type { IconName } from '@/levels/zwierzyniec/art/Icon'
 
 type StagePanelProps = {
   title: string
-  icon: IconName
+  icon: ReactNode
   counter: string
   hint: string
   children?: ReactNode
@@ -31,7 +29,7 @@ export function StagePanel({ title, icon, counter, hint, children }: StagePanelP
           {title}
         </p>
         <p className="flex items-center gap-1.5 font-display text-sm font-semibold text-[#6b4a2e]">
-          <Icon name={icon} className="size-6" />
+          {icon}
           {counter}
         </p>
       </div>

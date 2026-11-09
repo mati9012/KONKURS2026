@@ -16,13 +16,14 @@ import type { LevelGameProps } from '@/levels/level-game'
 import { MeadowBackdrop } from '@/levels/zwierzyniec/art/MeadowBackdrop'
 import { MeadowForeground } from '@/levels/zwierzyniec/art/MeadowForeground'
 import { PondBackdrop } from '@/levels/zwierzyniec/art/PondBackdrop'
-import { WatercolorDefs } from '@/levels/zwierzyniec/art/WatercolorDefs'
+import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { BridgeStage } from '@/levels/zwierzyniec/BridgeStage'
 import { bridgeLayout } from '@/levels/zwierzyniec/bridge-layout'
 import { HerdStage } from '@/levels/zwierzyniec/HerdStage'
 import { herdLayout } from '@/levels/zwierzyniec/herd-layout'
-import { StagePanel } from '@/levels/zwierzyniec/StagePanel'
-import { useWorld } from '@/levels/zwierzyniec/useWorld'
+import { StagePanel } from '@/components/ui/StagePanel'
+import { Icon } from '@/levels/zwierzyniec/art/Icon'
+import { useWorld } from '@/components/watercolor/useWorld'
 
 const CURTAIN_HOLD_MS = 700
 const FINISH_MS = 1600
@@ -175,7 +176,7 @@ export function ZwierzyniecLevel({ onComplete }: LevelGameProps) {
           >
             <StagePanel
               title="Zagroda Ordynata"
-              icon="konik"
+              icon={<Icon name="konik" className="size-6" />}
               counter={`W zagrodzie: ${penned} / ${HORSE_TOTAL}`}
               hint={herdHint}
             />

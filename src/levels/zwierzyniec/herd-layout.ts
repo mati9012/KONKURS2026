@@ -1,4 +1,4 @@
-export type World = { width: number; height: number }
+import type { World } from '@/components/watercolor/useWorld'
 
 export type Rect = { left: number; right: number; top: number; bottom: number }
 
