@@ -2,14 +2,14 @@ import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 
 const BUILD = [
-  ['Pałac Zamoyskich', 'zachodni kraniec miasta'],
-  ['Ulica Grodzka', 'oś od pałacu na wschód'],
-  ['Rynek Wielki', 'wielki plac na wschodzie'],
-  ['Ratusz', 'północny brzeg placu'],
-  ['Kamienice z podcieniami', 'pierzeje wokół placu'],
-  ['Kolegiata', 'na południe od osi'],
-  ['Akademia Zamojska', 'na północ od osi'],
   ['Mury i 7 bastionów', 'skraj miasta'],
+  ['Akademia Zamojska', 'na północ od osi'],
+  ['Ratusz', 'północny brzeg placu'],
+  ['Pałac Zamoyskich', 'zachodni kraniec miasta'],
+  ['Rynek Wielki', 'wielki plac na wschodzie'],
+  ['Kamienice z podcieniami', 'pierzeje wokół placu'],
+  ['Ulica Grodzka', 'oś od pałacu na wschód'],
+  ['Kolegiata', 'na południe od osi'],
 ] as const
 
 const BEATS = [0, 1, 2, 3, 4.5, 5, 6, 7]
@@ -95,7 +95,7 @@ test(
     await page
       .getByRole('button', { name: 'Miejsce na planie: zachodni kraniec miasta' })
       .dispatchEvent('click')
-    await expect(build.getByText('To nie ta budowla')).toBeVisible()
+    await expect(build.getByText('północnym brzegu rynku')).toBeVisible()
 
     for (const [index, [card, place]] of BUILD.entries()) {
       await dragCard(page, card, place)
