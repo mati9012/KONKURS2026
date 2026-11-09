@@ -26,6 +26,7 @@ type Round = {
 type HejnalPanelProps = {
   onFace: (direction: HejnalDirection) => void
   onRoundChange: (active: boolean) => void
+  onBlow: () => void
   onComplete: () => void
 }
 
@@ -52,7 +53,7 @@ function closestNote(time: number, hit: readonly number[]) {
   return best
 }
 
-export function HejnalPanel({ onFace, onRoundChange, onComplete }: HejnalPanelProps) {
+export function HejnalPanel({ onFace, onRoundChange, onBlow, onComplete }: HejnalPanelProps) {
   const volume = useGameStore((state) => state.settings.sfxVolume)
   const [played, setPlayed] = useState<HejnalDirection[]>([])
   const [round, setRound] = useState<Round | null>(null)
@@ -110,7 +111,8 @@ export function HejnalPanel({ onFace, onRoundChange, onComplete }: HejnalPanelPr
     playTrumpetNote(MELODY[best], volume)
     hitRef.current = [...hitRef.current, best]
     setHit(hitRef.current)
-  }, [round, volume])
+    onBlow()
+  }, [round, volume, onBlow])
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {

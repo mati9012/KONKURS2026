@@ -1,26 +1,47 @@
 'use client'
 
-import { Canvas } from '@react-three/fiber'
-import { AnimatePresence, useReducedMotion } from 'motion/react'
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { PointerEvent as ReactPointerEvent } from 'react'
 import { CloudCurtain } from '@/components/ui/CloudCurtain'
 import { NarratorConversation } from '@/components/ui/NarratorConversation'
+import { PAPER_GRAIN } from '@/components/ui/parchment'
+import { useWorld } from '@/components/watercolor/useWorld'
+import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { BUILD_FINALE, BUILD_STEPS, BUILDING_IDS, ZAMOSC_PROLOGUE } from '@/content/zamosc'
 import type { BuildingId, HejnalDirection } from '@/content/zamosc'
 import type { LevelGameProps } from '@/levels/level-game'
+import { CityArt } from '@/levels/zamosc/art/CityArt'
+import { BuildingIcon } from '@/levels/zamosc/art/BuildingIcon'
+import { TowerScene } from '@/levels/zamosc/art/TowerScene'
 import { BuildPanel } from '@/levels/zamosc/BuildPanel'
-import { CityModel } from '@/levels/zamosc/CityModel'
+import { cityLayout } from '@/levels/zamosc/city-layout'
+import { CitySockets } from '@/levels/zamosc/CitySockets'
 import { HejnalPanel } from '@/levels/zamosc/HejnalPanel'
-import { ZamoscCamera } from '@/levels/zamosc/ZamoscCamera'
-import type { CityShot } from '@/levels/zamosc/ZamoscCamera'
-import { useZamoscCity } from '@/levels/zamosc/useZamoscCity'
-import { useGameStore } from '@/store/game-store'
 
-const CURTAIN_HOLD_MS = 1300
+const CURTAIN_HOLD_MS = 700
 const RISE_TO_FACTS_MS = 1500
 const SHAKE_MS = 450
-const TURN_SETTLE_MS = 700
-const FIRST_HINT = 'Wybierzcie budowlę z kart na dole, a potem kliknijcie świecące miejsce.'
+const NOTE_LIFE_MS = 1400
+const DRAG_THRESHOLD = 8
+const FIRST_HINT = 'Przeciągnijcie budowlę z kart na dole na świecące miejsce na planie.'
+
+type Drag = {
+  id: BuildingId
+  startX: number
+  startY: number
+  x: number
+  y: number
+  moved: boolean
+}
+
+function socketAt(x: number, y: number) {
+  for (const element of document.elementsFromPoint(x, y)) {
+    const socket = element.closest<SVGGElement>('[data-socket]')
+    if (socket) return socket.dataset.socket as BuildingId
+  }
+  return null
+}
 
 type Stage =
   | { kind: 'prologue' }
@@ -30,62 +51,35 @@ type Stage =
   | { kind: 'finale' }
   | { kind: 'hejnal' }
 
-function shotFor(stage: Stage): CityShot {
-  if (stage.kind === 'rising' || stage.kind === 'facts') {
-    return { kind: 'building', id: BUILD_STEPS[stage.step].building }
-  }
-  if (stage.kind === 'hejnal' || stage.kind === 'finale') return { kind: 'tower' }
-  return { kind: 'overview' }
-}
-
-type CitySceneProps = {
-  stage: Stage
-  built: readonly BuildingId[]
-  sockets: readonly BuildingId[]
-  facing: HejnalDirection
-  onPick: (id: BuildingId) => void
-  onReady: () => void
-}
-
-function CityScene({ stage, built, sockets, facing, onPick, onReady }: CitySceneProps) {
-  const city = useZamoscCity()
-  const shot = useMemo(() => shotFor(stage), [stage])
-
-  useEffect(onReady, [onReady])
-
-  return (
-    <>
-      <CityModel city={city} built={built} sockets={sockets} facing={facing} onPick={onPick} />
-      <ZamoscCamera city={city} shot={shot} />
-    </>
-  )
+function focusOf(stage: Stage): BuildingId | null {
+  if (stage.kind === 'rising' || stage.kind === 'facts') return BUILD_STEPS[stage.step].building
+  return null
 }
 
 export function ZamoscLevel({ onComplete }: LevelGameProps) {
   const reduceMotion = useReducedMotion() ?? false
-  const high = useGameStore((state) => state.settings.quality === 'high')
-  const [ready, setReady] = useState(false)
+  const container = useRef<HTMLDivElement>(null)
+  const world = useWorld(container)
+  const layout = useMemo(() => cityLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
   const [stage, setStage] = useState<Stage>({ kind: 'prologue' })
   const [built, setBuilt] = useState<BuildingId[]>([])
   const [selected, setSelected] = useState<BuildingId | null>(null)
   const [shaking, setShaking] = useState<BuildingId | null>(null)
   const [hint, setHint] = useState(FIRST_HINT)
-  const [facing, setFacing] = useState<HejnalDirection>('west')
-  const [rhythmActive, setRhythmActive] = useState(false)
-  const [sceneResting, setSceneResting] = useState(false)
-  const markReady = useCallback(() => setReady(true), [])
+  const [facing, setFacing] = useState<HejnalDirection>('south')
+  const [playing, setPlaying] = useState(false)
+  const [notes, setNotes] = useState<{ id: number }[]>([])
+  const noteId = useRef(0)
+  const [drag, setDrag] = useState<Drag | null>(null)
+  const [hovered, setHovered] = useState<BuildingId | null>(null)
+  const dragging = useRef<Drag | null>(null)
+  const onTower = stage.kind === 'hejnal'
 
   useEffect(() => {
-    const timer = setTimeout(() => setSceneResting(rhythmActive), rhythmActive ? TURN_SETTLE_MS : 0)
-    return () => clearTimeout(timer)
-  }, [rhythmActive])
-
-  useEffect(() => {
-    if (!ready) return
     const timer = setTimeout(() => setCurtainOpen(true), CURTAIN_HOLD_MS)
     return () => clearTimeout(timer)
-  }, [ready])
+  }, [])
 
   useEffect(() => {
     if (stage.kind !== 'rising') return
@@ -99,8 +93,15 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
     return () => clearTimeout(timer)
   }, [shaking])
 
+  const blow = useCallback(() => {
+    const id = ++noteId.current
+    setNotes((current) => [...current, { id }])
+    setTimeout(() => setNotes((current) => current.filter((note) => note.id !== id)), NOTE_LIFE_MS)
+  }, [])
+
   const remaining = useMemo(() => BUILDING_IDS.filter((id) => !built.includes(id)), [built])
   const sockets = stage.kind === 'task' ? remaining : []
+  const cityArt = useMemo(() => <CityArt layout={layout} built={built} />, [layout, built])
 
   function startTask(step: number) {
     setSelected(null)
@@ -108,15 +109,11 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
     setStage({ kind: 'task', step })
   }
 
-  function pick(socket: BuildingId) {
+  function place(card: BuildingId, socket: BuildingId) {
     if (stage.kind !== 'task') return
     const step = BUILD_STEPS[stage.step]
-    if (!selected) {
-      setHint('Najpierw wybierzcie budowlę z kart na dole.')
-      return
-    }
-    if (selected !== step.building) {
-      setShaking(selected)
+    if (card !== step.building) {
+      setShaking(card)
       setSelected(null)
       setHint(step.wrongBuilding)
       return
@@ -130,48 +127,98 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
     setStage({ kind: 'rising', step: stage.step })
   }
 
+  function pick(socket: BuildingId) {
+    if (selected) place(selected, socket)
+    else setHint('Przeciągnijcie na to miejsce kartę z budowlą.')
+  }
+
+  function startDrag(id: BuildingId, event: ReactPointerEvent<HTMLButtonElement>) {
+    event.currentTarget.setPointerCapture(event.pointerId)
+    const { clientX: x, clientY: y } = event
+    dragging.current = { id, startX: x, startY: y, x, y, moved: false }
+    setDrag(dragging.current)
+  }
+
+  function moveDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    const current = dragging.current
+    if (!current) return
+    const { clientX: x, clientY: y } = event
+    const moved =
+      current.moved || Math.hypot(x - current.startX, y - current.startY) > DRAG_THRESHOLD
+    dragging.current = { ...current, x, y, moved }
+    setDrag(dragging.current)
+    setHovered(moved ? socketAt(x, y) : null)
+  }
+
+  function cancelDrag() {
+    dragging.current = null
+    setDrag(null)
+    setHovered(null)
+  }
+
+  function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    const current = dragging.current
+    if (!current) return
+    cancelDrag()
+    if (!current.moved) {
+      setSelected((chosen) => (chosen === current.id ? null : current.id))
+      return
+    }
+    const socket = socketAt(event.clientX, event.clientY)
+    if (socket) place(current.id, socket)
+  }
+
   function afterFacts(step: number) {
     if (step + 1 < BUILD_STEPS.length) startTask(step + 1)
     else setStage({ kind: 'finale' })
   }
 
   return (
-    <div className="absolute inset-0 overflow-hidden bg-[#a9b8e6]">
-      <Canvas
-        className="absolute inset-0 touch-none"
-        shadows={high ? 'percentage' : false}
-        dpr={high ? [1, 2] : [1, 1.25]}
-        flat
-        frameloop={sceneResting ? 'demand' : 'always'}
-        camera={{ position: [0, 15, 16], fov: 40, near: 0.1, far: 200 }}
-      >
-        <color attach="background" args={['#b9c3ec']} />
-        <fog attach="fog" args={['#c9c8ec', 30, 70]} />
-        <hemisphereLight args={['#eef0ff', '#7d6a4f', 1.4]} />
-        <directionalLight
-          position={[10, 16, 8]}
-          intensity={3.2}
-          color="#ffe6c4"
-          castShadow={high}
-          shadow-mapSize={[2048, 2048]}
-          shadow-camera-left={-14}
-          shadow-camera-right={14}
-          shadow-camera-top={14}
-          shadow-camera-bottom={-14}
-          shadow-bias={-0.0004}
-          shadow-normalBias={0.02}
-        />
-        <Suspense fallback={null}>
-          <CityScene
-            stage={stage}
-            built={built}
-            sockets={sockets}
-            facing={facing}
-            onPick={pick}
-            onReady={markReady}
-          />
-        </Suspense>
-      </Canvas>
+    <div
+      ref={container}
+      className="absolute inset-0 overflow-hidden bg-[#e9dfbf]"
+      onPointerMove={moveDrag}
+      onPointerUp={endDrag}
+      onPointerCancel={cancelDrag}
+    >
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={onTower ? 'tower' : 'city'}
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.9 }}
+        >
+          {onTower ? (
+            <TowerScene world={world} facing={facing} playing={playing} notes={notes} />
+          ) : (
+            <>
+              <svg
+                viewBox={`0 0 ${world.width} ${world.height}`}
+                className="absolute inset-0 size-full"
+                aria-hidden="true"
+              >
+                <WatercolorDefs />
+                {cityArt}
+              </svg>
+              <CitySockets
+                layout={layout}
+                sockets={sockets}
+                focus={focusOf(stage)}
+                hovered={hovered}
+                onPick={pick}
+              />
+            </>
+          )}
+        </motion.div>
+      </AnimatePresence>
+      <div
+        className="pointer-events-none absolute inset-0 mix-blend-multiply"
+        style={{
+          backgroundImage: `${PAPER_GRAIN}, radial-gradient(ellipse at center, transparent 55%, rgba(90, 60, 30, 0.28) 100%)`,
+        }}
+      />
 
       <AnimatePresence mode="wait">
         {curtainOpen && stage.kind === 'prologue' && (
@@ -191,7 +238,9 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
             cards={remaining}
             selected={selected}
             shaking={shaking}
+            dragged={drag?.moved ? drag.id : null}
             onSelect={(id) => setSelected((current) => (current === id ? null : id))}
+            onDragStart={startDrag}
           />
         )}
         {stage.kind === 'facts' && (
@@ -214,11 +263,27 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
           <HejnalPanel
             key="hejnal"
             onFace={setFacing}
-            onRoundChange={setRhythmActive}
+            onRoundChange={setPlaying}
+            onBlow={blow}
             onComplete={onComplete}
           />
         )}
       </AnimatePresence>
+
+      {drag?.moved && (
+        <div
+          className="pointer-events-none fixed z-40 -translate-x-1/2 -translate-y-3/4"
+          style={{ left: drag.x, top: drag.y }}
+        >
+          <motion.div
+            initial={{ scale: 0.6, rotate: 0 }}
+            animate={{ scale: hovered ? 1.15 : 1, rotate: hovered ? 0 : -6 }}
+            className="rounded-2xl border-2 border-[#b8894f] bg-[#fbf0d6]/90 p-1.5 shadow-[0_14px_30px_rgba(40,25,20,0.35)]"
+          >
+            <BuildingIcon id={drag.id} className="size-16 sm:size-20" />
+          </motion.div>
+        </div>
+      )}
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
         <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
