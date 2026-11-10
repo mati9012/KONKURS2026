@@ -97,8 +97,12 @@ function Room({ layout }: { layout: SceneLayout }) {
 export function MemoryStage({ layout, round, playing, onRound }: MemoryStageProps) {
   const { world, unit, ground, portrait } = layout
   const plan = MEMORY_ROUNDS[Math.min(round, MEMORY_ROUNDS.length - 1)]
-  const years = useMemo(
-    () => plan.exhibits.map((id) => exhibit(id).year).sort((a, b) => a - b),
+  const marks = useMemo(
+    () =>
+      plan.exhibits
+        .map((id) => exhibit(id))
+        .sort((a, b) => a.order - b.order)
+        .map((item) => ({ order: item.order, when: item.when })),
     [plan.exhibits],
   )
   const [placed, setPlaced] = useState<Record<number, ExhibitId>>({})
@@ -108,9 +112,10 @@ export function MemoryStage({ layout, round, playing, onRound }: MemoryStageProp
   const drag = useCardDrag(drop)
   const railY = ground - 40 * unit
   const span = world.width * (portrait ? 0.84 : 0.66)
-  const slots = years.map((year, index) => ({
-    year,
-    x: world.width / 2 - span / 2 + (span * (index + 0.5)) / years.length,
+  const box = Math.min(70 * unit, (span / marks.length) * 0.42)
+  const slots = marks.map((mark, index) => ({
+    ...mark,
+    x: world.width / 2 - span / 2 + (span * (index + 0.5)) / marks.length,
   }))
   const cards = plan.exhibits
     .filter((id) => !Object.values(placed).includes(id))
@@ -129,17 +134,17 @@ export function MemoryStage({ layout, round, playing, onRound }: MemoryStageProp
 
   function drop(card: string, target: string) {
     if (!playing) return
-    const year = Number(target.replace('year-', ''))
+    const order = Number(target.replace('when-', ''))
     const item = EXHIBITS.find((entry) => entry.id === card)
-    if (!item || Number.isNaN(year) || placed[year]) return
-    if (item.year !== year) {
+    if (!item || Number.isNaN(order) || placed[order]) return
+    if (item.order !== order) {
       setShaking(item.id)
       setHint(MEMORY_HINTS.wrong)
       return
     }
-    const next = { ...placed, [year]: item.id }
+    const next = { ...placed, [order]: item.id }
     setPlaced(next)
-    setHint(`${MEMORY_HINTS.good} ${item.year}: ${item.label}.`)
+    setHint(`${MEMORY_HINTS.good} ${item.when}: ${item.label}.`)
     if (Object.keys(next).length === plan.exhibits.length) onRound(round)
   }
 
@@ -164,14 +169,14 @@ export function MemoryStage({ layout, round, playing, onRound }: MemoryStageProp
           strokeWidth={2}
         />
         {slots.map((slot) => {
-          const target = `year-${slot.year}`
-          const item = placed[slot.year]
+          const target = `when-${slot.order}`
+          const item = placed[slot.order]
           return (
-            <g key={slot.year} transform={`translate(${slot.x} ${railY})`}>
+            <g key={slot.order} transform={`translate(${slot.x} ${railY})`}>
               <rect
-                x={-60 * unit}
+                x={-box * 0.92}
                 y={20 * unit}
-                width={120 * unit}
+                width={box * 1.84}
                 height={42 * unit}
                 rx={6}
                 fill="#e8d8a8"
@@ -182,34 +187,34 @@ export function MemoryStage({ layout, round, playing, onRound }: MemoryStageProp
                 x={0}
                 y={50 * unit}
                 textAnchor="middle"
-                fontSize={26 * unit}
+                fontSize={Math.min(26 * unit, box * 0.3)}
                 fontWeight={700}
                 fill="#4a2f1a"
                 fontFamily="var(--font-alegreya), Georgia, serif"
               >
-                {slot.year}
+                {slot.when}
               </text>
               {item ? (
                 <motion.g initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
                   <rect
-                    x={-70 * unit}
-                    y={-170 * unit}
-                    width={140 * unit}
-                    height={150 * unit}
+                    x={-box}
+                    y={-box * 2.4}
+                    width={box * 2}
+                    height={box * 2.1}
                     rx={10}
                     fill="#f6ecd2"
                     stroke={INK}
                     strokeWidth={2}
                   />
-                  <g transform={`translate(${-55 * unit} ${-160 * unit})`}>
-                    <ExhibitIcon id={item} size={110 * unit} />
+                  <g transform={`translate(${-box * 0.8} ${-box * 2.25})`}>
+                    <ExhibitIcon id={item} size={box * 1.6} />
                   </g>
                 </motion.g>
               ) : (
                 <g
                   role="button"
                   tabIndex={0}
-                  aria-label={`Rok ${slot.year}`}
+                  aria-label={`Data ${slot.when}`}
                   data-target={target}
                   className="cursor-pointer outline-none"
                   onClick={() => drag.pick(target)}
@@ -220,10 +225,10 @@ export function MemoryStage({ layout, round, playing, onRound }: MemoryStageProp
                   }}
                 >
                   <rect
-                    x={-70 * unit}
-                    y={-170 * unit}
-                    width={140 * unit}
-                    height={150 * unit}
+                    x={-box}
+                    y={-box * 2.4}
+                    width={box * 2}
+                    height={box * 2.1}
                     rx={10}
                     fill="#ffe7a3"
                     fillOpacity={drag.hovered === target ? 0.7 : showTargets ? 0.4 : 0.15}
@@ -271,7 +276,7 @@ export function MemoryStage({ layout, round, playing, onRound }: MemoryStageProp
             exit={{ opacity: 0 }}
           >
             <StagePanel
-              title="Izba pamięci"
+              title={plan.title}
               icon={<ExhibitIcon id="wreath" className="size-6" />}
               counter={`Gablota ${round + 1} / ${MEMORY_ROUNDS.length}`}
               hint={hint}
