@@ -66,7 +66,8 @@ async function tendField(page: Page, fact: string, shot?: string) {
     for (const plot of await page.locator('[data-plot]').all()) {
       const need = await plot.getAttribute('data-need')
       if (!need) continue
-      await page.locator(`[data-tool="${need}"]`).click()
+      const card = page.locator(`[data-card="${need}"]`)
+      if ((await card.getAttribute('aria-pressed')) !== 'true') await card.dispatchEvent('click')
       await plot.dispatchEvent('click')
     }
     await page.waitForTimeout(150)
@@ -148,6 +149,18 @@ test(
     const plot = page.locator('[data-plot]:not([data-need=""])').first()
     await plot.dispatchEvent('click')
     await expect(lab.getByText('Najpierw wybierzcie narzędzie')).toBeVisible()
+    const need = await plot.getAttribute('data-need')
+    const grown = await plot.getAttribute('data-growth')
+    const from = await page.locator(`[data-card="${need}"]`).boundingBox()
+    const to = await plot.boundingBox()
+    if (!from || !to) throw new Error('Brak karty albo rośliny na ekranie')
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 })
+    await page.mouse.up()
+    await expect(
+      page.locator(`[data-plot][data-growth="${Number(grown) + 1}"]`).first(),
+    ).toBeAttached()
     for (const [round, fact] of LAB_FACTS.entries()) {
       await tendField(page, fact, round === 2 ? testInfo.outputPath('pulawy-lab.png') : undefined)
     }

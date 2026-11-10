@@ -6,6 +6,9 @@ import { StagePanel } from '@/components/ui/StagePanel'
 import { PAINT, WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { LAB_HINTS, LAB_ROUNDS, NEED_LABELS, TOOL_NAMES } from '@/content/pulawy'
 import type { ToolId } from '@/content/pulawy'
+import { CardTray } from '@/levels/kock/CardTray'
+import { DragGhost } from '@/levels/kock/DragGhost'
+import { useCardDrag } from '@/levels/kock/useCardDrag'
 import { CropArt } from '@/levels/pulawy/art/CropArt'
 import type { CropKind } from '@/levels/pulawy/art/CropArt'
 import { FieldBackdrop } from '@/levels/pulawy/art/FieldBackdrop'
@@ -51,7 +54,6 @@ export function LabStage({ layout, round, playing, onRound }: LabStageProps) {
   const started = useRef(0)
   const clock = useRef(0)
   const done = useRef(false)
-  const [tool, setTool] = useState<ToolId | null>(null)
   const [hint, setHint] = useState<string>(LAB_HINTS.start)
   const [shaking, setShaking] = useState<number | null>(null)
   const backdrop = useMemo(() => <FieldBackdrop layout={layout} />, [layout])
@@ -59,6 +61,21 @@ export function LabStage({ layout, round, playing, onRound }: LabStageProps) {
   const slot = span / plan.plants
   const scale = Math.min(unit * (portrait ? 1.9 : 1.5), slot / (portrait ? 80 : 110))
   const ripe = plots.filter((plot) => plot.growth >= RIPE).length
+  const drag = useCardDrag(drop)
+  const tool = drag.selected as ToolId | null
+  const draggedId = drag.drag?.moved ? (drag.drag.id as ToolId) : null
+  const showTargets = playing && Boolean(drag.drag?.moved)
+  const cards = plan.tools.map((option) => ({
+    id: option,
+    label: TOOL_NAMES[option],
+    icon: <ToolIcon id={option} className="size-10 sm:size-12" />,
+  }))
+
+  function drop(card: string, target: string) {
+    const index = Number(target.replace('plot-', ''))
+    if (Number.isNaN(index)) return
+    tend(index, card as ToolId)
+  }
 
   function commit(next: Plot[]) {
     current.current = next
@@ -93,11 +110,11 @@ export function LabStage({ layout, round, playing, onRound }: LabStageProps) {
     return () => clearTimeout(timer)
   }, [shaking])
 
-  function tend(index: number) {
+  function tend(index: number, used: ToolId | null) {
     if (!playing) return
     const plot = current.current[index]
     if (!plot || plot.growth >= RIPE) return
-    if (!tool) {
+    if (!used) {
       setHint(LAB_HINTS.noTool)
       return
     }
@@ -105,7 +122,7 @@ export function LabStage({ layout, round, playing, onRound }: LabStageProps) {
       setHint(LAB_HINTS.idle)
       return
     }
-    if (plot.need !== tool) {
+    if (plot.need !== used) {
       setShaking(index)
       setHint(LAB_HINTS.wrong)
       return
@@ -125,7 +142,7 @@ export function LabStage({ layout, round, playing, onRound }: LabStageProps) {
   }
 
   return (
-    <>
+    <div className="absolute inset-0" {...drag.handlers}>
       <svg
         viewBox={`0 0 ${world.width} ${world.height}`}
         className="absolute inset-0 size-full select-none"
@@ -146,17 +163,30 @@ export function LabStage({ layout, round, playing, onRound }: LabStageProps) {
                 data-plot={index}
                 data-need={plot.need ?? ''}
                 data-growth={plot.growth}
+                data-target={`plot-${index}`}
                 className="cursor-pointer outline-none"
                 animate={shaking === index ? { x: [0, -10, 10, -6, 6, 0] } : { x: 0 }}
-                onClick={() => tend(index)}
+                onClick={() => tend(index, tool)}
                 onKeyDown={(event) => {
                   if (event.key !== 'Enter' && event.key !== ' ') return
                   event.preventDefault()
-                  tend(index)
+                  tend(index, tool)
                 }}
               >
                 <g transform={`scale(${scale})`}>
-                  <rect x={-55} y={-230} width={110} height={250} fill="transparent" />
+                  <rect
+                    x={-55}
+                    y={-230}
+                    width={110}
+                    height={250}
+                    rx={12}
+                    fill="#ffe7a3"
+                    fillOpacity={drag.hovered === `plot-${index}` ? 0.45 : 0}
+                    stroke="#1f5c50"
+                    strokeOpacity={showTargets && plot.need ? 0.8 : 0}
+                    strokeWidth={3}
+                    strokeDasharray="10 7"
+                  />
                   {plot.growth >= RIPE && (
                     <ellipse cx={0} cy={-80} rx={60} ry={100} fill="#fff4b0" opacity={0.35} />
                   )}
@@ -189,34 +219,24 @@ export function LabStage({ layout, round, playing, onRound }: LabStageProps) {
         })}
       </svg>
 
+      {draggedId && drag.drag && (
+        <DragGhost x={drag.drag.x} y={drag.drag.y} over={drag.hovered !== null}>
+          <ToolIcon id={draggedId} className="size-16" />
+        </DragGhost>
+      )}
+
       <AnimatePresence>
         {playing && (
-          <motion.div
+          <CardTray
             key={`tools-${round}`}
-            role="group"
-            aria-label="Narzędzia"
-            className="pointer-events-auto absolute inset-x-0 bottom-0 flex flex-wrap justify-center gap-2 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 30 }}
-          >
-            {plan.tools.map((option) => (
-              <button
-                key={option}
-                type="button"
-                data-tool={option}
-                aria-pressed={tool === option}
-                className={`flex w-[5.4rem] flex-col items-center gap-0.5 rounded-xl border-2 px-1 pt-1 pb-1 font-display text-[0.7rem] leading-tight font-bold shadow-md sm:w-28 sm:text-sm ${tool === option ? '-translate-y-2 border-[#1f5c50] bg-[#e3efe0] text-[#1f3f36]' : 'border-[#b8894f] bg-[#fbf0d6] text-[#4a2f1a] hover:bg-[#fff6e2]'}`}
-                onClick={() => {
-                  setTool(option)
-                  setHint(`${TOOL_NAMES[option]} w ręku. Stuknijcie w roślinę.`)
-                }}
-              >
-                <ToolIcon id={option} className="size-10 sm:size-12" />
-                {TOOL_NAMES[option]}
-              </button>
-            ))}
-          </motion.div>
+            label="Narzędzia"
+            cards={cards}
+            selected={drag.selected}
+            shaking={null}
+            dragged={draggedId}
+            onSelect={(id) => drag.setSelected((current) => (current === id ? null : id))}
+            onDragStart={(id, event) => drag.start(id, event)}
+          />
         )}
       </AnimatePresence>
 
@@ -239,6 +259,6 @@ export function LabStage({ layout, round, playing, onRound }: LabStageProps) {
           </motion.section>
         )}
       </AnimatePresence>
-    </>
+    </div>
   )
 }

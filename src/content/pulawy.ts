@@ -407,7 +407,7 @@ export const LAB_PROLOGUE = lines.parse([
     id: 'lab-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Ratujmy poletko doświadczalne! Nad rośliną pojawi się znak, czego potrzebuje. Wybierzcie narzędzie i stuknijcie w roślinę.',
+    text: 'Ratujmy poletko doświadczalne! Nad rośliną pojawi się znak, czego potrzebuje. Przeciągnijcie właściwe narzędzie na roślinę.',
   },
 ])
 
@@ -487,10 +487,11 @@ export const LAB_ROUNDS = z
   ])
 
 export const LAB_HINTS = {
-  start: 'Wybierzcie narzędzie, a potem stuknijcie w roślinę ze znakiem.',
+  start:
+    'Przeciągnijcie narzędzie na roślinę ze znakiem albo stuknijcie narzędzie, a potem roślinę.',
   wrong: 'Ta roślina potrzebuje czegoś innego. Spójrzcie na znak nad nią.',
   idle: 'Ta roślina ma teraz wszystko, czego potrzebuje.',
-  noTool: 'Najpierw wybierzcie narzędzie na dole.',
+  noTool: 'Najpierw wybierzcie narzędzie na dole albo przeciągnijcie je na roślinę.',
   good: 'Roślina rośnie!',
 } as const
 
