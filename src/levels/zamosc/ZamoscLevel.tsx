@@ -11,6 +11,7 @@ import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { BUILD_FINALE, BUILD_STEPS, BUILDING_IDS, ZAMOSC_PROLOGUE } from '@/content/zamosc'
 import type { BuildingId, HejnalDirection } from '@/content/zamosc'
 import type { LevelGameProps } from '@/levels/level-game'
+import { shuffled } from '@/lib/shuffle'
 import { CityArt } from '@/levels/zamosc/art/CityArt'
 import { BuildingIcon } from '@/levels/zamosc/art/BuildingIcon'
 import { TowerScene } from '@/levels/zamosc/art/TowerScene'
@@ -90,7 +91,8 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
     setTimeout(() => setNotes((current) => current.filter((note) => note.id !== id)), NOTE_LIFE_MS)
   }, [])
 
-  const remaining = useMemo(() => BUILDING_IDS.filter((id) => !built.includes(id)), [built])
+  const [deck] = useState(() => shuffled(BUILDING_IDS))
+  const remaining = useMemo(() => deck.filter((id) => !built.includes(id)), [deck, built])
   const sockets = stage.kind === 'task' ? remaining : []
   const cityArt = useMemo(() => <CityArt layout={layout} built={built} />, [layout, built])
 

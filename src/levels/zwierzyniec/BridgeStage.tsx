@@ -258,7 +258,7 @@ export function BridgeStage({
   useEffect(() => {
     if (!playing || puzzle.section >= section) return
     const frame = requestAnimationFrame(() =>
-      dispatch({ type: 'start', section, gaps: layout.gaps }),
+      dispatch({ type: 'start', section, gaps: layout.gaps, seed: Math.random() * 1e9 }),
     )
     return () => cancelAnimationFrame(frame)
   }, [layout, playing, puzzle.section, section])

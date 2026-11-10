@@ -1,5 +1,6 @@
 import { BRIDGE_HINTS } from '@/content/zwierzyniec'
 import { createRandom } from '@/lib/noise'
+import { shuffled } from '@/lib/shuffle'
 import { PLANK_SPAN, SECTION_ROTTEN, SECTION_SPARES } from '@/levels/zwierzyniec/bridge-layout'
 import type { Gap, PlankLength } from '@/levels/zwierzyniec/bridge-layout'
 
@@ -23,7 +24,7 @@ export type PuzzleState = {
 }
 
 export type PuzzleAction =
-  | { type: 'start'; section: number; gaps: readonly Gap[] }
+  | { type: 'start'; section: number; gaps: readonly Gap[]; seed: number }
   | { type: 'select'; id: string }
   | { type: 'place'; cardId: string; gap: Gap; at: Point }
   | { type: 'tick'; dt: number; seconds: number; midpoints: Record<string, Point> }
@@ -48,8 +49,7 @@ export function initialPuzzle(): PuzzleState {
   }
 }
 
-function cardsFor(section: number, gaps: readonly Gap[]) {
-  const random = createRandom(section * 97 + 13)
+function cardsFor(section: number, gaps: readonly Gap[], seed: number) {
   const lengths = gaps.filter((gap) => gap.section === section).map((gap) => gap.length)
   const cards: Card[] = [...lengths, ...SECTION_SPARES[section]].map((length, index) => ({
     id: `plank-${section}-${index}`,
@@ -57,11 +57,7 @@ function cardsFor(section: number, gaps: readonly Gap[]) {
     rotten: false,
   }))
   cards.push({ id: `plank-${section}-rotten`, length: SECTION_ROTTEN[section], rotten: true })
-  for (let index = cards.length - 1; index > 0; index--) {
-    const swap = Math.floor(random() * (index + 1))
-    ;[cards[index], cards[swap]] = [cards[swap], cards[index]]
-  }
-  return cards
+  return shuffled(cards, createRandom(seed))
 }
 
 function withEffect(state: PuzzleState, kind: Effect['kind'], at: Point): PuzzleState {
@@ -138,7 +134,7 @@ export function puzzleReducer(state: PuzzleState, action: PuzzleAction): PuzzleS
       return {
         ...state,
         section: action.section,
-        tray: cardsFor(action.section, action.gaps),
+        tray: cardsFor(action.section, action.gaps, action.seed),
         selected: null,
         flood: 0,
         hint: action.section === 0 ? BRIDGE_HINTS.start : state.hint,
