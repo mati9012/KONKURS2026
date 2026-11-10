@@ -3,7 +3,7 @@ import type { PlaceId } from '@/content/places'
 
 export const FIRST_PLACE: PlaceId = 'zamosc'
 export const LATE_PLACES: readonly PlaceId[] = ['chelm', 'lublin']
-export const LATE_PLACES_STAMPS = 6
+export const LATE_PLACES_STAMPS = PLACE_IDS.length - LATE_PLACES.length
 
 export type PlaceAccess = 'open' | 'needs-first' | 'needs-stamps'
 
