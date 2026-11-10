@@ -15,7 +15,7 @@ const [needsFirst, needsStamps, comingSoon] = z.array(dialogueLineSchema).parse(
     id: 'journey-needs-stamps',
     speaker: 'koziol',
     gesture: 'think',
-    text: `Tu diabeł ukrył coś naprawdę groźnego. Wrócimy, gdy w paszporcie będzie ${LATE_PLACES_STAMPS} pieczęci.`,
+    text: `Tu diabeł ukrył coś naprawdę groźnego. Wrócimy, gdy zbierzemy pieczęcie ze wszystkich ${LATE_PLACES_STAMPS} pozostałych miejsc.`,
   },
   {
     id: 'journey-coming-soon',
