@@ -251,7 +251,25 @@ body {
   .pl-mist,
   .pl-drip,
   .pl-ripple,
-  .pl-wing {
+  .pl-wing,
+  .wl-wobble {
     animation: none;
+  }
+}
+
+.wl-wobble {
+  animation: wl-wobble 0.4s ease-in-out infinite;
+}
+
+@keyframes wl-wobble {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-9deg);
+  }
+  75% {
+    transform: rotate(9deg);
   }
 }

@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic'
 import { BILGORAJ_ARRIVAL, BILGORAJ_OUTRO } from '@/content/bilgoraj'
 import { KOCK_ARRIVAL, KOCK_OUTRO } from '@/content/kock'
 import { POLESKI_ARRIVAL, POLESKI_OUTRO } from '@/content/poleski-park-narodowy'
+import { WLODAWA_ARRIVAL, WLODAWA_OUTRO } from '@/content/wlodawa'
 import { ROZTOCZE_ARRIVAL, ROZTOCZE_OUTRO } from '@/content/roztocze'
 import { ZAMOSC_ARRIVAL, ZAMOSC_OUTRO } from '@/content/zamosc'
 import { ZWIERZYNIEC_ARRIVAL, ZWIERZYNIEC_OUTRO } from '@/content/zwierzyniec'
@@ -54,5 +55,12 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
       () => import('@/levels/poleski-park-narodowy/PoleskiLevel').then((mod) => mod.PoleskiLevel),
       { ssr: false },
     ),
+  },
+  wlodawa: {
+    intro: WLODAWA_ARRIVAL,
+    outro: WLODAWA_OUTRO,
+    Game: dynamic(() => import('@/levels/wlodawa/WlodawaLevel').then((mod) => mod.WlodawaLevel), {
+      ssr: false,
+    }),
   },
 }
