@@ -152,6 +152,20 @@ body {
   animation: bj-beat 1s ease-out infinite;
 }
 
+@keyframes kk-gallop {
+  0%,
+  100% {
+    transform: rotate(-28deg);
+  }
+  50% {
+    transform: rotate(28deg);
+  }
+}
+
+.kk-gallop {
+  animation: kk-gallop 0.42s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rz-hop,
   .rz-breathe,
