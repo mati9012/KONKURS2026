@@ -1,11 +1,4 @@
-let context: AudioContext | null = null
-
-function audioContext() {
-  if (typeof window === 'undefined' || !('AudioContext' in window)) return null
-  context ??= new AudioContext()
-  if (context.state === 'suspended') void context.resume()
-  return context
-}
+import { audioContext } from '@/lib/audio/context'
 
 export function playTrumpetNote(frequency: number, volume: number, seconds = 0.32) {
   const audio = audioContext()

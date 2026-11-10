@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic'
 import { BILGORAJ_ARRIVAL, BILGORAJ_OUTRO } from '@/content/bilgoraj'
 import { KOCK_ARRIVAL, KOCK_OUTRO } from '@/content/kock'
+import { POLESKI_ARRIVAL, POLESKI_OUTRO } from '@/content/poleski-park-narodowy'
 import { ROZTOCZE_ARRIVAL, ROZTOCZE_OUTRO } from '@/content/roztocze'
 import { ZAMOSC_ARRIVAL, ZAMOSC_OUTRO } from '@/content/zamosc'
 import { ZWIERZYNIEC_ARRIVAL, ZWIERZYNIEC_OUTRO } from '@/content/zwierzyniec'
@@ -45,5 +46,13 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
     Game: dynamic(() => import('@/levels/kock/KockLevel').then((mod) => mod.KockLevel), {
       ssr: false,
     }),
+  },
+  'poleski-park-narodowy': {
+    intro: POLESKI_ARRIVAL,
+    outro: POLESKI_OUTRO,
+    Game: dynamic(
+      () => import('@/levels/poleski-park-narodowy/PoleskiLevel').then((mod) => mod.PoleskiLevel),
+      { ssr: false },
+    ),
   },
 }
