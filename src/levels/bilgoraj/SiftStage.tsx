@@ -8,6 +8,7 @@ import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { SIEVE_IDS, SIEVE_NAMES, SIFT_HINTS, SIFT_TASKS } from '@/content/bilgoraj'
 import type { GrainKind, SieveId } from '@/content/bilgoraj'
 import { createRandom } from '@/lib/noise'
+import { shuffled } from '@/lib/shuffle'
 import { BilgorajIcon } from '@/levels/bilgoraj/art/BilgorajIcon'
 import { GrainArt } from '@/levels/bilgoraj/art/GrainArt'
 import { KitchenBackdrop } from '@/levels/bilgoraj/art/KitchenBackdrop'
@@ -81,6 +82,7 @@ function grainsFor(task: number): Grain[] {
 
 export function SiftStage({ layout, task, playing, onTask }: SiftStageProps) {
   const { world, unit, floor, portrait } = layout
+  const [rack] = useState(() => shuffled(SIEVE_IDS))
   const [sieve, setSieve] = useState<SieveId | null>(null)
   const [fallen, setFallen] = useState<number[]>([])
   const [shakes, setShakes] = useState(0)
@@ -93,7 +95,7 @@ export function SiftStage({ layout, task, playing, onTask }: SiftStageProps) {
   const tableY = floor + 20 * unit
   const bowl = { x: world.width * (portrait ? 0.42 : 0.5), y: tableY + 110 * unit, rx: 150 * unit }
   const held = { x: bowl.x, y: tableY - 70 * unit, rx: 150 * unit }
-  const hooks = SIEVE_IDS.map((id, index) => ({
+  const hooks = rack.map((id, index) => ({
     id,
     x: world.width * (portrait ? 0.2 + index * 0.3 : 0.3 + index * 0.13),
     y: floor * (portrait ? 0.62 : 0.5),
