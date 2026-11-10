@@ -2,12 +2,40 @@ import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 
 const MEMORY = [
-  ['charter', 1417],
-  ['palace-plan', 1779],
-  ['shako', 1809],
-  ['helmet', 1939],
-  ['letter', 1941],
-  ['wreath', 1969],
+  {
+    text: 'Pierwsza gablota',
+    cards: [
+      ['charter', 14170000],
+      ['palace-plan', 17790000],
+      ['shako', 18090000],
+    ],
+  },
+  {
+    text: 'Westerplatte broniło',
+    cards: [
+      ['postcard', 19390901],
+      ['map', 19390909],
+      ['calendar', 19390917],
+      ['armband', 19390928],
+    ],
+  },
+  {
+    text: 'utworzono 11 września',
+    cards: [
+      ['order', 19390911],
+      ['helmet', 19391002],
+      ['ammo', 19391005],
+      ['flag', 19391006],
+    ],
+  },
+  {
+    text: 'ostatni polski generał',
+    cards: [
+      ['letter', 19410405],
+      ['wreath', 19691006],
+      ['key', 20121007],
+    ],
+  },
 ] as const
 
 async function skipConversation(page: Page, text: string) {
@@ -94,13 +122,13 @@ test(
 
     await skipConversation(page, 'izby pamięci')
     const memory = page.getByRole('region', { name: 'Izba pamięci' })
-    await placeCard(page, 'shako', 'year-1417')
-    await expect(memory.getByText('To nie ten rok')).toBeVisible()
-    for (const [card, year] of MEMORY.slice(0, 3)) await placeCard(page, card, `year-${year}`)
-    await skipConversation(page, 'Pierwsza gablota')
-    for (const [card, year] of MEMORY.slice(3)) await placeCard(page, card, `year-${year}`)
-    await page.screenshot({ path: testInfo.outputPath('kock-memory.png') })
-    await skipConversation(page, 'ostatnią bitwą kampanii')
+    await placeCard(page, 'shako', 'when-14170000')
+    await expect(memory.getByText('To nie ta data')).toBeVisible()
+    for (const [index, round] of MEMORY.entries()) {
+      for (const [card, order] of round.cards) await placeCard(page, card, `when-${order}`)
+      if (index === 2) await page.screenshot({ path: testInfo.outputPath('kock-memory.png') })
+      await skipConversation(page, round.text)
+    }
 
     await expect(page.getByRole('img', { name: 'Pieczęć: Kock' })).toBeVisible({ timeout: 30_000 })
     await skipConversation(page, 'Pałac ma swoje kolumny')

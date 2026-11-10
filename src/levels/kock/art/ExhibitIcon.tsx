@@ -62,6 +62,124 @@ function Glyph({ id }: { id: ExhibitId }) {
       </>
     )
   }
+  if (id === 'postcard') {
+    return (
+      <>
+        <rect
+          x={5}
+          y={10}
+          width={38}
+          height={28}
+          rx={2}
+          fill="#f2e8d4"
+          stroke={INK}
+          strokeWidth={1.6}
+        />
+        <rect x={8} y={13} width={20} height={22} fill="#9ab8c8" />
+        <path d="M8 30H28V35H8Z" fill="#c8b890" />
+        <path d="M16 30V18L19 15L22 18V30Z" fill="#e8e0cc" stroke={INK} strokeWidth={1} />
+        <path d="M31 16H40M31 21H40M31 26H38" stroke="#8a7a5a" strokeWidth={1.2} />
+        <rect x={34} y={29} width={6} height={6} fill="#c8402f" />
+      </>
+    )
+  }
+  if (id === 'map') {
+    return (
+      <>
+        <path
+          d="M6 12L17 8L31 12L42 8V36L31 40L17 36L6 40Z"
+          fill="#e8dcb8"
+          stroke={INK}
+          strokeWidth={1.6}
+          strokeLinejoin="round"
+        />
+        <path d="M17 8V36M31 12V40" stroke="#b8a888" strokeWidth={1} />
+        <path
+          d="M8 26C14 22 20 30 26 24C30 20 36 24 40 20"
+          fill="none"
+          stroke="#3a7aa8"
+          strokeWidth={2}
+        />
+        <path d="M22 16L26 20M26 16L22 20" stroke="#c8402f" strokeWidth={1.8} />
+      </>
+    )
+  }
+  if (id === 'calendar') {
+    return (
+      <>
+        <rect
+          x={10}
+          y={8}
+          width={28}
+          height={32}
+          rx={2}
+          fill="#fbf8f0"
+          stroke={INK}
+          strokeWidth={1.6}
+        />
+        <rect x={10} y={8} width={28} height={9} fill="#c8402f" />
+        <path d="M16 6V11M32 6V11" stroke={INK} strokeWidth={2} strokeLinecap="round" />
+        <text x={24} y={34} textAnchor="middle" fontSize={15} fontWeight={700} fill={INK}>
+          17
+        </text>
+      </>
+    )
+  }
+  if (id === 'armband') {
+    return (
+      <>
+        <path
+          d="M6 18C6 14 42 14 42 18V30C42 34 6 34 6 30Z"
+          fill="#fbfbf6"
+          stroke={INK}
+          strokeWidth={1.6}
+        />
+        <path d="M6 24H42V30C42 34 6 34 6 30Z" fill="#c8302a" />
+        <path d="M6 18C6 22 42 22 42 18" fill="none" stroke={INK} strokeWidth={1} />
+      </>
+    )
+  }
+  if (id === 'order') {
+    return (
+      <>
+        <rect x={10} y={6} width={28} height={36} fill="#f4ecd8" stroke={INK} strokeWidth={1.6} />
+        <path d="M15 13H33M15 18H33M15 23H33M15 28H28" stroke="#6a5a4a" strokeWidth={1.3} />
+        <path d="M27 36C29 33 33 33 34 36" fill="none" stroke="#2a3a6a" strokeWidth={1.4} />
+      </>
+    )
+  }
+  if (id === 'ammo') {
+    return (
+      <>
+        <path d="M6 18H42V38H6Z" fill="#6a7a4a" stroke={INK} strokeWidth={1.6} />
+        <path d="M4 14H44V18H4Z" fill="#5a6a3a" stroke={INK} strokeWidth={1.4} />
+        <path d="M20 26H28" stroke="#e8dcb8" strokeWidth={2} />
+        <path d="M14 22V34M34 22V34" stroke="#4a5a2a" strokeWidth={1.4} />
+      </>
+    )
+  }
+  if (id === 'flag') {
+    return (
+      <>
+        <path d="M10 6V44" stroke="#5a4632" strokeWidth={3} strokeLinecap="round" />
+        <path d="M12 8H40L33 15L40 22H12Z" fill="#fbfbf6" stroke={INK} strokeWidth={1.4} />
+        <path d="M12 15H33L40 22H12Z" fill="#c8302a" />
+      </>
+    )
+  }
+  if (id === 'key') {
+    return (
+      <>
+        <circle cx={16} cy={24} r={8} fill="none" stroke="#b8902a" strokeWidth={4} />
+        <path
+          d="M24 24H42M36 24V30M41 24V29"
+          stroke="#b8902a"
+          strokeWidth={4}
+          strokeLinecap="round"
+        />
+      </>
+    )
+  }
   if (id === 'letter') {
     return (
       <>

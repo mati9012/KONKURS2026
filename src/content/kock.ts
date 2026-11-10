@@ -20,6 +20,16 @@ const PORTICO = wiki('Portyk', 'Portyk')
 const BEREK = wiki('Berek Joselewicz', 'Berek_Joselewicz')
 const BEREK_GRAVE = wiki('Mogiła Berka Joselewicza', 'Mogi%C5%82a_Berka_Joselewicza')
 const BATTLE = wiki('Bitwa pod Kockiem (1939)', 'Bitwa_pod_Kockiem_(1939)')
+const CAMPAIGN = wiki('Kampania wrześniowa', 'Kampania_wrze%C5%9Bniowa')
+const WESTERPLATTE = wiki('Obrona Westerplatte', 'Obrona_Westerplatte')
+const BZURA = wiki('Bitwa nad Bzurą', 'Bitwa_nad_Bzur%C4%85')
+const USSR = wiki('Agresja ZSRR na Polskę', 'Agresja_ZSRR_na_Polsk%C4%99')
+const WARSAW = wiki('Obrona Warszawy (1939)', 'Obrona_Warszawy_(1939)')
+const SGO = wiki(
+  'Samodzielna Grupa Operacyjna „Polesie”',
+  'Samodzielna_Grupa_Operacyjna_%E2%80%9EPolesie%E2%80%9D',
+)
+const KLEEBERG = wiki('Franciszek Kleeberg', 'Franciszek_Kleeberg')
 const MENDEL = wiki('Menachem Mendel Morgenstern', 'Menachem_Mendel_Morgenstern')
 
 const lines = z.array(dialogueLineSchema)
@@ -315,17 +325,17 @@ export const MEMORY_PROLOGUE = lines.parse([
     text: 'Teraz zajrzymy do izby pamięci. Tu mówimy ciszej, bo Kock pamięta też trudne czasy.',
   },
   {
-    id: 'memory-battle',
+    id: 'memory-campaign',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Od 2 do 6 października 1939 roku pod Kockiem walczyła Samodzielna Grupa Operacyjna „Polesie” generała Franciszka Kleeberga.',
-    sources: [BATTLE],
+    text: 'Kampania wrześniowa trwała od 1 września do 6 października 1939 roku. Polska broniła się przed agresją III Rzeszy, a potem także ZSRR.',
+    sources: [CAMPAIGN],
   },
   {
     id: 'memory-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Pomóżcie ułożyć pamiątki z historii Kocka na osi czasu. Przeciągnijcie każdą na właściwy rok.',
+    text: 'Pomóżcie ułożyć pamiątki w gablotach. Przeciągnijcie każdą na właściwą datę na osi czasu.',
   },
 ])
 
@@ -333,9 +343,17 @@ export const EXHIBIT_IDS = [
   'charter',
   'palace-plan',
   'shako',
+  'postcard',
+  'map',
+  'calendar',
+  'armband',
+  'order',
   'helmet',
+  'ammo',
+  'flag',
   'letter',
   'wreath',
+  'key',
 ] as const
 export type ExhibitId = (typeof EXHIBIT_IDS)[number]
 
@@ -344,7 +362,8 @@ export const EXHIBITS = z
     z.object({
       id: z.enum(EXHIBIT_IDS),
       name: z.string().min(1),
-      year: z.number().int(),
+      order: z.number().int(),
+      when: z.string().min(1),
       label: z.string().min(1),
       sources: z.array(sourceSchema).min(1),
     }),
@@ -353,51 +372,128 @@ export const EXHIBITS = z
     {
       id: 'charter',
       name: 'Akt lokacji miasta',
-      year: 1417,
+      order: 14170000,
+      when: '1417',
       label: 'Kock zostaje miastem',
       sources: [TOWN],
     },
     {
       id: 'palace-plan',
       name: 'Projekt pałacu',
-      year: 1779,
+      order: 17790000,
+      when: '1779',
       label: 'Przebudowa pałacu według projektu Zuga',
       sources: [PALACE],
     },
     {
       id: 'shako',
       name: 'Czapka strzelca konnego',
-      year: 1809,
+      order: 18090000,
+      when: '1809',
       label: 'Pułkownik Berek Joselewicz ginie pod Kockiem',
       sources: [BEREK],
     },
     {
+      id: 'postcard',
+      name: 'Pocztówka z Westerplatte',
+      order: 19390901,
+      when: '1 IX 1939',
+      label: 'Atak Niemiec. Westerplatte broni się przez 7 dni',
+      sources: [CAMPAIGN, WESTERPLATTE],
+    },
+    {
+      id: 'map',
+      name: 'Mapa znad Bzury',
+      order: 19390909,
+      when: '9 IX 1939',
+      label: 'Początek bitwy nad Bzurą, największej bitwy kampanii',
+      sources: [BZURA],
+    },
+    {
+      id: 'calendar',
+      name: 'Kartka z kalendarza',
+      order: 19390917,
+      when: '17 IX 1939',
+      label: 'Napaść ZSRR na Polskę',
+      sources: [USSR],
+    },
+    {
+      id: 'armband',
+      name: 'Opaska obrońcy Warszawy',
+      order: 19390928,
+      when: '28 IX 1939',
+      label: 'Kapitulacja Warszawy',
+      sources: [WARSAW],
+    },
+    {
+      id: 'order',
+      name: 'Rozkaz o utworzeniu grupy',
+      order: 19390911,
+      when: '11 IX 1939',
+      label: 'Powstaje Samodzielna Grupa Operacyjna „Polesie”',
+      sources: [SGO],
+    },
+    {
       id: 'helmet',
       name: 'Hełm żołnierza SGO „Polesie”',
-      year: 1939,
-      label: 'Ostatnia bitwa kampanii wrześniowej',
+      order: 19391002,
+      when: '2 X 1939',
+      label: 'Początek bitwy pod Kockiem',
       sources: [BATTLE],
+    },
+    {
+      id: 'ammo',
+      name: 'Pusta skrzynka po amunicji',
+      order: 19391005,
+      when: '5 X 1939',
+      label: 'Meldunek: kończy się amunicja',
+      sources: [BATTLE],
+    },
+    {
+      id: 'flag',
+      name: 'Proporczyk kawalerii',
+      order: 19391006,
+      when: '6 X 1939',
+      label: 'Kapitulacja. Ostatnia bitwa kampanii wrześniowej',
+      sources: [BATTLE, SGO],
     },
     {
       id: 'letter',
       name: 'Fotografia generała Kleeberga',
-      year: 1941,
+      order: 19410405,
+      when: '1941',
       label: 'Generał Kleeberg umiera w niewoli niemieckiej',
-      sources: [TOWN],
+      sources: [KLEEBERG],
     },
     {
       id: 'wreath',
       name: 'Wieniec z grobu generała',
-      year: 1969,
-      label: 'Prochy generała wracają do Kocka',
-      sources: [TOWN],
+      order: 19691006,
+      when: '1969',
+      label: 'Prochy generała spoczywają w Kocku',
+      sources: [KLEEBERG],
+    },
+    {
+      id: 'key',
+      name: 'Klucz do izby pamięci',
+      order: 20121007,
+      when: '2012',
+      label: 'Otwarcie Wojskowej Izby Pamięci w Kocku',
+      sources: [BATTLE],
     },
   ])
 
 export const MEMORY_ROUNDS = z
-  .array(z.object({ exhibits: z.array(z.enum(EXHIBIT_IDS)).min(2), facts: lines.min(1) }))
+  .array(
+    z.object({
+      title: z.string().min(1),
+      exhibits: z.array(z.enum(EXHIBIT_IDS)).min(2),
+      facts: lines.min(1),
+    }),
+  )
   .parse([
     {
+      title: 'Dawny Kock',
       exhibits: ['charter', 'palace-plan', 'shako'],
       facts: [
         {
@@ -410,31 +506,107 @@ export const MEMORY_ROUNDS = z
       ],
     },
     {
-      exhibits: ['helmet', 'letter', 'wreath'],
+      title: 'Wrzesień 1939',
+      exhibits: ['postcard', 'map', 'calendar', 'armband'],
       facts: [
         {
-          id: 'memory-2-last',
+          id: 'memory-2-westerplatte',
           speaker: 'koziol',
           gesture: 'talk',
-          text: 'Bitwa pod Kockiem była ostatnią bitwą kampanii wrześniowej stoczoną przez regularne wojsko.',
+          text: 'Westerplatte broniło się od 1 do 7 września 1939 roku. Komendantem składnicy był major Henryk Sucharski.',
+          sources: [WESTERPLATTE],
+        },
+        {
+          id: 'memory-2-bzura',
+          speaker: 'koziol',
+          gesture: 'talk',
+          text: 'Bitwa nad Bzurą, toczona od 9 do 22 września, była największą bitwą kampanii wrześniowej.',
+          sources: [BZURA],
+        },
+        {
+          id: 'memory-2-ussr',
+          speaker: 'koziol',
+          gesture: 'think',
+          text: '17 września 1939 roku na Polskę napadł także Związek Radziecki.',
+          sources: [USSR],
+        },
+        {
+          id: 'memory-2-warsaw',
+          speaker: 'koziol',
+          gesture: 'talk',
+          text: 'Warszawa broniła się od 1 do 28 września. Gdy skapitulowała, broń złożyło 5 tysięcy oficerów oraz 97 tysięcy podoficerów i szeregowych.',
+          sources: [WARSAW],
+        },
+      ],
+    },
+    {
+      title: 'Bitwa pod Kockiem',
+      exhibits: ['order', 'helmet', 'ammo', 'flag'],
+      facts: [
+        {
+          id: 'memory-3-sgo',
+          speaker: 'koziol',
+          gesture: 'present',
+          text: 'Grupę „Polesie” utworzono 11 września 1939 roku. Należały do niej 50 Dywizja Piechoty „Brzoza” i 60 Dywizja Piechoty „Kobryń”, a potem też kawaleria.',
+          sources: [SGO],
+        },
+        {
+          id: 'memory-3-warsaw',
+          speaker: 'koziol',
+          gesture: 'talk',
+          text: 'Generał Kleeberg poprowadził żołnierzy z odsieczą oblężonej Warszawie. Gdy stolica skapitulowała, ruszyli po amunicję do składów koło Dęblina.',
+          sources: [SGO, BATTLE],
+        },
+        {
+          id: 'memory-3-young',
+          speaker: 'koziol',
+          gesture: 'think',
+          text: 'Większość żołnierzy generała należała do młodego rocznika, bez doświadczenia bojowego. Losy bitwy rozstrzygnęły się w rejonie Woli Gułowskiej.',
           sources: [BATTLE],
         },
         {
-          id: 'memory-2-honour',
+          id: 'memory-3-ammo',
+          speaker: 'koziol',
+          gesture: 'talk',
+          text: '5 października kwatermistrz zameldował, że zostało tylko 20 pocisków i zero amunicji do karabinów.',
+          sources: [BATTLE],
+        },
+        {
+          id: 'memory-3-last',
           speaker: 'koziol',
           gesture: 'think',
+          text: '6 października grupa skapitulowała jako ostatnia regularna polska jednostka kampanii wrześniowej. Taktycznie bitwę wygrali Polacy, ale strategicznie zwyciężyli Niemcy.',
+          sources: [SGO, BATTLE],
+        },
+        {
+          id: 'memory-3-honour',
+          speaker: 'koziol',
+          gesture: 'talk',
           text: 'Generał Kleeberg powiedział wtedy: „Nic sobie nie mamy do zarzucenia. Zachowaliśmy honor żołnierski do końca”.',
           sources: [BATTLE],
         },
+      ],
+    },
+    {
+      title: 'Pamięć',
+      exhibits: ['letter', 'wreath', 'key'],
+      facts: [
         {
-          id: 'memory-2-grave',
+          id: 'memory-4-general',
           speaker: 'koziol',
           gesture: 'talk',
-          text: 'Generał zmarł w 1941 roku w niewoli niemieckiej. W 1969 roku jego prochy sprowadzono na cmentarz wojskowy w Kocku.',
-          sources: [TOWN],
+          text: 'Generał Franciszek Kleeberg złożył broń jako ostatni polski generał. Był odznaczony czterema klasami Orderu Virtuti Militari.',
+          sources: [KLEEBERG],
         },
         {
-          id: 'memory-2-room',
+          id: 'memory-4-death',
+          speaker: 'koziol',
+          gesture: 'think',
+          text: 'Zmarł w niewoli 5 kwietnia 1941 roku w Dreźnie. W 1969 roku jego prochy złożono na cmentarzu wojennym w Kocku.',
+          sources: [KLEEBERG],
+        },
+        {
+          id: 'memory-4-room',
           speaker: 'koziol',
           gesture: 'present',
           text: 'Od 7 października 2012 roku w Kocku działa Wojskowa Izba Pamięci, a szkoła podstawowa nosi imię generała Kleeberga.',
@@ -445,8 +617,8 @@ export const MEMORY_ROUNDS = z
   ])
 
 export const MEMORY_HINTS = {
-  start: 'Przeciągnijcie pamiątkę na właściwy rok na osi czasu.',
-  wrong: 'To nie ten rok. Przypomnijcie sobie, co już wiecie o Kocku.',
+  start: 'Przeciągnijcie pamiątkę na właściwą datę na osi czasu.',
+  wrong: 'To nie ta data. Przypomnijcie sobie, co już wiecie.',
   good: 'Zgadza się!',
 } as const
 
