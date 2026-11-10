@@ -132,6 +132,13 @@ test(
     }
 
     await skipConversation(page, 'spływ kajakiem')
+    const river = page.locator('[data-river]')
+    await expect(river).toHaveAttribute('data-lane', '1')
+    await page.keyboard.press('ArrowLeft')
+    await expect(river).toHaveAttribute('data-lane', '0')
+    await page.keyboard.press('ArrowRight')
+    await page.keyboard.press('ArrowRight')
+    await expect(river).toHaveAttribute('data-lane', '2')
     for (const [leg, fact] of RIVER_FACTS.entries()) {
       if (leg === 1) {
         await page.waitForSelector('[data-obstacle]', { state: 'attached', timeout: 20_000 })
