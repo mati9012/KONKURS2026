@@ -10,7 +10,7 @@ export function voicePerch(bird: BirdId, layout: SceneLayout): Spot {
   const shore = lakeLine(layout)
   const bottom = world.height
   if (bird === 'bittern')
-    return { x: world.width * (portrait ? 0.22 : 0.16), y: bottom - 40 * unit }
+    return { x: world.width * (portrait ? 0.22 : 0.16), y: bottom - 64 * unit }
   if (bird === 'warbler')
     return { x: world.width * (portrait ? 0.62 : 0.5), y: (shore + bottom) / 2 + 60 * unit }
   if (bird === 'crane') return { x: world.width * (portrait ? 0.8 : 0.82), y: bottom - 70 * unit }

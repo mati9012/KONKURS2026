@@ -3,7 +3,7 @@ import { BirdArt } from '@/levels/poleski-park-narodowy/art/BirdArt'
 
 export function BirdIcon({ bird, className }: { bird: BirdId; className?: string }) {
   return (
-    <svg viewBox="-80 -150 160 200" aria-hidden="true" className={className}>
+    <svg viewBox="-85 -160 170 215" aria-hidden="true" className={className}>
       <BirdArt bird={bird} />
     </svg>
   )
