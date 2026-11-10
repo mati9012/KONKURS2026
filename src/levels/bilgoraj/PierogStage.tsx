@@ -13,6 +13,7 @@ import { KitchenBackdrop } from '@/levels/bilgoraj/art/KitchenBackdrop'
 import { PierogTin } from '@/levels/bilgoraj/art/PierogTin'
 import type { Crust } from '@/levels/bilgoraj/art/PierogTin'
 import type { RoomLayout } from '@/levels/bilgoraj/room-layout'
+import { shuffled } from '@/lib/shuffle'
 
 export type PierogStep = 'filling' | 'crust' | 'baked'
 
@@ -52,6 +53,7 @@ function overTin(x: number, y: number) {
 
 export function PierogStage({ layout, playing, onStep }: PierogStageProps) {
   const { world, unit, floor, portrait } = layout
+  const [deck] = useState(() => shuffled(SHELF))
   const [added, setAdded] = useState<IngredientId[]>([])
   const [rejected, setRejected] = useState<IngredientId[]>([])
   const [crust, setCrust] = useState<Crust | null>(null)
@@ -161,7 +163,7 @@ export function PierogStage({ layout, playing, onStep }: PierogStageProps) {
     if (overTin(event.clientX, event.clientY)) drop(current.id)
   }
 
-  const shelf = SHELF.filter((id) => !added.includes(id) && !rejected.includes(id))
+  const shelf = deck.filter((id) => !added.includes(id) && !rejected.includes(id))
 
   return (
     <div

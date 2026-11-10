@@ -11,6 +11,7 @@ import { DragGhost } from '@/levels/kock/DragGhost'
 import { ExhibitIcon } from '@/levels/kock/art/ExhibitIcon'
 import type { SceneLayout } from '@/levels/kock/scene-layout'
 import { useCardDrag } from '@/levels/kock/useCardDrag'
+import { shuffled } from '@/lib/shuffle'
 
 const SHAKE_MS = 450
 const INK = '#2a1e16'
@@ -101,6 +102,7 @@ export function MemoryStage({ layout, round, playing, onRound }: MemoryStageProp
     () => plan.exhibits.map((id) => exhibit(id).year).sort((a, b) => a - b),
     [plan.exhibits],
   )
+  const [deck] = useState(() => shuffled(plan.exhibits))
   const [placed, setPlaced] = useState<Record<number, ExhibitId>>({})
   const [hint, setHint] = useState<string>(MEMORY_HINTS.start)
   const [shaking, setShaking] = useState<string | null>(null)
@@ -112,7 +114,7 @@ export function MemoryStage({ layout, round, playing, onRound }: MemoryStageProp
     year,
     x: world.width / 2 - span / 2 + (span * (index + 0.5)) / years.length,
   }))
-  const cards = plan.exhibits
+  const cards = deck
     .filter((id) => !Object.values(placed).includes(id))
     .map((id) => ({
       id,

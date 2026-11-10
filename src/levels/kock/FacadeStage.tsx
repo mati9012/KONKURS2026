@@ -22,9 +22,9 @@ import { PlanShapeArt } from '@/levels/kock/art/PlanShapeArt'
 import { palaceLayout } from '@/levels/kock/palace-layout'
 import type { SceneLayout } from '@/levels/kock/scene-layout'
 import { useCardDrag } from '@/levels/kock/useCardDrag'
+import { shuffled } from '@/lib/shuffle'
 
 const SHAKE_MS = 450
-const CARD_ORDER = [0, 4, 1, 5, 2, 6, 3, 7]
 
 type FacadeStageProps = {
   layout: SceneLayout
@@ -39,10 +39,7 @@ function cardsFor(round: number) {
     ...Array.from({ length: 4 }, () => plan.column),
     ...plan.decoys.flatMap((kind) => [kind, kind]),
   ]
-  return CARD_ORDER.filter((index) => index < kinds.length).map((index) => ({
-    id: `${kinds[index]}-${index}`,
-    kind: kinds[index],
-  }))
+  return shuffled(kinds.map((kind, index) => ({ id: `${kind}-${index}`, kind })))
 }
 
 export function FacadeStage({ layout, round, playing, onRound }: FacadeStageProps) {
@@ -56,7 +53,7 @@ export function FacadeStage({ layout, round, playing, onRound }: FacadeStageProp
   const [used, setUsed] = useState<string[]>([])
   const [hint, setHint] = useState<string>(columnRound ? plan.task : PLAN_ROUND.task)
   const [shaking, setShaking] = useState<string | null>(null)
-  const cards = useMemo(() => (columnRound ? cardsFor(round) : []), [columnRound, round])
+  const [cards] = useState(() => (columnRound ? cardsFor(round) : []))
   const backdrop = useMemo(
     () => <PalaceBackdrop layout={layout} palace={palace} garden={round > 0} />,
     [layout, palace, round],
