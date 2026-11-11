@@ -1,7 +1,7 @@
 'use client'
 
-import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, animate, motion } from 'motion/react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { StagePanel } from '@/components/ui/StagePanel'
 import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
@@ -14,6 +14,9 @@ import type { SceneLayout } from '@/levels/chelm/scene-layout'
 
 const BLOW_MS = 6000
 const FINISH_MS = 2600
+const DARK_RADIUS = 46
+const DARKNESS = 'rgba(12,10,8,0.985)'
+const WARM = '255,216,138'
 
 const ITEM_SPOTS = [
   [
@@ -53,17 +56,63 @@ export function TunnelStage({ layout, round, playing, onRound }: TunnelStageProp
   const plan = TUNNEL_ROUNDS[Math.min(round, TUNNEL_ROUNDS.length - 1)]
   const spots = ITEM_SPOTS[Math.min(round, ITEM_SPOTS.length - 1)]
   const [found, setFound] = useState<TunnelItemKind[]>([])
-  const [lamp, setLamp] = useState({ x: world.width / 2, y: world.height * 0.6 })
+  const containerRef = useRef<HTMLDivElement>(null)
+  const darknessRef = useRef<HTMLDivElement>(null)
+  const litRadius = portrait ? 200 : 190
+  const lampRef = useRef({ x: 0.5, y: 0.6, radius: litRadius, lit: true })
   const [dark, setDark] = useState(false)
   const [blows, setBlows] = useState(0)
   const [hint, setHint] = useState<string>(TUNNEL_HINTS.start)
   const backdrop = useMemo(() => <TunnelBackdrop layout={layout} depth={round} />, [layout, round])
   const done = found.length >= plan.items.length
   const itemScale = unit * (portrait ? 1.1 : 0.95)
-  const radius = (dark ? 46 : portrait ? 200 : 190) * unit
   const glowSpot = GLOW_SPOTS[(blows + round * 2) % GLOW_SPOTS.length]
   const glow = { x: glowSpot[0] * world.width, y: glowSpot[1] * world.height }
   const eyes = { x: (1 - glowSpot[0]) * world.width, y: world.height * 0.4 }
+
+  const paintLamp = useCallback(() => {
+    const container = containerRef.current
+    const darkness = darknessRef.current
+    if (!container || !darkness) return
+    const { clientWidth, clientHeight } = container
+    const scale = (clientWidth / world.width) * unit
+    const { x, y, radius, lit } = lampRef.current
+    const at = `circle at ${x * clientWidth}px ${y * clientHeight}px`
+    const size = radius * scale
+    const layers = [
+      `radial-gradient(${at}, rgba(${WARM},0.35), rgba(${WARM},0) ${size}px)`,
+      `radial-gradient(${at}, transparent ${size * 0.55}px, ${DARKNESS} ${size}px)`,
+    ]
+    if (lit) {
+      const dot = 8 * scale
+      layers.unshift(
+        `radial-gradient(${at}, #ffe8a8 ${dot - 2}px, #8a6a3a ${dot - 2}px ${dot}px, transparent ${dot}px)`,
+      )
+    }
+    darkness.style.background = layers.join(',')
+  }, [world.width, unit])
+
+  useEffect(() => {
+    const lamp = lampRef.current
+    lamp.lit = !dark
+    paintLamp()
+    const controls = animate(lamp.radius, dark ? DARK_RADIUS : litRadius, {
+      duration: dark ? 0.25 : 0.6,
+      onUpdate: (value) => {
+        lamp.radius = value
+        paintLamp()
+      },
+    })
+    return () => controls.stop()
+  }, [dark, litRadius, paintLamp])
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+    const observer = new ResizeObserver(paintLamp)
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [paintLamp])
 
   useEffect(() => {
     if (!playing || dark || done) return
@@ -82,10 +131,15 @@ export function TunnelStage({ layout, round, playing, onRound }: TunnelStageProp
 
   function moveLamp(event: ReactPointerEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect()
-    setLamp({
-      x: ((event.clientX - rect.left) / rect.width) * world.width,
-      y: ((event.clientY - rect.top) / rect.height) * world.height,
-    })
+    lampRef.current.x = (event.clientX - rect.left) / rect.width
+    lampRef.current.y = (event.clientY - rect.top) / rect.height
+    paintLamp()
+  }
+
+  function pointLampAt(x: number, y: number) {
+    lampRef.current.x = x
+    lampRef.current.y = y
+    paintLamp()
   }
 
   function collect(kind: TunnelItemKind) {
@@ -108,34 +162,18 @@ export function TunnelStage({ layout, round, playing, onRound }: TunnelStageProp
 
   return (
     <div
+      ref={containerRef}
       className="absolute inset-0 cursor-none touch-none select-none"
       data-tunnel
       data-dark={dark}
       onPointerMove={moveLamp}
       onPointerDown={moveLamp}
     >
-      <svg viewBox={`0 0 ${world.width} ${world.height}`} className="absolute inset-0 size-full">
+      <svg
+        viewBox={`0 0 ${world.width} ${world.height}`}
+        className="absolute inset-0 size-full transform-gpu"
+      >
         <WatercolorDefs />
-        <defs>
-          <radialGradient id="ch-lamp-hole">
-            <stop offset="0" stopColor="#000" />
-            <stop offset="0.55" stopColor="#000" />
-            <stop offset="1" stopColor="#fff" />
-          </radialGradient>
-          <radialGradient id="ch-lamp-warm">
-            <stop offset="0" stopColor="#ffd88a" stopOpacity="0.35" />
-            <stop offset="1" stopColor="#ffd88a" stopOpacity="0" />
-          </radialGradient>
-          <mask id="ch-lamp-mask">
-            <rect width={world.width} height={world.height} fill="#fff" />
-            <motion.circle
-              initial={false}
-              animate={{ cx: lamp.x, cy: lamp.y, r: radius }}
-              transition={{ duration: 0.12, r: { duration: dark ? 0.25 : 0.6 } }}
-              fill="url(#ch-lamp-hole)"
-            />
-          </mask>
-        </defs>
         {backdrop}
         {spots.map(([sx, sy], index) => {
           const item = plan.items[index]
@@ -152,7 +190,7 @@ export function TunnelStage({ layout, round, playing, onRound }: TunnelStageProp
               className="outline-none"
               transform={`translate(${x} ${y}) scale(${itemScale})`}
               onClick={() => collect(item.id)}
-              onFocus={() => setLamp({ x, y })}
+              onFocus={() => pointLampAt(sx, sy)}
               onKeyDown={(event) => {
                 if (event.key !== 'Enter' && event.key !== ' ') return
                 event.preventDefault()
@@ -164,15 +202,16 @@ export function TunnelStage({ layout, round, playing, onRound }: TunnelStageProp
             </g>
           )
         })}
-        <circle cx={lamp.x} cy={lamp.y} r={radius} fill="url(#ch-lamp-warm)" pointerEvents="none" />
-        <rect
-          width={world.width}
-          height={world.height}
-          fill="#0c0a08"
-          opacity={0.985}
-          mask="url(#ch-lamp-mask)"
-          pointerEvents="none"
-        />
+      </svg>
+      <div
+        ref={darknessRef}
+        className="pointer-events-none absolute inset-0 transform-gpu"
+        style={{ background: DARKNESS }}
+      />
+      <svg
+        viewBox={`0 0 ${world.width} ${world.height}`}
+        className="pointer-events-none absolute inset-0 size-full"
+      >
         <AnimatePresence>
           {dark && (
             <motion.g
@@ -195,6 +234,7 @@ export function TunnelStage({ layout, round, playing, onRound }: TunnelStageProp
             tabIndex={0}
             aria-label="Poświata Bielucha"
             data-glow
+            pointerEvents="auto"
             className="cursor-pointer outline-none"
             onClick={relight}
             onKeyDown={(event) => {
@@ -215,17 +255,6 @@ export function TunnelStage({ layout, round, playing, onRound }: TunnelStageProp
               </g>
             </motion.g>
           </g>
-        )}
-        {!dark && (
-          <circle
-            cx={lamp.x}
-            cy={lamp.y}
-            r={8 * unit}
-            fill="#ffe8a8"
-            stroke="#8a6a3a"
-            strokeWidth={2}
-            pointerEvents="none"
-          />
         )}
       </svg>
 
