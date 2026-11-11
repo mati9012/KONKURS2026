@@ -19,8 +19,7 @@ import { GoatSprite } from '@/levels/zwierzyniec/art/GoatSprite'
 import { shuffled } from '@/lib/shuffle'
 
 const SHAKE_MS = 450
-const FINISH_MS = 2600
-const PAW_MS = 4200
+const PAW_MS = 1500
 const TABLE = 'table'
 
 type TrialStageProps = {
@@ -100,7 +99,11 @@ export function TrialStage({ layout, round, playing, onRound }: TrialStageProps)
 
   useEffect(() => {
     if (!done) return
-    const timer = setTimeout(() => onRound(round), final ? PAW_MS : FINISH_MS)
+    if (!final) {
+      onRound(round)
+      return
+    }
+    const timer = setTimeout(() => onRound(round), PAW_MS)
     return () => clearTimeout(timer)
   }, [done, final, round, onRound])
 
