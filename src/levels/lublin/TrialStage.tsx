@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { StagePanel } from '@/components/ui/StagePanel'
-import { PAINT, WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
+import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { TRIAL_HINTS, TRIAL_ROUNDS } from '@/content/lublin'
 import type { TrialEvidenceId } from '@/content/lublin'
 import { CardTray } from '@/levels/kock/CardTray'
@@ -11,6 +11,7 @@ import { DragGhost } from '@/levels/kock/DragGhost'
 import { useCardDrag } from '@/levels/kock/useCardDrag'
 import { CourtroomBackdrop } from '@/levels/lublin/art/CourtroomBackdrop'
 import { EvidenceIcon } from '@/levels/lublin/art/EvidenceIcon'
+import { JudgeTable, tableGeometry } from '@/levels/lublin/art/JudgeTable'
 import { JusticeScales } from '@/levels/lublin/art/JusticeScales'
 import type { SceneLayout } from '@/levels/lublin/scene-layout'
 import { DevilSprite } from '@/levels/zwierzyniec/art/DevilSprite'
@@ -18,8 +19,7 @@ import { GoatSprite } from '@/levels/zwierzyniec/art/GoatSprite'
 import { shuffled } from '@/lib/shuffle'
 
 const SHAKE_MS = 450
-const FINISH_MS = 2600
-const PAW_MS = 4200
+const PAW_MS = 1500
 const TABLE = 'table'
 
 type TrialStageProps = {
@@ -65,15 +65,18 @@ export function TrialStage({ layout, round, playing, onRound }: TrialStageProps)
   const [message, setMessage] = useState<string | null>(null)
   const drag = useCardDrag(drop)
   const backdrop = useMemo(() => <CourtroomBackdrop layout={layout} />, [layout])
+  const table = useMemo(() => <JudgeTable layout={layout} />, [layout])
   const done = refuted.length >= plan.charges.length
   const charge = done ? null : plan.charges[refuted.length]
   const total = TRIAL_ROUNDS.reduce((sum, entry) => sum + entry.charges.length, 0)
   const settled = round * plan.charges.length + refuted.length
   const tilt = 16 - (32 * settled) / total
-  const tableTop = world.height * (portrait ? 0.58 : 0.6)
-  const tableLeft = world.width * (portrait ? 0.06 : 0.2)
-  const tableWidth = world.width - tableLeft * 2
-  const tableHeight = 90 * unit
+  const {
+    top: tableTop,
+    left: tableLeft,
+    width: tableWidth,
+    height: tableHeight,
+  } = tableGeometry(layout)
   const devilScale = unit * (portrait ? 2.6 : 2.4)
   const cards = deck
     .filter((entry) => !refuted.includes(entry.id))
@@ -96,7 +99,11 @@ export function TrialStage({ layout, round, playing, onRound }: TrialStageProps)
 
   useEffect(() => {
     if (!done) return
-    const timer = setTimeout(() => onRound(round), final ? PAW_MS : FINISH_MS)
+    if (!final) {
+      onRound(round)
+      return
+    }
+    const timer = setTimeout(() => onRound(round), PAW_MS)
     return () => clearTimeout(timer)
   }, [done, final, round, onRound])
 
@@ -120,28 +127,38 @@ export function TrialStage({ layout, round, playing, onRound }: TrialStageProps)
         <WatercolorDefs />
         {backdrop}
       </svg>
-      <svg
-        viewBox={`0 0 ${world.width} ${world.height}`}
-        className="absolute inset-0 size-full select-none"
+      <motion.div
+        className="pointer-events-none absolute inset-0 will-change-transform"
+        initial={false}
+        animate={
+          shaking
+            ? { y: ['0%', '-1.6%', '0%', '-0.9%', '0%'] }
+            : done && final
+              ? { y: ['0%', '-4.5%', '1.1%', '0%'] }
+              : { y: '0%' }
+        }
+        transition={{ duration: done && final ? 0.7 : 0.45 }}
       >
-        <motion.g
-          initial={false}
-          animate={
-            shaking
-              ? { y: [0, -14 * unit, 0, -8 * unit, 0] }
-              : done && final
-                ? { y: [0, -40 * unit, 10 * unit, 0] }
-                : { y: 0 }
-          }
-          transition={{ duration: done && final ? 0.7 : 0.45 }}
-        >
+        <svg viewBox={`0 0 ${world.width} ${world.height}`} className="size-full">
           <g
             transform={`translate(${world.width / 2} ${tableTop + 10 * unit}) scale(${devilScale})`}
           >
             <DevilSprite cracking={false} />
           </g>
-        </motion.g>
-        <g
+        </svg>
+      </motion.div>
+      <svg
+        viewBox={`0 0 ${world.width} ${world.height}`}
+        className="pointer-events-none absolute inset-0 size-full transform-gpu select-none"
+      >
+        <WatercolorDefs />
+        {table}
+      </svg>
+      <svg
+        viewBox={`0 0 ${world.width} ${world.height}`}
+        className="absolute inset-0 size-full select-none"
+      >
+        <rect
           role="button"
           tabIndex={0}
           aria-label="Stół sędziowski"
@@ -153,48 +170,16 @@ export function TrialStage({ layout, round, playing, onRound }: TrialStageProps)
             event.preventDefault()
             drag.pick(TABLE)
           }}
-        >
-          <g filter={PAINT}>
-            <rect
-              x={tableLeft}
-              y={tableTop}
-              width={tableWidth}
-              height={tableHeight}
-              fill="#7a4a2a"
-              stroke="#2a1c14"
-              strokeWidth={4}
-            />
-            <rect
-              x={tableLeft - 14 * unit}
-              y={tableTop - 12 * unit}
-              width={tableWidth + 28 * unit}
-              height={16 * unit}
-              fill="#9a6238"
-              stroke="#2a1c14"
-              strokeWidth={4}
-            />
-            <rect
-              x={tableLeft + 20 * unit}
-              y={tableTop + tableHeight}
-              width={tableWidth - 40 * unit}
-              height={world.height * 0.12}
-              fill="#5a3420"
-              stroke="#2a1c14"
-              strokeWidth={4}
-            />
-          </g>
-          <rect
-            x={tableLeft - 14 * unit}
-            y={tableTop - 12 * unit}
-            width={tableWidth + 28 * unit}
-            height={tableHeight + 12 * unit}
-            fill="#ffe7a3"
-            fillOpacity={hovered ? 0.45 : showTarget ? 0.25 : 0}
-            stroke={showTarget ? '#f2b84b' : 'transparent'}
-            strokeWidth={4}
-            strokeDasharray="12 8"
-          />
-        </g>
+          x={tableLeft - 14 * unit}
+          y={tableTop - 12 * unit}
+          width={tableWidth + 28 * unit}
+          height={tableHeight + 12 * unit}
+          fill="#ffe7a3"
+          fillOpacity={hovered ? 0.45 : showTarget ? 0.25 : 0}
+          stroke={showTarget ? '#f2b84b' : 'transparent'}
+          strokeWidth={4}
+          strokeDasharray="12 8"
+        />
         <g
           transform={`translate(${tableLeft + tableWidth * 0.86} ${tableTop - 160 * unit * (portrait ? 0.9 : 1)}) scale(${unit * (portrait ? 0.9 : 1)})`}
           pointerEvents="none"
@@ -228,7 +213,7 @@ export function TrialStage({ layout, round, playing, onRound }: TrialStageProps)
       </svg>
 
       {dragged && drag.drag && (
-        <DragGhost x={drag.drag.x} y={drag.drag.y} over={drag.hovered !== null}>
+        <DragGhost position={drag.position} over={drag.hovered !== null}>
           <EvidenceIcon id={dragged.id} className="size-16" />
         </DragGhost>
       )}

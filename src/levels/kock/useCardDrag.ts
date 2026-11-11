@@ -1,3 +1,5 @@
+import { useMotionValue } from 'motion/react'
+import type { MotionValue } from 'motion/react'
 import { useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 
@@ -5,12 +7,12 @@ const DRAG_THRESHOLD = 8
 
 export type CardDrag = {
   id: string
-  startX: number
-  startY: number
-  x: number
-  y: number
   moved: boolean
 }
+
+export type DragPosition = { x: MotionValue<number>; y: MotionValue<number> }
+
+type DragStart = CardDrag & { startX: number; startY: number }
 
 function targetAt(x: number, y: number) {
   for (const element of document.elementsFromPoint(x, y)) {
@@ -24,27 +26,41 @@ export function useCardDrag(onDrop: (card: string, target: string) => void) {
   const [drag, setDrag] = useState<CardDrag | null>(null)
   const [hovered, setHovered] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
-  const dragging = useRef<CardDrag | null>(null)
+  const dragging = useRef<DragStart | null>(null)
+  const hoverFrame = useRef(0)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
 
   function start(id: string, event: ReactPointerEvent<HTMLElement>) {
     event.currentTarget.setPointerCapture(event.pointerId)
-    const { clientX: x, clientY: y } = event
-    dragging.current = { id, startX: x, startY: y, x, y, moved: false }
-    setDrag(dragging.current)
+    const { clientX, clientY } = event
+    dragging.current = { id, startX: clientX, startY: clientY, moved: false }
+    x.set(clientX)
+    y.set(clientY)
+    setDrag({ id, moved: false })
   }
 
   function move(event: ReactPointerEvent<HTMLElement>) {
     const current = dragging.current
     if (!current) return
-    const { clientX: x, clientY: y } = event
-    const moved =
-      current.moved || Math.hypot(x - current.startX, y - current.startY) > DRAG_THRESHOLD
-    dragging.current = { ...current, x, y, moved }
-    setDrag(dragging.current)
-    setHovered(moved ? targetAt(x, y) : null)
+    const { clientX, clientY } = event
+    x.set(clientX)
+    y.set(clientY)
+    if (!current.moved) {
+      if (Math.hypot(clientX - current.startX, clientY - current.startY) <= DRAG_THRESHOLD) return
+      current.moved = true
+      setDrag({ id: current.id, moved: true })
+    }
+    if (hoverFrame.current) return
+    hoverFrame.current = requestAnimationFrame(() => {
+      hoverFrame.current = 0
+      if (dragging.current) setHovered(targetAt(x.get(), y.get()))
+    })
   }
 
   function cancel() {
+    cancelAnimationFrame(hoverFrame.current)
+    hoverFrame.current = 0
     dragging.current = null
     setDrag(null)
     setHovered(null)
@@ -70,6 +86,7 @@ export function useCardDrag(onDrop: (card: string, target: string) => void) {
 
   return {
     drag,
+    position: { x, y } satisfies DragPosition,
     hovered,
     selected,
     setSelected,

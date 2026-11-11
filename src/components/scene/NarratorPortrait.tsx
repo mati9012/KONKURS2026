@@ -2,7 +2,7 @@
 
 import { useAnimations, useGLTF } from '@react-three/drei'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Suspense, useEffect, useRef } from 'react'
+import { Suspense, memo, useEffect, useRef } from 'react'
 import { Quaternion, Vector3 } from 'three'
 import type { AnimationAction, Group, Object3D } from 'three'
 import type { DialogueLine, NarratorGesture } from '@/content/schema'
@@ -124,13 +124,17 @@ function Devil({ gesture, speaking }: GoatProps) {
   )
 }
 
-export function NarratorPortrait({ speaker, gesture, speaking }: NarratorPortraitProps) {
+export const NarratorPortrait = memo(function NarratorPortrait({
+  speaker,
+  gesture,
+  speaking,
+}: NarratorPortraitProps) {
   const devil = speaker === 'diabel'
 
   return (
     <Canvas
       flat
-      dpr={[1, 2]}
+      dpr={[1, 1.5]}
       gl={{ alpha: true }}
       camera={{ position: [0.34, 0.7, 1.7], fov: 30 }}
       onCreated={({ camera }) => camera.lookAt(0.02, 0.6, 0)}
@@ -148,7 +152,7 @@ export function NarratorPortrait({ speaker, gesture, speaking }: NarratorPortrai
       </Suspense>
     </Canvas>
   )
-}
+})
 
 useGLTF.preload(MODEL)
 useGLTF.preload(DEVIL_MODEL)

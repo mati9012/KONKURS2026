@@ -14,7 +14,6 @@ import { createRandom } from '@/lib/noise'
 import { shuffled } from '@/lib/shuffle'
 
 const SHAKE_MS = 450
-const FINISH_MS = 2600
 const SOOT_SCALE = 3
 const CLEAN_SHARE = 0.62
 const CHECK_EVERY = 10
@@ -144,9 +143,7 @@ export function FrescoStage({ layout, round, playing, onRound }: FrescoStageProp
   }, [shaking])
 
   useEffect(() => {
-    if (!done) return
-    const timer = setTimeout(() => onRound(round), FINISH_MS)
-    return () => clearTimeout(timer)
+    if (done) onRound(round)
   }, [done, round, onRound])
 
   function rub(event: ReactPointerEvent<HTMLCanvasElement>) {

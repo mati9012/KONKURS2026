@@ -1,6 +1,6 @@
 'use client'
 
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useMotionValue } from 'motion/react'
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { BRIDGE_HINTS } from '@/content/zwierzyniec'
@@ -40,8 +40,6 @@ type Drag = {
   id: string
   startX: number
   startY: number
-  x: number
-  y: number
   moved: boolean
   pixels: number
 }
@@ -247,6 +245,8 @@ export function BridgeStage({
   const doneFor = useRef(-1)
   const [puzzle, dispatch] = useReducer(puzzleReducer, undefined, initialPuzzle)
   const [drag, setDrag] = useState<Drag | null>(null)
+  const dragX = useMotionValue(0)
+  const dragY = useMotionValue(0)
   const dragging = useRef<Drag | null>(null)
   const midpoints = useMemo(
     () => Object.fromEntries(layout.gaps.map((gap) => [gap.id, midpoint(layout, gap)])),
@@ -351,21 +351,25 @@ export function BridgeStage({
       id: card.id,
       startX: event.clientX,
       startY: event.clientY,
-      x: event.clientX,
-      y: event.clientY,
       moved: false,
       pixels: (width / layout.world.width) * layout.unit,
     }
+    dragX.set(event.clientX)
+    dragY.set(event.clientY)
     setDrag(dragging.current)
   }
 
   function moveDrag(event: ReactPointerEvent<HTMLDivElement>) {
     const current = dragging.current
     if (!current) return
-    const moved =
-      current.moved ||
-      Math.hypot(event.clientX - current.startX, event.clientY - current.startY) > DRAG_THRESHOLD
-    dragging.current = { ...current, x: event.clientX, y: event.clientY, moved }
+    dragX.set(event.clientX)
+    dragY.set(event.clientY)
+    if (current.moved) return
+    if (
+      Math.hypot(event.clientX - current.startX, event.clientY - current.startY) <= DRAG_THRESHOLD
+    )
+      return
+    dragging.current = { ...current, moved: true }
     setDrag(dragging.current)
   }
 
@@ -573,18 +577,19 @@ export function BridgeStage({
       </section>
 
       {dragged && (
-        <svg
-          aria-hidden="true"
-          viewBox={`-4 -12 ${PLANK_SPAN[dragged.length] + 8} 24`}
-          className="pointer-events-none fixed z-40 -translate-x-1/2 -translate-y-1/2 drop-shadow-lg"
-          style={{
-            left: drag?.x,
-            top: drag?.y,
-            width: `${(PLANK_SPAN[dragged.length] + 8) * (drag?.pixels ?? 1)}px`,
-          }}
+        <motion.div
+          className="pointer-events-none fixed top-0 left-0 z-40 will-change-transform"
+          style={{ x: dragX, y: dragY }}
         >
-          <PlankArt span={PLANK_SPAN[dragged.length]} rotten={dragged.rotten} />
-        </svg>
+          <svg
+            aria-hidden="true"
+            viewBox={`-4 -12 ${PLANK_SPAN[dragged.length] + 8} 24`}
+            className="-translate-x-1/2 -translate-y-1/2 drop-shadow-lg"
+            style={{ width: `${(PLANK_SPAN[dragged.length] + 8) * (drag?.pixels ?? 1)}px` }}
+          >
+            <PlankArt span={PLANK_SPAN[dragged.length]} rotten={dragged.rotten} />
+          </svg>
+        </motion.div>
       )}
     </div>
   )
