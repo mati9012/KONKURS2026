@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic'
 import { BILGORAJ_ARRIVAL, BILGORAJ_OUTRO } from '@/content/bilgoraj'
+import { KAZIMIERZ_ARRIVAL, KAZIMIERZ_OUTRO } from '@/content/kazimierz-dolny'
 import { KOCK_ARRIVAL, KOCK_OUTRO } from '@/content/kock'
 import { POLESKI_ARRIVAL, POLESKI_OUTRO } from '@/content/poleski-park-narodowy'
 import { WLODAWA_ARRIVAL, WLODAWA_OUTRO } from '@/content/wlodawa'
@@ -70,5 +71,13 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
     Game: dynamic(() => import('@/levels/pulawy/PulawyLevel').then((mod) => mod.PulawyLevel), {
       ssr: false,
     }),
+  },
+  'kazimierz-dolny': {
+    intro: KAZIMIERZ_ARRIVAL,
+    outro: KAZIMIERZ_OUTRO,
+    Game: dynamic(
+      () => import('@/levels/kazimierz-dolny/KazimierzLevel').then((mod) => mod.KazimierzLevel),
+      { ssr: false },
+    ),
   },
 }
