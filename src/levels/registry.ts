@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic'
 import { BILGORAJ_ARRIVAL, BILGORAJ_OUTRO } from '@/content/bilgoraj'
+import { CHELM_ARRIVAL, CHELM_OUTRO } from '@/content/chelm'
 import { KAZIMIERZ_ARRIVAL, KAZIMIERZ_OUTRO } from '@/content/kazimierz-dolny'
 import { KOCK_ARRIVAL, KOCK_OUTRO } from '@/content/kock'
 import { POLESKI_ARRIVAL, POLESKI_OUTRO } from '@/content/poleski-park-narodowy'
@@ -69,6 +70,13 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
     intro: PULAWY_ARRIVAL,
     outro: PULAWY_OUTRO,
     Game: dynamic(() => import('@/levels/pulawy/PulawyLevel').then((mod) => mod.PulawyLevel), {
+      ssr: false,
+    }),
+  },
+  chelm: {
+    intro: CHELM_ARRIVAL,
+    outro: CHELM_OUTRO,
+    Game: dynamic(() => import('@/levels/chelm/ChelmLevel').then((mod) => mod.ChelmLevel), {
       ssr: false,
     }),
   },
