@@ -158,7 +158,7 @@ export function MarketStage({ layout, round, playing, onRound }: MarketStageProp
       </svg>
 
       {draggedId && drag.drag && (
-        <DragGhost x={drag.drag.x} y={drag.drag.y} over={drag.hovered !== null}>
+        <DragGhost position={drag.position} over={drag.hovered !== null}>
           <GoodIcon id={draggedId} className="size-16" />
         </DragGhost>
       )}

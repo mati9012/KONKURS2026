@@ -1,8 +1,9 @@
 'use client'
 
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useMotionValue } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
+import { DragGhost } from '@/levels/kock/DragGhost'
 import { StagePanel } from '@/components/ui/StagePanel'
 import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { INGREDIENT_NAMES, OVEN, PIEROG_HINTS, RECIPE } from '@/content/bilgoraj'
@@ -36,8 +37,6 @@ type Drag = {
   id: IngredientId
   startX: number
   startY: number
-  x: number
-  y: number
   moved: boolean
 }
 
@@ -64,6 +63,8 @@ export function PierogStage({ layout, playing, onStep }: PierogStageProps) {
   const [selected, setSelected] = useState<IngredientId | null>(null)
   const [shaking, setShaking] = useState<IngredientId | null>(null)
   const [drag, setDrag] = useState<Drag | null>(null)
+  const dragX = useMotionValue(0)
+  const dragY = useMotionValue(0)
   const [hovering, setHovering] = useState(false)
   const dragging = useRef<Drag | null>(null)
   const filled = added.length === RECIPE.length
@@ -135,7 +136,9 @@ export function PierogStage({ layout, playing, onStep }: PierogStageProps) {
     if (!playing || phase !== 'fill') return
     event.currentTarget.setPointerCapture(event.pointerId)
     const { clientX: x, clientY: y } = event
-    dragging.current = { id, startX: x, startY: y, x, y, moved: false }
+    dragging.current = { id, startX: x, startY: y, moved: false }
+    dragX.set(x)
+    dragY.set(y)
     setDrag(dragging.current)
   }
 
@@ -143,11 +146,14 @@ export function PierogStage({ layout, playing, onStep }: PierogStageProps) {
     const current = dragging.current
     if (!current) return
     const { clientX: x, clientY: y } = event
-    const moved =
-      current.moved || Math.hypot(x - current.startX, y - current.startY) > DRAG_THRESHOLD
-    dragging.current = { ...current, x, y, moved }
-    setDrag(dragging.current)
-    setHovering(moved && overTin(x, y))
+    dragX.set(x)
+    dragY.set(y)
+    if (!current.moved) {
+      if (Math.hypot(x - current.startX, y - current.startY) <= DRAG_THRESHOLD) return
+      dragging.current = { ...current, moved: true }
+      setDrag(dragging.current)
+    }
+    setHovering(overTin(x, y))
   }
 
   function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
@@ -226,18 +232,9 @@ export function PierogStage({ layout, playing, onStep }: PierogStageProps) {
       </svg>
 
       {drag?.moved && (
-        <div
-          className="pointer-events-none fixed z-40 -translate-x-1/2 -translate-y-3/4"
-          style={{ left: drag.x, top: drag.y }}
-        >
-          <motion.div
-            initial={{ scale: 0.6 }}
-            animate={{ scale: hovering ? 1.15 : 1, rotate: hovering ? 0 : -6 }}
-            className="rounded-2xl border-2 border-[#b8894f] bg-[#fbf0d6]/90 p-1.5 shadow-[0_14px_30px_rgba(40,25,20,0.35)]"
-          >
-            <IngredientIcon id={drag.id} className="size-16" />
-          </motion.div>
-        </div>
+        <DragGhost position={{ x: dragX, y: dragY }} over={hovering}>
+          <IngredientIcon id={drag.id} className="size-16" />
+        </DragGhost>
       )}
 
       <AnimatePresence>

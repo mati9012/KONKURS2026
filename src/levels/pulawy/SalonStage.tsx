@@ -251,7 +251,7 @@ export function SalonStage({ layout, round, playing, onRound }: SalonStageProps)
       </svg>
 
       {draggedId && drag.drag && (
-        <DragGhost x={drag.drag.x} y={drag.drag.y} over={drag.hovered !== null}>
+        <DragGhost position={drag.position} over={drag.hovered !== null}>
           <GuestIcon id={draggedId} className="size-16" />
         </DragGhost>
       )}

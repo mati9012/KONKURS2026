@@ -334,7 +334,7 @@ export function FacadeStage({ layout, round, playing, onRound }: FacadeStageProp
       </svg>
 
       {draggedPiece && drag.drag && (
-        <DragGhost x={drag.drag.x} y={drag.drag.y} over={drag.hovered !== null}>
+        <DragGhost position={drag.position} over={drag.hovered !== null}>
           <OrnamentIcon kind={draggedPiece.kind} className="size-16" />
         </DragGhost>
       )}

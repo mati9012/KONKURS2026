@@ -219,7 +219,7 @@ export function TempleStage({ layout, round, playing, onRound }: TempleStageProp
       </svg>
 
       {draggedId && drag.drag && (
-        <DragGhost x={drag.drag.x} y={drag.drag.y} over={drag.hovered !== null}>
+        <DragGhost position={drag.position} over={drag.hovered !== null}>
           <RelicIcon id={draggedId} className="size-16" />
         </DragGhost>
       )}

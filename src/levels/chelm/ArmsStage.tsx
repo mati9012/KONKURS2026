@@ -160,7 +160,7 @@ export function ArmsStage({ layout, round, playing, onRound }: ArmsStageProps) {
       </svg>
 
       {draggedPart && drag.drag && (
-        <DragGhost x={drag.drag.x} y={drag.drag.y} over={drag.hovered !== null}>
+        <DragGhost position={drag.position} over={drag.hovered !== null}>
           <ArmsPartIcon kind={draggedPart.id} className="size-16" />
         </DragGhost>
       )}

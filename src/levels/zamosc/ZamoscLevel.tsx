@@ -1,6 +1,6 @@
 'use client'
 
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion, useMotionValue, useReducedMotion } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { CloudCurtain } from '@/components/ui/CloudCurtain'
@@ -10,6 +10,7 @@ import { useWorld } from '@/components/watercolor/useWorld'
 import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { BUILD_FINALE, BUILD_STEPS, BUILDING_IDS, ZAMOSC_PROLOGUE } from '@/content/zamosc'
 import type { BuildingId, HejnalDirection } from '@/content/zamosc'
+import { DragGhost } from '@/levels/kock/DragGhost'
 import type { LevelGameProps } from '@/levels/level-game'
 import { shuffled } from '@/lib/shuffle'
 import { CityArt } from '@/levels/zamosc/art/CityArt'
@@ -30,8 +31,6 @@ type Drag = {
   id: BuildingId
   startX: number
   startY: number
-  x: number
-  y: number
   moved: boolean
 }
 
@@ -70,6 +69,8 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
   const [notes, setNotes] = useState<{ id: number }[]>([])
   const noteId = useRef(0)
   const [drag, setDrag] = useState<Drag | null>(null)
+  const dragX = useMotionValue(0)
+  const dragY = useMotionValue(0)
   const [hovered, setHovered] = useState<BuildingId | null>(null)
   const dragging = useRef<Drag | null>(null)
   const onTower = stage.kind === 'hejnal'
@@ -131,7 +132,9 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
   function startDrag(id: BuildingId, event: ReactPointerEvent<HTMLButtonElement>) {
     event.currentTarget.setPointerCapture(event.pointerId)
     const { clientX: x, clientY: y } = event
-    dragging.current = { id, startX: x, startY: y, x, y, moved: false }
+    dragging.current = { id, startX: x, startY: y, moved: false }
+    dragX.set(x)
+    dragY.set(y)
     setDrag(dragging.current)
     choose(id)
   }
@@ -140,11 +143,14 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
     const current = dragging.current
     if (!current) return
     const { clientX: x, clientY: y } = event
-    const moved =
-      current.moved || Math.hypot(x - current.startX, y - current.startY) > DRAG_THRESHOLD
-    dragging.current = { ...current, x, y, moved }
-    setDrag(dragging.current)
-    setHovered(moved ? socketAt(x, y) : null)
+    dragX.set(x)
+    dragY.set(y)
+    if (!current.moved) {
+      if (Math.hypot(x - current.startX, y - current.startY) <= DRAG_THRESHOLD) return
+      dragging.current = { ...current, moved: true }
+      setDrag(dragging.current)
+    }
+    setHovered(socketAt(x, y))
   }
 
   function cancelDrag() {
@@ -271,18 +277,9 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       {drag?.moved && (
-        <div
-          className="pointer-events-none fixed z-40 -translate-x-1/2 -translate-y-3/4"
-          style={{ left: drag.x, top: drag.y }}
-        >
-          <motion.div
-            initial={{ scale: 0.6, rotate: 0 }}
-            animate={{ scale: hovered ? 1.15 : 1, rotate: hovered ? 0 : -6 }}
-            className="rounded-2xl border-2 border-[#b8894f] bg-[#fbf0d6]/90 p-1.5 shadow-[0_14px_30px_rgba(40,25,20,0.35)]"
-          >
-            <BuildingIcon id={drag.id} className="size-16 sm:size-20" />
-          </motion.div>
-        </div>
+        <DragGhost position={{ x: dragX, y: dragY }} over={hovered !== null}>
+          <BuildingIcon id={drag.id} className="size-16 sm:size-20" />
+        </DragGhost>
       )}
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">

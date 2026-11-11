@@ -46,6 +46,7 @@ export function ChaseStage({ layout, round, playing, onRound }: ChaseStageProps)
   const devilX = stopX(geometry, index) + 180 * geometry.scale
   const cameraX = goatX + world.width * (portrait ? 0.15 : 0.2)
   const actorScale = unit * (portrait ? 1.5 : 1.3)
+  const actorBox = 220 * actorScale
   const widthShare = (geometry.width / world.width) * 100
 
   useEffect(() => {
@@ -81,29 +82,28 @@ export function ChaseStage({ layout, round, playing, onRound }: ChaseStageProps)
         transition={RUN}
       >
         {panorama}
-        <svg
-          viewBox={`0 0 ${geometry.width} ${world.height}`}
-          className="absolute inset-0 size-full transform-gpu"
-        >
-          <motion.g
+        {[
+          {
+            key: 'devil',
+            x: devilX,
+            y: geometry.ground - 70 * unit,
+            art: <DevilSprite cracking={false} />,
+          },
+          { key: 'goat', x: goatX, y: geometry.ground + 30 * unit, art: <GoatSprite /> },
+        ].map((actor) => (
+          <motion.div
+            key={actor.key}
+            className="absolute inset-y-0 left-0 will-change-transform"
+            style={{ width: `${(actorBox / geometry.width) * 100}%` }}
             initial={false}
-            animate={{ x: devilX, y: geometry.ground - 70 * unit }}
+            animate={{ x: `${(actor.x / actorBox - 0.5) * 100}%` }}
             transition={RUN}
           >
-            <g transform={`scale(${actorScale})`}>
-              <DevilSprite cracking={false} />
-            </g>
-          </motion.g>
-          <motion.g
-            initial={false}
-            animate={{ x: goatX, y: geometry.ground + 30 * unit }}
-            transition={RUN}
-          >
-            <g transform={`scale(${actorScale})`}>
-              <GoatSprite />
-            </g>
-          </motion.g>
-        </svg>
+            <svg viewBox={`${-actorBox / 2} 0 ${actorBox} ${world.height}`} className="size-full">
+              <g transform={`translate(0 ${actor.y}) scale(${actorScale})`}>{actor.art}</g>
+            </svg>
+          </motion.div>
+        ))}
       </motion.div>
 
       <AnimatePresence>
