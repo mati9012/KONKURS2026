@@ -3,6 +3,7 @@ import { BILGORAJ_ARRIVAL, BILGORAJ_OUTRO } from '@/content/bilgoraj'
 import { CHELM_ARRIVAL, CHELM_OUTRO } from '@/content/chelm'
 import { KAZIMIERZ_ARRIVAL, KAZIMIERZ_OUTRO } from '@/content/kazimierz-dolny'
 import { KOCK_ARRIVAL, KOCK_OUTRO } from '@/content/kock'
+import { LUBLIN_ARRIVAL, LUBLIN_OUTRO } from '@/content/lublin'
 import { POLESKI_ARRIVAL, POLESKI_OUTRO } from '@/content/poleski-park-narodowy'
 import { WLODAWA_ARRIVAL, WLODAWA_OUTRO } from '@/content/wlodawa'
 import { PULAWY_ARRIVAL, PULAWY_OUTRO } from '@/content/pulawy'
@@ -87,5 +88,12 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
       () => import('@/levels/kazimierz-dolny/KazimierzLevel').then((mod) => mod.KazimierzLevel),
       { ssr: false },
     ),
+  },
+  lublin: {
+    intro: LUBLIN_ARRIVAL,
+    outro: LUBLIN_OUTRO,
+    Game: dynamic(() => import('@/levels/lublin/LublinLevel').then((mod) => mod.LublinLevel), {
+      ssr: false,
+    }),
   },
 }
