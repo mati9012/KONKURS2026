@@ -1,52 +1,24 @@
 'use client'
 
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { StagePanel } from '@/components/ui/StagePanel'
-import { blobPath, ridgePath } from '@/components/watercolor/paint'
-import { TreeLine } from '@/components/watercolor/TreeLine'
-import { PAINT, PAINT_SOFT, WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
+import { WatercolorDefs } from '@/components/watercolor/WatercolorDefs'
 import { GORGE_HINTS, GORGE_LEGS } from '@/content/kazimierz-dolny'
-import { GorgeObstacleArt } from '@/levels/kazimierz-dolny/art/GorgeObstacleArt'
+import { GorgeView, gorgeGeometry } from '@/levels/kazimierz-dolny/art/GorgeView'
 import { RoosterArt } from '@/levels/kazimierz-dolny/art/RoosterArt'
-import { gorgeCourse, ROOT_HEIGHT } from '@/levels/kazimierz-dolny/gorge-course'
 import type { SceneLayout } from '@/levels/kazimierz-dolny/scene-layout'
+import { shuffled } from '@/lib/shuffle'
 
-const GRAVITY = 2600
-const JUMP = 1000
-const DUCK_SECONDS = 0.75
-const BUMP_SECONDS = 0.7
-const BUMP_SLOW = 0.35
-const HIT_HALF = 44
-const BUTTON =
-  'pointer-events-auto absolute bottom-[max(1rem,env(safe-area-inset-bottom))] h-20 w-28 rounded-2xl border-2 border-[#7a4e28] bg-[#fbf0d6] font-display text-lg font-bold text-[#4a2f1a] shadow-lg active:translate-y-1'
+const WALK_MS = 900
+const SLIDE_MS = 1400
+const ARRIVE_MS = 1300
 
-const TREES = {
-  fir: ['#5a7e52', '#648a5a'],
-  beech: ['#7aa05a', '#88ac64', '#6e9450'],
-  trunk: '#5a4632',
-}
-
-type Runner = {
-  clock: number
-  offset: number
-  height: number
-  lift: number
-  duckUntil: number
-  bumpUntil: number
-  hits: number[]
-}
-
-const START: Runner = {
-  clock: 0,
-  offset: 0,
-  height: 0,
-  lift: 0,
-  duckUntil: 0,
-  bumpUntil: 0,
-  hits: [],
-}
+type Phase =
+  | { kind: 'choose' }
+  | { kind: 'walk'; answer: number }
+  | { kind: 'slide'; answer: number }
+  | { kind: 'arrived'; answer: number }
 
 type GorgeStageProps = {
   layout: SceneLayout
@@ -55,196 +27,164 @@ type GorgeStageProps = {
   onLeg: (leg: number) => void
 }
 
-function Walls({ layout, offset }: { layout: SceneLayout; offset: number }) {
-  const { world, unit, ground, portrait } = layout
-  const { width, height } = world
-  const top = ground - (portrait ? 640 : 420) * unit
-  const far = useMemo(
-    () => (
-      <g>
-        <path d={ridgePath(width, top - 20 * unit, 30 * unit, 7, ground, 0.004)} fill="#e0c88a" />
-        {[0.2, 0.45, 0.7].map((share) => (
-          <path
-            key={share}
-            d={`M-20 ${top + (ground - top) * share}C${width * 0.3} ${top + (ground - top) * share - 10 * unit} ${width * 0.6} ${top + (ground - top) * share + 12 * unit} ${width + 20} ${top + (ground - top) * share}`}
-            stroke="#c8ac6a"
-            strokeWidth={4 * unit}
-            fill="none"
-            opacity={0.6}
-          />
-        ))}
-      </g>
-    ),
-    [width, top, ground, unit],
-  )
-  const crest = useMemo(
-    () => (
-      <g>
-        <TreeLine
-          width={width}
-          baseY={top + 10 * unit}
-          height={120 * unit}
-          seed={91}
-          palette={TREES}
-          density={0.9}
-          filter={PAINT_SOFT}
-        />
-        {Array.from({ length: Math.ceil(width / (70 * unit)) }, (_, index) => (
-          <path
-            key={index}
-            d={`M${index * 70 * unit} ${top}C${index * 70 * unit - 6 * unit} ${top + 40 * unit} ${index * 70 * unit + 8 * unit} ${top + 80 * unit} ${index * 70 * unit + (index % 2 ? 4 : -6) * unit} ${top + (60 + (index % 3) * 30) * unit}`}
-            stroke="#7a5a34"
-            strokeWidth={3 * unit}
-            fill="none"
-            opacity={0.8}
-          />
-        ))}
-      </g>
-    ),
-    [width, top, unit],
-  )
-  const layer = (content: ReactNode, factor: number) => {
-    const shift = -((offset * unit * factor) % width)
-    return (
-      <g transform={`translate(${shift} 0)`}>
-        {content}
-        <g transform={`translate(${width} 0)`}>{content}</g>
-      </g>
-    )
-  }
-  return (
-    <g>
-      <rect width={width} height={height} fill="#cfe0e8" />
-      <path
-        d={blobPath(width * 0.5, top * 0.4, 160 * unit, 22 * unit, 81, 0.3)}
-        fill="#fffaf0"
-        opacity={0.8}
-      />
-      {layer(far, 0.15)}
-      {layer(crest, 0.4)}
-      <rect y={ground} width={width} height={height - ground} fill="#c8a86a" filter={PAINT} />
-      <rect y={ground + 4 * unit} width={width} height={30 * unit} fill="#a8884a" opacity={0.6} />
-    </g>
-  )
+function phaseDelay(phase: Phase) {
+  if (phase.kind === 'walk') return WALK_MS
+  if (phase.kind === 'slide') return SLIDE_MS
+  return ARRIVE_MS
 }
 
 export function GorgeStage({ layout, leg, playing, onLeg }: GorgeStageProps) {
-  const { world, unit, ground } = layout
+  const { world, unit, portrait } = layout
   const plan = GORGE_LEGS[Math.min(leg, GORGE_LEGS.length - 1)]
-  const course = useMemo(() => gorgeCourse(leg, plan.distance), [leg, plan.distance])
-  const runnerX = world.width * 0.24
-  const [frame, setFrame] = useState<Runner>(START)
-  const state = useRef(frame)
-  const done = useRef(false)
+  const [orders] = useState(() =>
+    plan.forks.map((fork) => shuffled(fork.answers.map((_, index) => index))),
+  )
+  const [forkIndex, setForkIndex] = useState(0)
+  const [blocked, setBlocked] = useState<number[]>([])
+  const [phase, setPhase] = useState<Phase>({ kind: 'choose' })
   const [hint, setHint] = useState<string>(GORGE_HINTS.start)
-
-  function jump() {
-    if (!playing) return
-    const current = state.current
-    if (current.height > 0 || current.lift > 0) return
-    state.current = { ...current, lift: JUMP, duckUntil: 0 }
-  }
-
-  function duck() {
-    if (!playing) return
-    const current = state.current
-    if (current.height > 0) return
-    state.current = { ...current, duckUntil: current.clock + DUCK_SECONDS }
-  }
+  const fork = plan.forks[Math.min(forkIndex, plan.forks.length - 1)]
+  const order = orders[Math.min(forkIndex, orders.length - 1)]
+  const geometry = gorgeGeometry(layout, order.length)
+  const view = useMemo(
+    () => <GorgeView layout={layout} geometry={gorgeGeometry(layout, order.length)} />,
+    [layout, order.length],
+  )
+  const roosterScale = unit * (portrait ? 1.5 : 1.3)
+  const home = { x: world.width / 2, y: world.height - 70 * unit }
 
   useEffect(() => {
-    if (!playing) return
-    let raf = 0
-    let last = performance.now()
-    function tick(now: number) {
-      const dt = Math.min(0.05, (now - last) / 1000)
-      last = now
-      const current = state.current
-      const clock = current.clock + dt
-      const slow = clock < current.bumpUntil ? BUMP_SLOW : 1
-      const offset = current.offset + plan.speed * slow * dt
-      let lift = current.lift - GRAVITY * dt
-      let height = Math.max(0, current.height + lift * dt)
-      if (height === 0 && lift < 0) lift = 0
-      const ducking = clock < current.duckUntil
-      let { bumpUntil, hits } = current
-      for (const obstacle of course) {
-        if (hits.includes(obstacle.id)) continue
-        if (Math.abs(obstacle.pos - offset) >= HIT_HALF) continue
-        const hit = obstacle.kind === 'root' ? height < ROOT_HEIGHT : !ducking
-        if (!hit) continue
-        hits = [...hits, obstacle.id]
-        bumpUntil = clock + BUMP_SECONDS
-        height = 0
-        lift = 0
-        setHint(obstacle.kind === 'root' ? GORGE_HINTS.root : GORGE_HINTS.branch)
-      }
-      state.current = { ...current, clock, offset, height, lift, bumpUntil, hits }
-      setFrame(state.current)
-      if (offset >= plan.distance) {
-        if (!done.current) {
-          done.current = true
-          onLeg(leg)
-        }
+    if (phase.kind === 'choose') return
+    const timer = setTimeout(() => {
+      if (phase.kind === 'walk') {
+        const correct = phase.answer === fork.correctIndex
+        setPhase(
+          correct
+            ? { kind: 'arrived', answer: phase.answer }
+            : { kind: 'slide', answer: phase.answer },
+        )
+        setHint(correct ? fork.fact : GORGE_HINTS.wrong)
         return
       }
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [playing, course, plan.distance, plan.speed, leg, onLeg])
+      if (phase.kind === 'slide') {
+        setBlocked((current) => [...current, phase.answer])
+        setPhase({ kind: 'choose' })
+        return
+      }
+      if (forkIndex + 1 >= plan.forks.length) {
+        onLeg(leg)
+        return
+      }
+      setForkIndex(forkIndex + 1)
+      setBlocked([])
+      setPhase({ kind: 'choose' })
+      setHint(GORGE_HINTS.start)
+    }, phaseDelay(phase))
+    return () => clearTimeout(timer)
+  }, [phase, fork, forkIndex, plan.forks.length, leg, onLeg])
 
-  useEffect(() => {
-    if (!playing) return
-    function onKey(event: KeyboardEvent) {
-      if (event.key === 'ArrowUp' || event.key === ' ') jump()
-      else if (event.key === 'ArrowDown') duck()
-      else return
-      event.preventDefault()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  })
+  function choose(answer: number) {
+    if (!playing || phase.kind !== 'choose' || blocked.includes(answer)) return
+    setPhase({ kind: 'walk', answer })
+  }
 
-  const ducking = frame.clock < frame.duckUntil
-  const airborne = frame.height > 0
-  const stumbling = frame.clock < frame.bumpUntil
-  const next = course.find((obstacle) => obstacle.pos - frame.offset > -HIT_HALF)
-  const nextGap = next ? Math.round(next.pos - frame.offset) : -1
-  const progress = Math.min(1, frame.offset / plan.distance)
-  const pose = ducking ? 'duck' : airborne ? 'jump' : 'run'
+  const target = phase.kind === 'choose' ? null : geometry.openings[order.indexOf(phase.answer)]
+  const roosterAt =
+    phase.kind === 'choose' || !target
+      ? { x: home.x, y: home.y, scale: 1 }
+      : phase.kind === 'slide'
+        ? {
+            x: home.x + (target.x - home.x) * 0.4,
+            y: home.y + (geometry.backBottom - home.y) * 0.4,
+            scale: 0.8,
+          }
+        : { x: target.x, y: geometry.backBottom - 10 * unit, scale: 0.45 }
+  const pose = phase.kind === 'walk' ? 'run' : phase.kind === 'arrived' ? 'crow' : 'stand'
 
   return (
-    <div
-      className="absolute inset-0 touch-none select-none"
-      data-gorge
-      data-next-gap={nextGap}
-      data-next-kind={next?.kind ?? ''}
-      data-airborne={airborne}
-      data-ducking={ducking}
-    >
+    <div className="absolute inset-0 select-none" data-gorge data-fork={forkIndex}>
       <svg viewBox={`0 0 ${world.width} ${world.height}`} className="absolute inset-0 size-full">
         <WatercolorDefs />
-        <Walls layout={layout} offset={frame.offset} />
-        {course.map((obstacle) => {
-          const x = runnerX + (obstacle.pos - frame.offset) * unit
-          if (x < -150 * unit || x > world.width + 150 * unit) return null
+        <AnimatePresence initial={false}>
+          <motion.g
+            key={forkIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {view}
+          </motion.g>
+        </AnimatePresence>
+        {geometry.openings.map((opening, slot) => {
+          const answer = order[slot]
+          const sliding = phase.kind === 'slide' && phase.answer === answer
+          if (!blocked.includes(answer) && !sliding) return null
           return (
-            <g
-              key={obstacle.id}
-              transform={`translate(${x} ${ground + 10 * unit}) scale(${unit})`}
-              opacity={frame.hits.includes(obstacle.id) ? 0.5 : 1}
+            <motion.g
+              key={`${forkIndex}-${answer}`}
+              initial={sliding ? { y: -260 * unit, opacity: 0 } : false}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, ease: 'easeIn' }}
             >
-              <GorgeObstacleArt kind={obstacle.kind} />
-            </g>
+              <path
+                d={`M${opening.x - opening.width * 0.62} ${geometry.backBottom + 6 * unit}C${opening.x - opening.width * 0.5} ${opening.top + opening.width * 0.2} ${opening.x + opening.width * 0.5} ${opening.top + opening.width * 0.1} ${opening.x + opening.width * 0.62} ${geometry.backBottom + 6 * unit}Z`}
+                fill="#d8b46c"
+                stroke="#8a6a3a"
+                strokeWidth={3}
+              />
+              {[-0.3, 0, 0.28].map((share) => (
+                <circle
+                  key={share}
+                  cx={opening.x + opening.width * share}
+                  cy={geometry.backBottom - opening.width * (0.25 + Math.abs(share) * 0.2)}
+                  r={opening.width * 0.08}
+                  fill="#c09450"
+                />
+              ))}
+            </motion.g>
           )
         })}
-        <g
-          transform={`translate(${runnerX} ${ground + 10 * unit - frame.height * unit}) scale(${unit})${stumbling ? ' rotate(-8)' : ''}`}
+        <motion.g
+          initial={false}
+          animate={{ x: roosterAt.x, y: roosterAt.y, scale: roosterAt.scale }}
+          transition={{
+            duration: phase.kind === 'slide' ? 0.4 : WALK_MS / 1000,
+            ease: 'easeInOut',
+          }}
         >
-          <RoosterArt pose={pose} />
-        </g>
+          <g transform={`scale(${roosterScale})`}>
+            <RoosterArt pose={pose} />
+          </g>
+        </motion.g>
       </svg>
+
+      {playing && phase.kind === 'choose' && (
+        <div className="pointer-events-none absolute inset-0">
+          {geometry.openings.map((opening, slot) => {
+            const answer = order[slot]
+            const closed = blocked.includes(answer)
+            return (
+              <button
+                key={`${forkIndex}-${answer}`}
+                type="button"
+                disabled={closed}
+                data-answer={answer}
+                className="pointer-events-auto absolute -translate-x-1/2 rounded-xl border-2 border-[#7a4e28] bg-[#fbf0d6] px-2 py-1.5 text-center font-display text-xs leading-tight font-bold text-[#4a2f1a] shadow-lg hover:bg-[#fff6e2] disabled:opacity-40 sm:text-sm"
+                style={{
+                  left: `${(opening.x / world.width) * 100}%`,
+                  top: `${((opening.top + (geometry.backBottom - opening.top) * 0.3) / world.height) * 100}%`,
+                  width: `${(Math.max(opening.width * 1.1, 120 * unit) / world.width) * 100}%`,
+                }}
+                onClick={() => choose(answer)}
+              >
+                {closed ? 'Zasypane' : fork.answers[answer]}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
       <AnimatePresence>
         {playing && (
           <motion.section
@@ -256,51 +196,24 @@ export function GorgeStage({ layout, leg, playing, onLeg }: GorgeStageProps) {
             exit={{ opacity: 0 }}
           >
             <StagePanel
-              title="Wąwóz lessowy"
+              title={plan.title}
               icon={<span aria-hidden="true">🐓</span>}
-              counter={`Odcinek ${leg + 1} / ${GORGE_LEGS.length}`}
+              counter={`Rozwidlenie ${Math.min(forkIndex + 1, plan.forks.length)} / ${plan.forks.length}`}
               hint={hint}
             >
-              <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-[#e8d8b4]">
-                <div
-                  className="h-full rounded-full bg-[#1f5c50]"
-                  style={{ width: `${progress * 100}%` }}
-                />
+              <p className="mt-2 text-sm font-bold text-[#5a4630] sm:text-base">{fork.question}</p>
+              <div className="mt-1.5 flex items-center gap-1.5" aria-hidden="true">
+                {plan.forks.map((_, index) => (
+                  <span
+                    key={index}
+                    className={`h-2.5 flex-1 rounded-full ${index < forkIndex || (index === forkIndex && phase.kind === 'arrived') ? 'bg-[#1f5c50]' : index === forkIndex ? 'bg-[#d8a83a]' : 'bg-[#e8d8b4]'}`}
+                  />
+                ))}
               </div>
             </StagePanel>
           </motion.section>
         )}
       </AnimatePresence>
-      {playing && (
-        <>
-          <button
-            type="button"
-            className={`${BUTTON} left-4`}
-            onPointerDown={(event) => {
-              event.stopPropagation()
-              duck()
-            }}
-            onClick={(event) => {
-              if (event.detail === 0) duck()
-            }}
-          >
-            Schyl się
-          </button>
-          <button
-            type="button"
-            className={`${BUTTON} right-4`}
-            onPointerDown={(event) => {
-              event.stopPropagation()
-              jump()
-            }}
-            onClick={(event) => {
-              if (event.detail === 0) jump()
-            }}
-          >
-            Skok!
-          </button>
-        </>
-      )}
     </div>
   )
 }

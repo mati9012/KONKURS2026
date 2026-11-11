@@ -176,7 +176,7 @@ export function KazimierzLevel({ onComplete }: LevelGameProps) {
           <NarratorConversation
             key="gorge-prologue"
             lines={GORGE_PROLOGUE}
-            doneLabel="Biegniemy!"
+            doneLabel="Szukamy drogi!"
             onDone={() => setStage({ kind: 'gorge', step: 0 })}
           />
         )}
@@ -185,7 +185,7 @@ export function KazimierzLevel({ onComplete }: LevelGameProps) {
             key={`gorge-facts-${stage.step}`}
             lines={GORGE_LEGS[stage.step].facts}
             doneLabel={
-              stage.step + 1 < GORGE_LEGS.length ? 'Biegniemy dalej' : 'Wychodzimy z wąwozu'
+              stage.step + 1 < GORGE_LEGS.length ? 'Następny wąwóz' : 'Wychodzimy z wąwozu'
             }
             onDone={() =>
               setStage(

@@ -16,7 +16,7 @@ const RESPAWN_SECONDS = 0.5
 const SPLASH_SECONDS = 0.7
 const CHEER_SECONDS = 0.9
 const BOAT_GAP = 560
-const CATCH = 80
+const CATCH = 95
 
 type Boat = { id: number; x: number; sacks: number }
 
@@ -171,7 +171,7 @@ export function CraneStage({ layout, round, playing, onRound }: CraneStageProps)
   const aligned = frame.boats.some(
     (boat) =>
       boat.sacks < plan.capacity &&
-      Math.abs(boat.x + plan.speed * unit * fallTime - rig.x) < CATCH * unit * 0.4,
+      Math.abs(boat.x + plan.speed * unit * fallTime - rig.x) < CATCH * unit * 0.5,
   )
   const ready = !frame.falling && frame.clock >= frame.readyAt
   const splashing = frame.clock < frame.splashUntil

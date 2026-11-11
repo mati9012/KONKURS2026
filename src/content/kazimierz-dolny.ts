@@ -118,7 +118,7 @@ export const CRANE_ROUNDS = z
     },
     {
       sacks: 6,
-      speed: 250,
+      speed: 220,
       capacity: 3,
       facts: [
         {
@@ -263,7 +263,7 @@ export const GORGE_PROLOGUE = lines.parse([
     id: 'gorge-devil',
     speaker: 'diabel',
     gesture: 'angry',
-    text: 'Statki popłynęły, kamienice błyszczą? To schowam się w wąwozie, a korzenie was zatrzymają!',
+    text: 'Statki popłynęły, kamienice błyszczą? To zgubicie się w wąwozach! Pozasypuję wam przejścia lessem!',
   },
   {
     id: 'gorge-ravines',
@@ -276,85 +276,149 @@ export const GORGE_PROLOGUE = lines.parse([
     id: 'gorge-how',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Nad korzeniami na ziemi skaczcie strzałką w górę. Pod nisko zwisającymi korzeniami schylajcie się strzałką w dół. Na ekranie są też przyciski.',
+    text: 'Na każdym rozwidleniu zadam wam pytanie. Każde przejście ma inną odpowiedź. Wybierzcie dobrą, a kogucik znajdzie drogę. Zła odpowiedź prowadzi pod osuwisko.',
   },
 ])
+
+const forkSchema = z
+  .object({
+    question: z.string().min(1),
+    answers: z.array(z.string().min(1)).min(2),
+    correctIndex: z.number().int().nonnegative(),
+    fact: z.string().min(1),
+    sources: z.array(sourceSchema).min(1),
+  })
+  .refine((fork) => fork.correctIndex < fork.answers.length, {
+    message: 'correctIndex poza zakresem odpowiedzi',
+    path: ['correctIndex'],
+  })
 
 export const GORGE_LEGS = z
   .array(
     z.object({
-      distance: z.number().positive(),
-      speed: z.number().positive(),
+      title: z.string().min(1),
+      forks: z.array(forkSchema).min(1),
       facts: lines.min(1),
     }),
   )
   .parse([
     {
-      distance: 2600,
-      speed: 300,
+      title: 'Wejście do wąwozu',
+      forks: [
+        {
+          question: 'Co przyniosło pył, z którego powstał less?',
+          answers: ['Wiatr', 'Fale morskie', 'Wybuch wulkanu'],
+          correctIndex: 0,
+          fact: 'Tak! Less naniósł wiatr w czasach suchego klimatu.',
+          sources: [LOESS],
+        },
+        {
+          question: 'Jaki kolor ma najczęściej less?',
+          answers: ['Żółtawoszary albo jasnożółty', 'Czerwony', 'Czarny'],
+          correctIndex: 0,
+          fact: 'Zgadza się! Spójrzcie na żółte ściany wąwozu.',
+          sources: [LOESS],
+        },
+        {
+          question: 'Co robi less, gdy jest suchy?',
+          answers: [
+            'Pęka i tworzy pionowe urwiska',
+            'Topi się jak lód',
+            'Zamienia się w piasek morski',
+          ],
+          correctIndex: 0,
+          fact: 'Właśnie! Suchy less pęka i tworzy pionowe urwiska.',
+          sources: [LOESS],
+        },
+      ],
       facts: [
         {
           id: 'gorge-1-loess',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Pierwszy odcinek! Less to pylasta skała osadowa, którą naniósł wiatr w czasach suchego klimatu.',
-          sources: [LOESS],
-        },
-        {
-          id: 'gorge-1-colour',
-          speaker: 'koziol',
-          gesture: 'talk',
-          text: 'Less ma przeważnie żółtawoszarą albo jasnożółtą barwę. Spójrzcie na ściany wąwozu!',
+          text: 'Pierwszy wąwóz za nami! Less to pylasta skała osadowa, złożona głównie z drobniutkich ziarenek kwarcu.',
           sources: [LOESS],
         },
       ],
     },
     {
-      distance: 3000,
-      speed: 340,
+      title: 'Głęboki parów',
+      forks: [
+        {
+          question: 'Czym jest wąwóz?',
+          answers: [
+            'Głęboką, suchą doliną o stromych zboczach',
+            'Jeziorem w górach',
+            'Jaskinią pod ziemią',
+          ],
+          correctIndex: 0,
+          fact: 'Brawo! Wąwóz ma strome zbocza i wąskie, płaskie dno.',
+          sources: [RAVINE],
+        },
+        {
+          question: 'Co żłobi wąwozy w lessie?',
+          answers: ['Woda, która płynie tylko czasami', 'Krety', 'Ludzie z łopatami'],
+          correctIndex: 0,
+          fact: 'Dobrze! Wąwozy powstają przez erozję wód okresowych.',
+          sources: [RAVINE],
+        },
+        {
+          question: 'Na jakiej części województwa lubelskiego są wąwozy?',
+          answers: ['Na około 20% powierzchni', 'Na około 90% powierzchni', 'Nie ma ich wcale'],
+          correctIndex: 0,
+          fact: 'Tak! Wąwozy zajmują około jednej piątej województwa.',
+          sources: [RAVINE],
+        },
+      ],
       facts: [
         {
           id: 'gorge-2-ravine',
           speaker: 'koziol',
           gesture: 'think',
-          text: 'Wąwóz to głęboka, sucha dolina o stromych zboczach i wąskim dnie. Powstaje m.in. w lessach.',
-          sources: [RAVINE],
-        },
-        {
-          id: 'gorge-2-lublin',
-          speaker: 'koziol',
-          gesture: 'present',
-          text: 'W województwie lubelskim wąwozy występują na około 20% powierzchni.',
+          text: 'W Polsce wąwozy najczęściej występują na obszarach lessowych.',
           sources: [RAVINE],
         },
       ],
     },
     {
-      distance: 3400,
-      speed: 380,
-      facts: [
+      title: 'Ku wyjściu',
+      forks: [
         {
-          id: 'gorge-3-cracks',
-          speaker: 'koziol',
-          gesture: 'talk',
-          text: 'Suchy less pęka i tworzy pionowe urwiska, które znikają, gdy jest wilgotny.',
-          sources: [LOESS],
+          question: 'Jak nazywa się słynny wąwóz koło Kazimierza?',
+          answers: ['Korzeniowy Dół', 'Dolina Kościeliska', 'Morskie Oko'],
+          correctIndex: 0,
+          fact: 'Tak! Korzeniowy Dół to jeden z wąwozów lessowych koło Kazimierza.',
+          sources: [RAVINE],
         },
         {
-          id: 'gorge-3-park',
+          question: 'Co budowano w wąwozach pod koniec XIX wieku?',
+          answers: ['Wille i pensjonaty dla letników', 'Spichlerze na zboże', 'Kopalnie złota'],
+          correctIndex: 0,
+          fact: 'Zgadza się! Przyjeżdżali tu letnicy, głównie z Lublina i Warszawy.',
+          sources: [TOWN],
+        },
+        {
+          question: 'Kiedy utworzono Kazimierski Park Krajobrazowy?',
+          answers: ['W 1979 roku', 'W 1406 roku', 'W 2022 roku'],
+          correctIndex: 0,
+          fact: 'Brawo! Park utworzono 27 kwietnia 1979 roku.',
+          sources: [TOWN],
+        },
+      ],
+      facts: [
+        {
+          id: 'gorge-3-exit',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Koniec wąwozu! Kazimierski Park Krajobrazowy utworzono 27 kwietnia 1979 roku.',
-          sources: [TOWN],
+          text: 'Wyszliśmy z labiryntu wąwozów! Diabeł nie zdołał nas zasypać.',
         },
       ],
     },
   ])
 
 export const GORGE_HINTS = {
-  start: 'Strzałka w górę to skok, strzałka w dół to schylanie się.',
-  root: 'Ups! Korzeń na ziemi. Skaczcie strzałką w górę.',
-  branch: 'Au! Nisko zwisający korzeń. Schylcie się strzałką w dół.',
+  start: 'Przeczytajcie pytanie i wybierzcie przejście z dobrą odpowiedzią.',
+  wrong: 'Osuwisko! To przejście zasypał less. Wracamy i próbujemy inaczej.',
 } as const
 
 export const KAZIMIERZ_OUTRO = lines.parse([

@@ -23,7 +23,24 @@ const FACADES = [
   },
 ] as const
 
-const GORGE_FACTS = ['Pierwszy odcinek', 'głęboka, sucha dolina', 'Suchy less pęka'] as const
+const GORGE = [
+  {
+    fact: 'Pierwszy wąwóz za nami',
+    answers: ['Wiatr', 'Żółtawoszary albo jasnożółty', 'Pęka i tworzy pionowe urwiska'],
+  },
+  {
+    fact: 'najczęściej występują na obszarach lessowych',
+    answers: [
+      'Głęboką, suchą doliną o stromych zboczach',
+      'Woda, która płynie tylko czasami',
+      'Na około 20% powierzchni',
+    ],
+  },
+  {
+    fact: 'Wyszliśmy z labiryntu',
+    answers: ['Korzeniowy Dół', 'Wille i pensjonaty dla letników', 'W 1979 roku'],
+  },
+] as const
 
 async function skipConversation(page: Page, text: string) {
   const narrator = page.getByRole('dialog', { name: 'Szaro mówi' })
@@ -45,28 +62,6 @@ async function loadBoats(page: Page) {
       if (!crane || document.querySelector('[role="dialog"]')) return 'done'
       if (crane.dataset.aligned === 'true') {
         window.dispatchEvent(new KeyboardEvent('keydown', { key: ' ' }))
-      }
-      await new Promise((resolve) => setTimeout(resolve, 16))
-    }
-    return 'timeout'
-  })
-  expect(result).toBe('done')
-}
-
-async function runGorge(page: Page) {
-  await expect(page.getByRole('dialog', { name: 'Szaro mówi' })).toHaveCount(0)
-  const result = await page.evaluate(async () => {
-    const deadline = Date.now() + 60_000
-    while (Date.now() < deadline) {
-      const gorge = document.querySelector<HTMLElement>('[data-gorge]')
-      if (!gorge || document.querySelector('[role="dialog"]')) return 'done'
-      const gap = Number(gorge.dataset.nextGap)
-      const kind = gorge.dataset.nextKind
-      if (kind === 'root' && gap > 50 && gap < 140 && gorge.dataset.airborne === 'false') {
-        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }))
-      }
-      if (kind === 'branch' && gap > 20 && gap < 160 && gorge.dataset.ducking === 'false') {
-        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }))
       }
       await new Promise((resolve) => setTimeout(resolve, 16))
     }
@@ -125,15 +120,32 @@ test(
       await skipConversation(page, plan.fact)
     }
 
-    await skipConversation(page, 'schowam się w wąwozie')
-    for (const [leg, fact] of GORGE_FACTS.entries()) {
-      if (leg === 1) {
-        await page.waitForSelector('[data-gorge]', { state: 'attached', timeout: 20_000 })
-        await page.waitForTimeout(2500)
-        await page.screenshot({ path: testInfo.outputPath('kazimierz-gorge.png') })
+    await skipConversation(page, 'Pozasypuję wam przejścia')
+    const gorge = page.getByRole('region', { name: 'Wąwóz lessowy' })
+    for (const [leg, plan] of GORGE.entries()) {
+      for (const [fork, answer] of plan.answers.entries()) {
+        await expect(gorge.getByText(`Rozwidlenie ${fork + 1} / 3`)).toBeVisible({
+          timeout: 15_000,
+        })
+        if (leg === 0 && fork === 0) {
+          await page.getByRole('button', { name: 'Fale morskie' }).click()
+          await expect(gorge.getByText('Osuwisko!')).toBeVisible()
+          await expect(page.getByRole('button', { name: 'Zasypane' })).toBeVisible({
+            timeout: 10_000,
+          })
+        }
+        if (leg === 1 && fork === 1) {
+          await page.waitForTimeout(800)
+          await page.screenshot({ path: testInfo.outputPath('kazimierz-gorge.png') })
+        }
+        await page.getByRole('button', { name: answer, exact: true }).click()
+        if (fork + 1 < plan.answers.length) {
+          await expect(gorge.getByText(`Rozwidlenie ${fork + 2} / 3`)).toBeVisible({
+            timeout: 15_000,
+          })
+        }
       }
-      await runGorge(page)
-      await skipConversation(page, fact)
+      await skipConversation(page, plan.fact)
     }
 
     await expect(page.getByRole('img', { name: 'Pieczęć: Kazimierz Dolny' })).toBeVisible({
