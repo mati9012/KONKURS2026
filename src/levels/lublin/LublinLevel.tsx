@@ -15,6 +15,7 @@ import {
   TRIAL_ROUNDS,
 } from '@/content/lublin'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { ChaseStage } from '@/levels/lublin/ChaseStage'
 import { FrescoStage } from '@/levels/lublin/FrescoStage'
 import { TrialStage } from '@/levels/lublin/TrialStage'
@@ -53,13 +54,22 @@ export function LublinLevel({ onComplete }: LevelGameProps) {
   const world = useWorld(container)
   const layout = useMemo(() => sceneLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'chase-prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'chase-prologue' })
   const scene = sceneOf(stage)
   const step = stepOf(stage)
 
-  const onChase = useCallback((done: number) => setStage({ kind: 'chase-facts', step: done }), [])
-  const onFresco = useCallback((done: number) => setStage({ kind: 'fresco-facts', step: done }), [])
-  const onTrial = useCallback((done: number) => setStage({ kind: 'trial-facts', step: done }), [])
+  const onChase = useCallback(
+    (done: number) => setStage({ kind: 'chase-facts', step: done }),
+    [setStage],
+  )
+  const onFresco = useCallback(
+    (done: number) => setStage({ kind: 'fresco-facts', step: done }),
+    [setStage],
+  )
+  const onTrial = useCallback(
+    (done: number) => setStage({ kind: 'trial-facts', step: done }),
+    [setStage],
+  )
 
   useEffect(() => {
     const timer = setTimeout(() => setCurtainOpen(true), CURTAIN_HOLD_MS)
@@ -197,7 +207,7 @@ export function LublinLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )

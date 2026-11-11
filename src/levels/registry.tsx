@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import { CoveringClouds } from '@/components/ui/CoveringClouds'
 import { BILGORAJ_ARRIVAL, BILGORAJ_OUTRO } from '@/content/bilgoraj'
 import { CHELM_ARRIVAL, CHELM_OUTRO } from '@/content/chelm'
 import { KAZIMIERZ_ARRIVAL, KAZIMIERZ_OUTRO } from '@/content/kazimierz-dolny'
@@ -13,12 +14,14 @@ import { ZWIERZYNIEC_ARRIVAL, ZWIERZYNIEC_OUTRO } from '@/content/zwierzyniec'
 import type { PlaceId } from '@/content/places'
 import type { LevelDefinition } from '@/levels/level-game'
 
+const LEVEL_LOADING = { ssr: false, loading: () => <CoveringClouds /> }
+
 export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
   zamosc: {
     intro: ZAMOSC_ARRIVAL,
     outro: ZAMOSC_OUTRO,
     Game: dynamic(() => import('@/levels/zamosc/ZamoscLevel').then((mod) => mod.ZamoscLevel), {
-      ssr: false,
+      ...LEVEL_LOADING,
     }),
   },
   zwierzyniec: {
@@ -26,7 +29,7 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
     outro: ZWIERZYNIEC_OUTRO,
     Game: dynamic(
       () => import('@/levels/zwierzyniec/ZwierzyniecLevel').then((mod) => mod.ZwierzyniecLevel),
-      { ssr: false },
+      { ...LEVEL_LOADING },
     ),
   },
   roztocze: {
@@ -34,7 +37,7 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
     outro: ROZTOCZE_OUTRO,
     Game: dynamic(
       () => import('@/levels/roztocze/RoztoczeLevel').then((mod) => mod.RoztoczeLevel),
-      { ssr: false },
+      { ...LEVEL_LOADING },
     ),
   },
   bilgoraj: {
@@ -42,14 +45,14 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
     outro: BILGORAJ_OUTRO,
     Game: dynamic(
       () => import('@/levels/bilgoraj/BilgorajLevel').then((mod) => mod.BilgorajLevel),
-      { ssr: false },
+      { ...LEVEL_LOADING },
     ),
   },
   kock: {
     intro: KOCK_ARRIVAL,
     outro: KOCK_OUTRO,
     Game: dynamic(() => import('@/levels/kock/KockLevel').then((mod) => mod.KockLevel), {
-      ssr: false,
+      ...LEVEL_LOADING,
     }),
   },
   'poleski-park-narodowy': {
@@ -57,28 +60,28 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
     outro: POLESKI_OUTRO,
     Game: dynamic(
       () => import('@/levels/poleski-park-narodowy/PoleskiLevel').then((mod) => mod.PoleskiLevel),
-      { ssr: false },
+      { ...LEVEL_LOADING },
     ),
   },
   wlodawa: {
     intro: WLODAWA_ARRIVAL,
     outro: WLODAWA_OUTRO,
     Game: dynamic(() => import('@/levels/wlodawa/WlodawaLevel').then((mod) => mod.WlodawaLevel), {
-      ssr: false,
+      ...LEVEL_LOADING,
     }),
   },
   pulawy: {
     intro: PULAWY_ARRIVAL,
     outro: PULAWY_OUTRO,
     Game: dynamic(() => import('@/levels/pulawy/PulawyLevel').then((mod) => mod.PulawyLevel), {
-      ssr: false,
+      ...LEVEL_LOADING,
     }),
   },
   chelm: {
     intro: CHELM_ARRIVAL,
     outro: CHELM_OUTRO,
     Game: dynamic(() => import('@/levels/chelm/ChelmLevel').then((mod) => mod.ChelmLevel), {
-      ssr: false,
+      ...LEVEL_LOADING,
     }),
   },
   'kazimierz-dolny': {
@@ -86,14 +89,14 @@ export const LEVELS: Partial<Record<PlaceId, LevelDefinition>> = {
     outro: KAZIMIERZ_OUTRO,
     Game: dynamic(
       () => import('@/levels/kazimierz-dolny/KazimierzLevel').then((mod) => mod.KazimierzLevel),
-      { ssr: false },
+      { ...LEVEL_LOADING },
     ),
   },
   lublin: {
     intro: LUBLIN_ARRIVAL,
     outro: LUBLIN_OUTRO,
     Game: dynamic(() => import('@/levels/lublin/LublinLevel').then((mod) => mod.LublinLevel), {
-      ssr: false,
+      ...LEVEL_LOADING,
     }),
   },
 }

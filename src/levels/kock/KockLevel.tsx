@@ -16,6 +16,7 @@ import {
   RIDE_PROLOGUE,
 } from '@/content/kock'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { FacadeStage } from '@/levels/kock/FacadeStage'
 import { MemoryStage } from '@/levels/kock/MemoryStage'
 import { RideStage } from '@/levels/kock/RideStage'
@@ -61,10 +62,10 @@ export function KockLevel({ onComplete }: LevelGameProps) {
   const world = useWorld(container)
   const layout = useMemo(() => sceneLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'facade-prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'facade-prologue' })
   const scene = sceneOf(stage)
   const index = indexOf(stage)
-  const finishLeg = useCallback((leg: number) => setStage({ kind: 'ride-facts', leg }), [])
+  const finishLeg = useCallback((leg: number) => setStage({ kind: 'ride-facts', leg }), [setStage])
 
   useEffect(() => {
     const timer = setTimeout(() => setCurtainOpen(true), CURTAIN_HOLD_MS)
@@ -200,7 +201,7 @@ export function KockLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )
