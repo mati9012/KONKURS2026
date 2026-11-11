@@ -15,6 +15,7 @@ import {
   TEMPLE_ROUNDS,
 } from '@/content/wlodawa'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { MarketStage } from '@/levels/wlodawa/MarketStage'
 import { RiverStage } from '@/levels/wlodawa/RiverStage'
 import { sceneLayout } from '@/levels/wlodawa/scene-layout'
@@ -55,13 +56,19 @@ export function WlodawaLevel({ onComplete }: LevelGameProps) {
   const world = useWorld(container)
   const layout = useMemo(() => sceneLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'market-prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'market-prologue' })
   const scene = sceneOf(stage)
   const step = stepOf(stage)
 
-  const onMarket = useCallback((round: number) => setStage({ kind: 'market-facts', round }), [])
-  const onTemple = useCallback((round: number) => setStage({ kind: 'temple-facts', round }), [])
-  const onRiver = useCallback((leg: number) => setStage({ kind: 'river-facts', leg }), [])
+  const onMarket = useCallback(
+    (round: number) => setStage({ kind: 'market-facts', round }),
+    [setStage],
+  )
+  const onTemple = useCallback(
+    (round: number) => setStage({ kind: 'temple-facts', round }),
+    [setStage],
+  )
+  const onRiver = useCallback((leg: number) => setStage({ kind: 'river-facts', leg }), [setStage])
 
   useEffect(() => {
     const timer = setTimeout(() => setCurtainOpen(true), CURTAIN_HOLD_MS)
@@ -201,7 +208,7 @@ export function WlodawaLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )

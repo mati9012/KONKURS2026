@@ -15,6 +15,7 @@ import {
   GORGE_PROLOGUE,
 } from '@/content/kazimierz-dolny'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { CraneStage } from '@/levels/kazimierz-dolny/CraneStage'
 import { FacadeStage } from '@/levels/kazimierz-dolny/FacadeStage'
 import { GorgeStage } from '@/levels/kazimierz-dolny/GorgeStage'
@@ -53,13 +54,22 @@ export function KazimierzLevel({ onComplete }: LevelGameProps) {
   const world = useWorld(container)
   const layout = useMemo(() => sceneLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'crane-prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'crane-prologue' })
   const scene = sceneOf(stage)
   const step = stepOf(stage)
 
-  const onCrane = useCallback((done: number) => setStage({ kind: 'crane-facts', step: done }), [])
-  const onFacade = useCallback((done: number) => setStage({ kind: 'facade-facts', step: done }), [])
-  const onGorge = useCallback((done: number) => setStage({ kind: 'gorge-facts', step: done }), [])
+  const onCrane = useCallback(
+    (done: number) => setStage({ kind: 'crane-facts', step: done }),
+    [setStage],
+  )
+  const onFacade = useCallback(
+    (done: number) => setStage({ kind: 'facade-facts', step: done }),
+    [setStage],
+  )
+  const onGorge = useCallback(
+    (done: number) => setStage({ kind: 'gorge-facts', step: done }),
+    [setStage],
+  )
 
   useEffect(() => {
     const timer = setTimeout(() => setCurtainOpen(true), CURTAIN_HOLD_MS)
@@ -199,7 +209,7 @@ export function KazimierzLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )

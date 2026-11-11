@@ -1,7 +1,9 @@
 'use client'
 
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { CURTAIN_CLOSE_MS } from '@/components/ui/CloudCurtain'
+import { CoveringClouds } from '@/components/ui/CoveringClouds'
 import { NarratorConversation } from '@/components/ui/NarratorConversation'
 import { PlaceStamp } from '@/components/ui/PlaceStamp'
 import { CLOSED_PLACE, COMING_SOON } from '@/content/journey'
@@ -19,11 +21,17 @@ function placeName(placeId: PlaceId) {
 
 function PlayBoard({ level, onComplete }: { level: LevelDefinition; onComplete: () => void }) {
   const leave = useJourneyStore((state) => state.leave)
+  const [covered, setCovered] = useState(false)
   const { Game } = level
+
+  useEffect(() => {
+    const timer = setTimeout(() => setCovered(true), CURTAIN_CLOSE_MS)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <section role="region" aria-label="Zadanie" className="pointer-events-auto absolute inset-0">
-      <Game onComplete={onComplete} />
+      {covered ? <Game onComplete={onComplete} /> : <CoveringClouds closeFromAway />}
       <button
         type="button"
         className="absolute top-3 right-3 z-30 rounded-full border-2 border-[#b8894f] bg-[#f6e7c8] px-4 py-1.5 font-display text-sm font-bold text-[#4a2f1a] shadow-[0_4px_12px_rgba(60,30,10,0.35)] hover:bg-[#fff1d6] sm:top-4 sm:right-4"

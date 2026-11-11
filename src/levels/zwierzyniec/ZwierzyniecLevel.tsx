@@ -13,6 +13,7 @@ import {
   HERD_WAVES,
 } from '@/content/zwierzyniec'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { MeadowBackdrop } from '@/levels/zwierzyniec/art/MeadowBackdrop'
 import { MeadowForeground } from '@/levels/zwierzyniec/art/MeadowForeground'
 import { PondBackdrop } from '@/levels/zwierzyniec/art/PondBackdrop'
@@ -59,7 +60,7 @@ export function ZwierzyniecLevel({ onComplete }: LevelGameProps) {
   const herd = useMemo(() => herdLayout(world), [world])
   const bridge = useMemo(() => bridgeLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'prologue' })
   const [penned, setPenned] = useState(0)
   const [herdHint, setHerdHint] = useState<string>(HERD_HINTS.start)
   const meadow = onMeadow(stage)
@@ -81,16 +82,16 @@ export function ZwierzyniecLevel({ onComplete }: LevelGameProps) {
       setStage((current) =>
         current.kind === 'herd' ? { kind: 'herd-facts', wave: current.wave } : current,
       ),
-    [],
+    [setStage],
   )
   const finishSection = useCallback(
     () =>
       setStage((current) =>
         current.kind === 'bridge' ? { kind: 'bridge-facts', section: current.section } : current,
       ),
-    [],
+    [setStage],
   )
-  const finishProcession = useCallback(() => setStage({ kind: 'finished' }), [])
+  const finishProcession = useCallback(() => setStage({ kind: 'finished' }), [setStage])
 
   const meadowArt = useMemo(() => <MeadowBackdrop layout={herd} />, [herd])
   const pondArt = useMemo(() => <PondBackdrop layout={bridge} lit={lit} />, [bridge, lit])
@@ -219,7 +220,7 @@ export function ZwierzyniecLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )

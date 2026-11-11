@@ -15,6 +15,7 @@ import {
   TUNNEL_PROLOGUE,
 } from '@/content/chelm'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { HillStage } from '@/levels/chelm/HillStage'
 import { ArmsStage } from '@/levels/chelm/ArmsStage'
 import { TunnelStage } from '@/levels/chelm/TunnelStage'
@@ -53,13 +54,22 @@ export function ChelmLevel({ onComplete }: LevelGameProps) {
   const world = useWorld(container)
   const layout = useMemo(() => sceneLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'hill-prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'hill-prologue' })
   const scene = sceneOf(stage)
   const step = stepOf(stage)
 
-  const onHill = useCallback((done: number) => setStage({ kind: 'hill-facts', step: done }), [])
-  const onArms = useCallback((done: number) => setStage({ kind: 'arms-facts', step: done }), [])
-  const onTunnel = useCallback((done: number) => setStage({ kind: 'tunnel-facts', step: done }), [])
+  const onHill = useCallback(
+    (done: number) => setStage({ kind: 'hill-facts', step: done }),
+    [setStage],
+  )
+  const onArms = useCallback(
+    (done: number) => setStage({ kind: 'arms-facts', step: done }),
+    [setStage],
+  )
+  const onTunnel = useCallback(
+    (done: number) => setStage({ kind: 'tunnel-facts', step: done }),
+    [setStage],
+  )
 
   useEffect(() => {
     const timer = setTimeout(() => setCurtainOpen(true), CURTAIN_HOLD_MS)
@@ -195,7 +205,7 @@ export function ChelmLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )

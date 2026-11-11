@@ -26,7 +26,7 @@ type GameState = {
   reset: () => void
 }
 
-const safeLocalStorage: StateStorage = {
+export const safeLocalStorage: StateStorage = {
   getItem: (name) => {
     try {
       return localStorage.getItem(name)
