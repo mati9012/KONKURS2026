@@ -15,7 +15,8 @@
     "models:optimize": "node scripts/optimize-models.mjs",
     "island:build": "node scripts/build-island.mjs",
     "koziol:build": "node scripts/build-koziol.mjs",
-    "devil:build": "node scripts/build-devil.mjs"
+    "devil:build": "node scripts/build-devil.mjs",
+    "voice:build": "tsx scripts/build-voice.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
