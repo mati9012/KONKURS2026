@@ -25,6 +25,7 @@ test(
 
     await page.goto('/')
     await expect(page.locator('main canvas')).toBeVisible({ timeout: 30_000 })
+    await page.getByRole('button', { name: 'Zagraj' }).click({ timeout: 60_000 })
     await expect(page.getByRole('status', { name: 'Ładowanie gry' })).toBeHidden({
       timeout: 60_000,
     })

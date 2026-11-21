@@ -19,14 +19,15 @@ export function NarratorDialog() {
   const hydrated = useHydrated()
   const introSeen = useGameStore((state) => state.introSeen)
   const markIntroSeen = useGameStore((state) => state.markIntroSeen)
+  const started = useGameStore((state) => state.started)
   const { ready } = useSceneReady()
   const [curtainOpen, setCurtainOpen] = useState(false)
 
   useEffect(() => {
-    if (!ready) return
+    if (!ready || !started) return
     const timer = setTimeout(() => setCurtainOpen(true), CURTAIN_DELAY_MS)
     return () => clearTimeout(timer)
-  }, [ready])
+  }, [ready, started])
 
   const show = hydrated && !introSeen && curtainOpen
 
