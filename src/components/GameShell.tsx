@@ -9,6 +9,7 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { NarratorDialog } from '@/components/ui/NarratorDialog'
 import { Passport } from '@/components/ui/Passport'
 import { useGameStore } from '@/store/game-store'
+import { useJourneyStore } from '@/store/journey-store'
 
 const IslandScene = dynamic(
   () => import('@/components/scene/IslandScene').then((mod) => mod.IslandScene),
@@ -18,6 +19,7 @@ const IslandScene = dynamic(
 export function GameShell() {
   useEffect(() => {
     void useGameStore.persist.rehydrate()
+    void useJourneyStore.persist.rehydrate()
   }, [])
 
   return (

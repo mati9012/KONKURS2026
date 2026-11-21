@@ -15,6 +15,7 @@ import {
   WEAVE_ROUNDS,
 } from '@/content/bilgoraj'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { PierogStage } from '@/levels/bilgoraj/PierogStage'
 import type { PierogStep } from '@/levels/bilgoraj/PierogStage'
 import { roomLayout } from '@/levels/bilgoraj/room-layout'
@@ -55,7 +56,7 @@ export function BilgorajLevel({ onComplete }: LevelGameProps) {
   const world = useWorld(container)
   const layout = useMemo(() => roomLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'weave-prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'weave-prologue' })
   const scene = sceneOf(stage)
   const task = siftTask(stage)
 
@@ -185,7 +186,7 @@ export function BilgorajLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )

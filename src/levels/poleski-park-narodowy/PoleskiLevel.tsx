@@ -16,6 +16,7 @@ import {
 } from '@/content/poleski-park-narodowy'
 import type { BirdId, PlantId } from '@/content/poleski-park-narodowy'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { BogStage } from '@/levels/poleski-park-narodowy/BogStage'
 import { sceneLayout } from '@/levels/poleski-park-narodowy/scene-layout'
 import { TurtleStage } from '@/levels/poleski-park-narodowy/TurtleStage'
@@ -62,18 +63,21 @@ export function PoleskiLevel({ onComplete }: LevelGameProps) {
   const world = useWorld(container)
   const layout = useMemo(() => sceneLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'turtle-prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'turtle-prologue' })
   const scene = sceneOf(stage)
   const wave = waveOf(stage)
 
-  const onWave = useCallback((done: number) => setStage({ kind: 'turtle-facts', wave: done }), [])
+  const onWave = useCallback(
+    (done: number) => setStage({ kind: 'turtle-facts', wave: done }),
+    [setStage],
+  )
   const onPlant = useCallback(
     (plant: PlantId, count: number) => setStage({ kind: 'bog-facts', plant, count }),
-    [],
+    [setStage],
   )
   const onBird = useCallback(
     (bird: BirdId, count: number) => setStage({ kind: 'voices-facts', bird, count }),
-    [],
+    [setStage],
   )
 
   useEffect(() => {
@@ -199,7 +203,7 @@ export function PoleskiLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )

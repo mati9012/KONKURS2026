@@ -17,6 +17,7 @@ import {
 } from '@/content/pulawy'
 import type { ParkBuildingId } from '@/content/pulawy'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { LabStage } from '@/levels/pulawy/LabStage'
 import { ParkStage } from '@/levels/pulawy/ParkStage'
 import { SalonStage } from '@/levels/pulawy/SalonStage'
@@ -60,16 +61,22 @@ export function PulawyLevel({ onComplete }: LevelGameProps) {
   const world = useWorld(container)
   const layout = useMemo(() => sceneLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'park-prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'park-prologue' })
   const scene = sceneOf(stage)
   const round = roundOf(stage)
 
   const onBuilding = useCallback(
     (building: ParkBuildingId, count: number) => setStage({ kind: 'park-facts', building, count }),
-    [],
+    [setStage],
   )
-  const onSalon = useCallback((done: number) => setStage({ kind: 'salon-facts', round: done }), [])
-  const onLab = useCallback((done: number) => setStage({ kind: 'lab-facts', round: done }), [])
+  const onSalon = useCallback(
+    (done: number) => setStage({ kind: 'salon-facts', round: done }),
+    [setStage],
+  )
+  const onLab = useCallback(
+    (done: number) => setStage({ kind: 'lab-facts', round: done }),
+    [setStage],
+  )
 
   useEffect(() => {
     const timer = setTimeout(() => setCurtainOpen(true), CURTAIN_HOLD_MS)
@@ -211,7 +218,7 @@ export function PulawyLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )

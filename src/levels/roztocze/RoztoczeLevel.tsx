@@ -16,6 +16,7 @@ import {
 } from '@/content/roztocze'
 import type { AnimalId } from '@/content/roztocze'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { ForestStage } from '@/levels/roztocze/ForestStage'
 import { sceneLayout } from '@/levels/roztocze/scene-layout'
 import { StonesStage } from '@/levels/roztocze/StonesStage'
@@ -54,7 +55,7 @@ export function RoztoczeLevel({ onComplete }: LevelGameProps) {
   const world = useWorld(container)
   const layout = useMemo(() => sceneLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'stones-prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'stones-prologue' })
   const scene = sceneOf(stage)
 
   useEffect(() => {
@@ -182,7 +183,7 @@ export function RoztoczeLevel({ onComplete }: LevelGameProps) {
       </AnimatePresence>
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )

@@ -12,6 +12,7 @@ import { BUILD_FINALE, BUILD_STEPS, BUILDING_IDS, ZAMOSC_PROLOGUE } from '@/cont
 import type { BuildingId, HejnalDirection } from '@/content/zamosc'
 import { DragGhost } from '@/levels/kock/DragGhost'
 import type { LevelGameProps } from '@/levels/level-game'
+import { useSavedStage } from '@/levels/use-saved-stage'
 import { shuffled } from '@/lib/shuffle'
 import { CityArt } from '@/levels/zamosc/art/CityArt'
 import { BuildingIcon } from '@/levels/zamosc/art/BuildingIcon'
@@ -59,7 +60,7 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
   const world = useWorld(container)
   const layout = useMemo(() => cityLayout(world), [world])
   const [curtainOpen, setCurtainOpen] = useState(false)
-  const [stage, setStage] = useState<Stage>({ kind: 'prologue' })
+  const [stage, setStage] = useSavedStage<Stage>({ kind: 'prologue' })
   const [built, setBuilt] = useState<BuildingId[]>([])
   const [selected, setSelected] = useState<BuildingId | null>(null)
   const [shaking, setShaking] = useState<BuildingId | null>(null)
@@ -283,7 +284,7 @@ export function ZamoscLevel({ onComplete }: LevelGameProps) {
       )}
 
       <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} closeFromAway />
+        <CloudCurtain open={curtainOpen} reduceMotion={reduceMotion} />
       </div>
     </div>
   )

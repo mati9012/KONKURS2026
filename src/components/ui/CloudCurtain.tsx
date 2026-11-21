@@ -7,6 +7,7 @@ import { textureUrl } from '@/lib/three/texture-url'
 
 const EXIT_EASE = [0.5, 0, 0.9, 0.4] as const
 const CLOSE_EASE = [0.2, 0.8, 0.3, 1] as const
+export const CURTAIN_CLOSE_MS = 1350
 
 type Puff = {
   x: number

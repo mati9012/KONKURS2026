@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useSyncExternalStore } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Float, PerformanceMonitor } from '@react-three/drei'
 import { CameraRig } from '@/components/scene/CameraRig'
@@ -11,6 +11,7 @@ import { Balloon } from '@/components/scene/sky/Balloon'
 import { CloudSea } from '@/components/scene/sky/CloudSea'
 import { Eagle } from '@/components/scene/sky/Eagle'
 import { SkyDome } from '@/components/scene/sky/SkyDome'
+import { isSceneSettled, subscribeToLoading } from '@/lib/three/loading-progress'
 import { useGameStore } from '@/store/game-store'
 import { useJourneyStore } from '@/store/journey-store'
 
@@ -22,6 +23,7 @@ export function IslandScene() {
   const setQuality = useGameStore((state) => state.setQuality)
   const high = quality === 'high'
   const playing = useJourneyStore((state) => state.placeId !== null && state.phase === 'play')
+  const settled = useSyncExternalStore(subscribeToLoading, isSceneSettled, () => false)
 
   return (
     <Canvas
@@ -30,7 +32,7 @@ export function IslandScene() {
       dpr={high ? [1, 1.5] : [1, 1.25]}
       camera={{ position: [0, 22, 22], fov: 40, near: 0.1, far: 700 }}
       flat
-      frameloop={playing ? 'demand' : 'always'}
+      frameloop={playing && settled ? 'demand' : 'always'}
     >
       <PerformanceMonitor onDecline={() => setQuality('low')} />
       <fog attach="fog" args={[FOG_COLOR, 70, 260]} />
