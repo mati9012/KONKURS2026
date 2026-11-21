@@ -96,7 +96,7 @@ test(
       timeout: 90_000,
     })
     await page.getByRole('button', { name: 'Zwierzyniec', exact: true }).dispatchEvent('click')
-    await skipConversation(page, 'w samym sercu Roztocza')
+    await skipConversation(page, 'w środku Roztocza')
     await skipConversation(page, 'Wyrwałem sztachety')
 
     const herd = page.getByRole('region', { name: 'Zagroda koników' })

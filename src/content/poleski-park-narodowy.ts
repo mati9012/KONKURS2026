@@ -28,7 +28,7 @@ export const POLESKI_ARRIVAL = lines.parse([
     id: 'poleski-arrival',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Witajcie w Poleskim Parku Narodowym! Nad mokradłami wstaje mglisty poranek. Spędzimy tu cały dzień.',
+    text: 'Witajcie w Poleskim Parku Narodowym. Nad mokradłami wstaje mglisty poranek, a my spędzimy tu cały dzień.',
   },
 ])
 
@@ -51,7 +51,7 @@ export const TURTLE_PROLOGUE = lines.parse([
     id: 'turtle-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Maluchy wędrują z gniazda do wody, a czyhają na nie lisy, jenoty i borsuki. Stukajcie w drapieżniki, żeby je przegonić!',
+    text: 'Maluchy wędrują z gniazda do wody, a czyhają na nie lisy, jenoty i borsuki. Stukajcie w drapieżniki, żeby je przegonić.',
     sources: [TURTLE],
   },
 ])
@@ -82,7 +82,7 @@ export const TURTLE_WAVES = z
           id: 'turtle-1-size',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Pierwsze maluchy w wodzie! Młody żółw po wykluciu ma około 2,5 centymetra i miękki pancerz.',
+          text: 'Pierwsze maluchy są w wodzie. Młody żółw po wykluciu ma około 2,5 centymetra i miękki pancerz.',
           sources: [TURTLE],
         },
         {
@@ -197,7 +197,7 @@ export const PLANTS = z
           id: 'bog-sundew-insects',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'To rosiczka, roślina owadożerna! Na torfowisku brakuje azotu, więc zdobywa go z owadów.',
+          text: 'To rosiczka, roślina owadożerna. Na torfowisku brakuje azotu, więc rosiczka zdobywa go z owadów.',
           sources: [SUNDEW],
         },
         {
@@ -219,7 +219,7 @@ export const PLANTS = z
           id: 'bog-cranberry-berries',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Żurawina błotna! Jej pędy mają do metra długości, a jagody do 1 centymetra średnicy.',
+          text: 'To żurawina błotna. Jej pędy mają do metra długości, a jagody do 1 centymetra średnicy.',
           sources: [CRANBERRY],
         },
         {
@@ -241,7 +241,7 @@ export const PLANTS = z
           id: 'bog-sphagnum-water',
           speaker: 'koziol',
           gesture: 'present',
-          text: 'Torfowiec zatrzymuje wodę w ilości 20 do 30 razy większej niż jego własna masa!',
+          text: 'Torfowiec zatrzymuje wodę w ilości 20 do 30 razy większej niż jego własna masa.',
           sources: [SPHAGNUM],
         },
         {
@@ -289,14 +289,14 @@ export const VOICES_PROLOGUE = lines.parse([
     id: 'voices-birds',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Zapada wieczór. Park to jeden z najbogatszych w ptaki obszarów w Polsce. Stwierdzono tu około dwustu gatunków.',
+    text: 'Zapada wieczór. Park należy do najbogatszych w ptaki miejsc w Polsce, naliczono tu około dwustu gatunków.',
     sources: [PARK],
   },
   {
     id: 'voices-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Posłuchajcie mokradeł. Gdy usłyszycie głos, wybierzcie ptaka, który tak się odzywa. Głosy naśladuję fujarką, prawdziwe są jeszcze piękniejsze!',
+    text: 'Posłuchajcie mokradeł. Gdy usłyszycie głos, wybierzcie ptaka, który tak się odzywa. Głosy naśladuję na fujarce, a prawdziwe są jeszcze piękniejsze.',
   },
 ])
 
@@ -330,7 +330,7 @@ export const VOICES = z
           id: 'voices-bittern-voice',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'To bąk! Samiec wzmacnia swój głos przełykiem, jak pudłem rezonansowym.',
+          text: 'To bąk. Samiec wzmacnia głos przełykiem, który działa jak pudło rezonansowe.',
           sources: [BITTERN],
         },
         {
@@ -386,7 +386,7 @@ export const VOICES = z
           id: 'voices-crane-symbol',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'To żuraw, symbol Poleskiego Parku Narodowego!',
+          text: 'To żuraw, symbol Poleskiego Parku Narodowego.',
           sources: [PARK],
         },
         {
@@ -418,7 +418,7 @@ export const POLESKI_OUTRO = lines.parse([
     id: 'poleski-done',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Żółwiki w wodzie, rośliny rozpoznane, a żurawie odleciały kluczem. Piękny dzień na mokradłach!',
+    text: 'Żurawie odleciały kluczem. To był piękny dzień na mokradłach.',
   },
   {
     id: 'poleski-ramsar',
@@ -431,7 +431,7 @@ export const POLESKI_OUTRO = lines.parse([
     id: 'poleski-beaver',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'I jeszcze jedno: w 1992 roku sprowadzono do parku bobry. Mieszka tu 48 gatunków ssaków.',
+    text: 'W 1992 roku sprowadzono do parku bobry. Żyje tu 48 gatunków ssaków.',
     sources: [PARK],
   },
 ])

@@ -9,7 +9,7 @@ const [needsFirst, needsStamps, comingSoon] = z.array(dialogueLineSchema).parse(
     id: 'journey-needs-first',
     speaker: 'koziol',
     gesture: 'think',
-    text: 'Nie tak szybko! Wyprawę zaczynamy w Zamościu. Kliknijcie go na mapie.',
+    text: 'Chwileczkę, wyprawę zaczynamy w Zamościu. Kliknijcie go na mapie.',
   },
   {
     id: 'journey-needs-stamps',

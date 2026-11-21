@@ -43,7 +43,7 @@ export const LUBLIN_ARRIVAL = lines.parse([
     id: 'lublin-arrival',
     speaker: 'koziol',
     gesture: 'wave',
-    text: 'Witajcie w Lublinie, w moim domu! Srebrny kozioł z herbu miasta wspina się na zielony krzak winny. Poznajecie?',
+    text: 'Witajcie w Lublinie, w moim domu. Srebrny kozioł z herbu miasta wspina się na zielony krzak winny. Poznajecie?',
     sources: [ARMS],
   },
 ])
@@ -53,7 +53,7 @@ export const CHASE_PROLOGUE = lines.parse([
     id: 'chase-devil',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Hehe! Dziesięć pieczęci, a wszystkie fałszywe! O północy sam zasiądę w Trybunale i wydam wyrok. Złapcie mnie, jeśli umiecie!',
+    text: 'Dziesięć pieczęci, a wszystkie fałszywe! O północy sam zasiądę w Trybunale i wydam wyrok. Złapcie mnie, jeśli umiecie.',
   },
   {
     id: 'chase-koziol',
@@ -194,7 +194,7 @@ export const FRESCO_PROLOGUE = lines.parse([
     id: 'fresco-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Weźmy pędzel! Przecierajcie ścianę myszką albo palcem, aż sadza zejdzie. Potem wskażcie scenę, o którą zapytam.',
+    text: 'Weźmy pędzel. Przecierajcie ścianę myszką albo palcem, aż sadza zejdzie. Potem wskażcie scenę, o którą zapytam.',
   },
 ])
 
@@ -291,7 +291,7 @@ export const FRESCO_ROUNDS = z
           id: 'fresco-plaster',
           speaker: 'koziol',
           gesture: 'think',
-          text: 'Diabeł nie był pierwszy! W XIX wieku kaplicę otynkowano i freski zniknęły. W 1899 roku Józef Smoliński odkrył ich fragmenty.',
+          text: 'Diabeł nie był pierwszy. W XIX wieku kaplicę otynkowano i freski zniknęły. W 1899 roku Józef Smoliński odkrył ich fragmenty.',
           sources: [CHAPEL],
         },
         {
@@ -328,7 +328,7 @@ export const TRIAL_PROLOGUE = lines.parse([
     id: 'trial-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Mamy dowody z całej wyprawy! Gdy diabeł skłamie, przeciągnijcie na stół sędziowski dowód, który go obala.',
+    text: 'Mamy dowody z całej wyprawy. Gdy diabeł skłamie, przeciągnijcie na stół sędziowski dowód, który go obala.',
   },
 ])
 
@@ -430,7 +430,7 @@ export const TRIAL_ROUNDS = z
           id: 'trial-paw',
           speaker: 'koziol',
           gesture: 'think',
-          text: 'Tak jak w legendzie! Diabelski sędzia przypieczętował wyrok, wypalając na stole ślad łapy.',
+          text: 'Zupełnie jak w legendzie: diabelski sędzia przypieczętował wyrok, wypalając na stole ślad łapy.',
           sources: [PAW],
         },
       ],
@@ -461,6 +461,6 @@ export const LUBLIN_OUTRO = lines.parse([
     id: 'lublin-end',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Paszport pełny! Przeszliście całe Lubelskie, od Zamościa po Lublin. Dziękuję za wspólną wyprawę!',
+    text: 'Paszport jest pełny. Przeszliście całe Lubelskie, od Zamościa po Lublin. Dziękuję wam za tę wyprawę.',
   },
 ])

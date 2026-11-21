@@ -40,7 +40,7 @@ export const ZWIERZYNIEC_ARRIVAL = lines.parse([
     id: 'zwierzyniec-arrival',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Witajcie w Zwierzyńcu, w samym sercu Roztocza! Słyszycie ten tętent? Ktoś tu narobił zamieszania...',
+    text: 'Witajcie w Zwierzyńcu, w środku Roztocza. Słyszycie ten tętent? Ktoś tu narobił zamieszania...',
   },
 ])
 
@@ -49,13 +49,13 @@ export const HERD_PROLOGUE = lines.parse([
     id: 'herd-devil-fence',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Ha! Wyrwałem sztachety z płotu i rozgoniłem koniki po polanie. Niech ich szukają do zimy!',
+    text: 'Wyrwałem sztachety z płotu i rozgoniłem koniki po polanie. Niech ich szukają do zimy, ha!',
   },
   {
     id: 'herd-founded',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Co za łobuz! Zwierzyniec powstał w 1593 roku, cztery lata po założeniu Ordynacji Zamojskiej.',
+    text: 'Co za łobuz. Zwierzyniec powstał w 1593 roku, cztery lata po założeniu Ordynacji Zamojskiej.',
     sources: [TOWN],
   },
   {
@@ -83,7 +83,7 @@ export const HERD_WAVES = z
           id: 'herd-wave-1-symbol',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Dwa koniki w zagrodzie! To koniki polskie, symbol Roztoczańskiego Parku Narodowego.',
+          text: 'Dwa koniki są już w zagrodzie. To koniki polskie, symbol Roztoczańskiego Parku Narodowego.',
           sources: [PARK],
         },
         {
@@ -127,7 +127,7 @@ export const HERD_WAVES = z
           id: 'herd-wave-3-vetulani',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Całe stado w domu! Nazwę „konik polski” wprowadził profesor Tadeusz Vetulani. Od 1936 roku odtwarzał w Puszczy Białowieskiej konika podobnego do tarpana.',
+          text: 'Całe stado w domu. Nazwę „konik polski” wprowadził profesor Tadeusz Vetulani. Od 1936 roku odtwarzał w Puszczy Białowieskiej konika podobnego do tarpana.',
           sources: [KONIK],
         },
         {
@@ -173,7 +173,7 @@ export const BRIDGE_PROLOGUE = lines.parse([
     id: 'bridge-how',
     speaker: 'koziol',
     gesture: 'think',
-    text: 'Ułóżmy nowe kładki! Przeciągnijcie deskę o pasującej długości na przerwę między słupkami. Tylko uważajcie na poczerniałe deski, to podróbki diabła!',
+    text: 'Ułóżmy nowe kładki. Przeciągnijcie deskę o pasującej długości na przerwę między słupkami. Tylko uważajcie na poczerniałe deski, to podróbki diabła.',
   },
 ])
 
@@ -184,7 +184,7 @@ export const BRIDGE_SECTIONS = z.array(z.object({ facts: lines.min(1) })).parse(
         id: 'bridge-section-1-patron',
         speaker: 'koziol',
         gesture: 'cheer',
-        text: 'Pierwsza wysepka! Święty Jan Nepomucen to patron mostów i tonących, a także orędownik podczas powodzi.',
+        text: 'Pierwsza wysepka. Święty Jan Nepomucen to patron mostów i tonących, a także orędownik podczas powodzi.',
         sources: [NEPOMUK],
       },
     ],
@@ -213,7 +213,7 @@ export const BRIDGE_SECTIONS = z.array(z.object({ facts: lines.min(1) })).parse(
         id: 'bridge-section-3-real-bridge',
         speaker: 'koziol',
         gesture: 'talk',
-        text: 'Prawdziwy most do kościoła zbudowano z żelbetu w latach 1963–1964. Ale nasza kładka też da radę!',
+        text: 'Prawdziwy most do kościoła zbudowano z żelbetu w latach 1963–1964. Ale nasza kładka też da radę.',
         sources: [CHURCH],
       },
     ],
@@ -236,13 +236,13 @@ export const ZWIERZYNIEC_OUTRO = lines.parse([
     id: 'zwierzyniec-done',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Koniki w zagrodzie, a procesja z lampionami doszła po kładce do kościółka. Brawo!',
+    text: 'Procesja z lampionami doszła po kładce do kościółka. Dobra robota.',
   },
   {
     id: 'zwierzyniec-lusthaus',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Ciekawostka na koniec: w ogrodzie Zamoyskich stał kiedyś na wodzie letni pałacyk Gryzeldy, matki króla Michała Korybuta Wiśniowieckiego.',
+    text: 'W ogrodzie Zamoyskich stał kiedyś na wodzie letni pałacyk Gryzeldy, matki króla Michała Korybuta Wiśniowieckiego.',
     sources: [TOWN],
   },
   {

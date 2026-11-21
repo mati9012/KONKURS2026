@@ -28,7 +28,7 @@ export const BILGORAJ_ARRIVAL = lines.parse([
     id: 'bilgoraj-arrival',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Witajcie w Biłgoraju! Jest zima, a w drewnianych zagrodach stukają krosna. Oj, ktoś tu chyba narozrabiał...',
+    text: 'Witajcie w Biłgoraju. Jest zima, w drewnianych zagrodach stukają krosna... Oj, chyba ktoś tu narozrabiał.',
   },
 ])
 
@@ -37,7 +37,7 @@ export const WEAVE_PROLOGUE = lines.parse([
     id: 'weave-devil-tangle',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Hehe! Poplątałem całe końskie włosie w zagrodzie sitarzy. Żadne sito w tym mieście już nie powstanie!',
+    text: 'Poplątałem całe końskie włosie w zagrodzie sitarzy. Żadne sito w tym mieście już nie powstanie, hehe.',
   },
   {
     id: 'weave-founded',
@@ -50,7 +50,7 @@ export const WEAVE_PROLOGUE = lines.parse([
     id: 'weave-name',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Miasto założono na zalesionym wzniesieniu zwanym Białym Gorajem. Stąd wzięła się jego nazwa.',
+    text: 'Miasto założono na zalesionym wzniesieniu, które nazywano Białym Gorajem. Stąd nazwa Biłgoraj.',
     sources: [TOWN],
   },
   {
@@ -64,7 +64,7 @@ export const WEAVE_PROLOGUE = lines.parse([
     id: 'weave-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Siatkę na sito plotło się na krojsie, czyli odmianie krosna. Naciskajcie lewy i prawy podnóżek według wzoru na karcie, zawsze w rytm stuknięć krosna!',
+    text: 'Siatkę na sito plotło się na krojsie, czyli odmianie krosna. Naciskajcie lewy i prawy podnóżek tak, jak pokazuje wzór na karcie, w rytm stuknięć krosna.',
     sources: [TOWN],
   },
 ])
@@ -88,7 +88,7 @@ export const WEAVE_ROUNDS = z
           id: 'weave-1-horsehair',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Pierwsza siatka gotowa! Plotło się ją z końskiego włosia, a obręcze, na których się ją rozpinało, robiono zwykle z sosny.',
+          text: 'Pierwsza siatka gotowa. Plotło się ją z końskiego włosia, a obręcze, na których ją rozpinano, robiono zwykle z sosny.',
           sources: [CRAFT],
         },
         {
@@ -109,7 +109,7 @@ export const WEAVE_ROUNDS = z
           id: 'weave-2-devil',
           speaker: 'diabel',
           gesture: 'angry',
-          text: 'Grr, plecie się! To przy następnej będę wyrywał wam nitki przy każdej pomyłce!',
+          text: 'Grr, plecie się... To przy następnej siatce wyrwę wam nitkę za każdą pomyłkę.',
         },
         {
           id: 'weave-2-guild',
@@ -122,7 +122,7 @@ export const WEAVE_ROUNDS = z
           id: 'weave-2-share',
           speaker: 'koziol',
           gesture: 'think',
-          text: 'W pierwszej połowie XIX wieku rzemieślnicy stanowili około 65% mieszkańców, a od 80 do 90% z nich to byli sitarze!',
+          text: 'W pierwszej połowie XIX wieku rzemieślnicy stanowili około 65% mieszkańców, a od 80 do 90% z nich to byli sitarze.',
           sources: [TOWN],
         },
       ],
@@ -136,14 +136,14 @@ export const WEAVE_ROUNDS = z
           id: 'weave-3-winter',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Trzy siatki gotowe! Sita robiło się zimą, a gdy robiło się cieplej, sitarz brał je na plecy w drewnianych nosiłkach i „szedł w świat”.',
+          text: 'Trzy siatki gotowe. Sita robiono zimą, a gdy przychodziło ciepło, sitarz brał je na plecy w drewnianych nosiłkach i „szedł w świat”.',
           sources: [CRAFT],
         },
         {
           id: 'weave-3-language',
           speaker: 'koziol',
           gesture: 'talk',
-          text: 'Biłgorajanie mieli nawet tajny język sitarski. Była to szyfrowana mowa, którą rozumieli tylko mieszczanie z Biłgoraja.',
+          text: 'Biłgorajanie mieli nawet tajny język sitarski, szyfrowaną mowę, którą rozumieli tylko mieszczanie z Biłgoraja.',
           sources: [TOWN],
         },
       ],
@@ -197,7 +197,7 @@ export const SIFT_PROLOGUE = lines.parse([
     id: 'sift-how',
     speaker: 'koziol',
     gesture: 'think',
-    text: 'Wybierzcie sito ze ściany i potrząsajcie nim. Przez oczka przeleci tylko to, co mniejsze od nich. Do miski ma trafić to, czego potrzebujemy do pieroga!',
+    text: 'Wybierzcie sito ze ściany i potrząsajcie nim. Przez oczka przeleci tylko to, co mniejsze od nich. Do miski ma trafić to, czego potrzebujemy do pieroga.',
   },
 ])
 
@@ -222,7 +222,7 @@ export const SIFT_TASKS = z
           id: 'sift-1-przetak',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Czyste ziarno! Do czyszczenia ziarna służyły przetaki, sita z większymi oczkami. Robił je przetaczarz z cienkiego drutu.',
+          text: 'Ziarno czyste. Do czyszczenia ziarna służyły przetaki, czyli sita z większymi oczkami. Robił je przetaczarz z cienkiego drutu.',
           sources: [CRAFT],
         },
       ],
@@ -237,7 +237,7 @@ export const SIFT_TASKS = z
           id: 'sift-2-spring',
           speaker: 'koziol',
           gesture: 'present',
-          text: 'Kasza czysta! Co roku wiosną mężczyźni z Biłgoraja wyruszali w drogę, żeby sprzedawać sita.',
+          text: 'Kasza czysta. Co roku wiosną mężczyźni z Biłgoraja wyruszali w drogę, żeby sprzedawać sita.',
           sources: [TOWN],
         },
         {
@@ -259,7 +259,7 @@ export const SIFT_TASKS = z
           id: 'sift-3-worms',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Puszysta mąka! Sitami przesiewano mąkę i oczyszczano ją z robaków, na przykład larw mącznika.',
+          text: 'Mąka puszysta. Sitami przesiewano ją i oczyszczano z robaków, na przykład z larw mącznika.',
           sources: [CRAFT],
         },
         {
@@ -328,7 +328,7 @@ export const PIEROG_PROLOGUE = lines.parse([
     id: 'pierog-intro',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Pieczemy pieróg biłgorajski! Dawniej przyrządzano go na szczególne okazje, na przykład na Boże Narodzenie i Wielkanoc.',
+    text: 'Pieczemy pieróg biłgorajski. Dawniej przyrządzano go od święta, na przykład na Boże Narodzenie i Wielkanoc.',
     sources: [TOWN, PIEROG_CITY],
   },
   {
@@ -342,7 +342,7 @@ export const PIEROG_PROLOGUE = lines.parse([
     id: 'pierog-how',
     speaker: 'koziol',
     gesture: 'think',
-    text: 'Przeciągnijcie do blaszki tylko to, co należy do farszu. Diabelskie słodkości zostawcie na półce!',
+    text: 'Przeciągnijcie do blaszki tylko to, co należy do farszu. Diabelskie słodkości zostawcie na półce.',
   },
 ])
 
@@ -352,7 +352,7 @@ export const PIEROG_STEPS = {
       id: 'pierog-filling',
       speaker: 'koziol',
       gesture: 'cheer',
-      text: 'Farsz gotowy! Robi się go z kaszy gryczanej, ziemniaków, twarogu, jajek i śmietany. Zależnie od przepisu dodaje się też miętę, smalec albo słoninę.',
+      text: 'Farsz gotowy. Robi się go z kaszy gryczanej, ziemniaków, twarogu, jajek i śmietany. Zależnie od przepisu dodaje się też miętę, smalec albo słoninę.',
       sources: [PIEROG],
     },
     {
@@ -368,14 +368,14 @@ export const PIEROG_STEPS = {
       id: 'pierog-crust-names',
       speaker: 'koziol',
       gesture: 'talk',
-      text: 'Obie wersje są prawdziwe! Pieróg bez skórki nazywa się „łysy”. W domach piecze się go najczęściej w dużych prostokątnych blaszkach.',
+      text: 'Obie wersje są prawdziwe. Pieróg bez skórki nazywa się „łysy”. W domach piecze się go najczęściej w dużych prostokątnych blaszkach.',
       sources: [PIEROG_CITY],
     },
     {
       id: 'pierog-oven-ask',
       speaker: 'koziol',
       gesture: 'think',
-      text: 'Do pieca! Ustawcie dobrą temperaturę, żeby się nie spalił ani nie został surowy.',
+      text: 'Teraz do pieca. Ustawcie taką temperaturę, żeby się nie spalił i nie został surowy.',
     },
   ]),
   baked: lines.parse([
@@ -383,7 +383,7 @@ export const PIEROG_STEPS = {
       id: 'pierog-baked',
       speaker: 'koziol',
       gesture: 'cheer',
-      text: 'Upieczony! Według przepisu piecze się go około półtorej godziny w piecu nagrzanym do 180–200 stopni.',
+      text: 'Upieczony. Według przepisu piecze się go około półtorej godziny w piecu nagrzanym do 180–200 stopni.',
       sources: [PIEROG_CITY],
     },
     {
@@ -412,7 +412,7 @@ export const BILGORAJ_OUTRO = lines.parse([
     id: 'bilgoraj-done',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Sita uplecione, ziarno przesiane, a pieróg pachnie ziemniakami i kaszą na całą zagrodę. Brawo!',
+    text: 'Cała zagroda pachnie ziemniakami i kaszą. Pięknie wam poszło.',
   },
   {
     id: 'bilgoraj-singer',
@@ -425,7 +425,7 @@ export const BILGORAJ_OUTRO = lines.parse([
     id: 'bilgoraj-three-cultures',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Biłgoraj nazywany jest Miastem Trzech Kultur: polskiej, żydowskiej i rusińskiej. A w herbie ma srebrnego łabędzia nad trzema belkami.',
+    text: 'Biłgoraj nazywają Miastem Trzech Kultur: polskiej, żydowskiej i rusińskiej. W herbie ma srebrnego łabędzia nad trzema belkami.',
     sources: [TOWN],
   },
   {

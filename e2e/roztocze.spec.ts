@@ -107,7 +107,7 @@ test(
     await expect(page.getByRole('img', { name: 'Pieczęć: Roztocze' })).toBeVisible({
       timeout: 30_000,
     })
-    await skipConversation(page, 'Wschód słońca nad Bukową Górą')
+    await skipConversation(page, 'Słońce wschodzi nad Bukową Górą')
     const passport = page.getByRole('dialog', { name: 'Paszport Lubelski' })
     await expect(passport.getByText('Zebrane pieczęcie: 2 / 11')).toBeVisible()
   },

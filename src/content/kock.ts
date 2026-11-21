@@ -39,7 +39,7 @@ export const KOCK_ARRIVAL = lines.parse([
     id: 'kock-arrival',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Witajcie w Kocku! Miasto leży u ujścia Czarnej do Tyśmienicy. O, a co to za hałas w pałacu?',
+    text: 'Witajcie w Kocku. Miasto leży tam, gdzie Czarna wpada do Tyśmienicy. O, a co to za hałas w pałacu?',
     sources: [TOWN],
   },
 ])
@@ -68,7 +68,7 @@ export const FACADE_PROLOGUE = lines.parse([
     id: 'facade-devil',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Hehe! Powyrywałem kolumny z pałacu księżnej i pomieszałem je z kolumnami z całego świata. Ciekawe, czy traficie!',
+    text: 'Powyrywałem kolumny z pałacu księżnej i pomieszałem je z kolumnami z całego świata. Ciekawe, czy traficie, hehe.',
   },
   {
     id: 'facade-founded',
@@ -122,7 +122,7 @@ export const FACADE_ROUNDS = z
           id: 'facade-1-portico',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Portyk gotowy! Fasadę pałacu ozdobiono portykiem jońskim.',
+          text: 'Portyk gotowy. Od frontu pałac ma portyk joński.',
           sources: [PALACE],
         },
         {
@@ -180,7 +180,7 @@ export const PLAN_ROUND = {
       id: 'facade-3-horseshoe',
       speaker: 'koziol',
       gesture: 'cheer',
-      text: 'Tak! Pałac zbudowano na planie podkowy.',
+      text: 'Zgadza się, pałac zbudowano na planie podkowy.',
       sources: [PALACE],
     },
     {
@@ -216,7 +216,7 @@ export const RIDE_PROLOGUE = lines.parse([
     id: 'ride-berek',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Przenosimy się do 1809 roku! Berek Joselewicz był polskim kupcem żydowskiego pochodzenia i pułkownikiem wojska polskiego.',
+    text: 'Przenosimy się do 1809 roku. Berek Joselewicz był polskim kupcem żydowskiego pochodzenia i pułkownikiem wojska polskiego.',
     sources: [BEREK],
   },
   {
@@ -230,7 +230,7 @@ export const RIDE_PROLOGUE = lines.parse([
     id: 'ride-how',
     speaker: 'koziol',
     gesture: 'think',
-    text: 'Zawieźmy meldunek do szwadronu pułkownika! Stukajcie w ekran albo naciskajcie spację, żeby koń przeskoczył przeszkodę.',
+    text: 'Zawieźmy meldunek do szwadronu pułkownika. Stukajcie w ekran albo naciskajcie spację, żeby koń przeskoczył przeszkodę.',
   },
 ])
 
@@ -251,7 +251,7 @@ export const RIDE_LEGS = z
           id: 'ride-1-squadron',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Pierwszy odcinek za nami! W 1807 roku Berek Joselewicz dowodził szwadronem 5 Pułku Strzelców Konnych.',
+          text: 'Pierwszy odcinek za nami. W 1807 roku Berek Joselewicz dowodził szwadronem 5 Pułku Strzelców Konnych.',
           sources: [BEREK],
         },
         {
@@ -568,7 +568,7 @@ export const MEMORY_ROUNDS = z
           id: 'memory-3-ammo',
           speaker: 'koziol',
           gesture: 'talk',
-          text: '5 października kwatermistrz zameldował, że zostało tylko 20 pocisków i zero amunicji do karabinów.',
+          text: '5 października kwatermistrz zameldował, że zostało tylko 20 pocisków, a amunicji do karabinów nie było wcale.',
           sources: [BATTLE],
         },
         {
@@ -627,13 +627,13 @@ export const KOCK_OUTRO = lines.parse([
     id: 'kock-done',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Pałac ma swoje kolumny, meldunek dotarł, a pamiątki leżą na swoich miejscach. Dziękuję!',
+    text: 'Pamiątki leżą na swoich miejscach. Dziękuję wam za pomoc.',
   },
   {
     id: 'kock-mendel',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Jeszcze jedna ciekawostka: w 1829 roku osiadł w Kocku cadyk Menachem Mendel Morgenstern i założył tu ośrodek życia chasydzkiego.',
+    text: 'W 1829 roku osiadł w Kocku cadyk Menachem Mendel Morgenstern i założył tu ośrodek życia chasydzkiego.',
     sources: [MENDEL],
   },
   {
