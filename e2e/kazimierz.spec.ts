@@ -120,7 +120,7 @@ test(
       await skipConversation(page, plan.fact)
     }
 
-    await skipConversation(page, 'Pozasypuję wam przejścia')
+    await skipConversation(page, 'pozasypuję wam lessem')
     const gorge = page.getByRole('region', { name: 'Wąwóz lessowy' })
     for (const [leg, plan] of GORGE.entries()) {
       for (const [fork, answer] of plan.answers.entries()) {

@@ -21,7 +21,7 @@ export const INTRO_DIALOGUE = z.array(dialogueLineSchema).parse([
     id: 'intro-hello',
     speaker: 'koziol',
     gesture: 'wave',
-    text: 'Cześć! Jestem Szaro, kozioł prosto z herbu Lublina. Od dziś jestem waszym przewodnikiem po Lubelszczyźnie!',
+    text: 'Cześć, jestem Szaro, kozioł z herbu Lublina. Od dziś będę waszym przewodnikiem po Lubelszczyźnie.',
     sources: [LUBLIN_HISTORY],
   },
   {
@@ -48,7 +48,7 @@ export const INTRO_DIALOGUE = z.array(dialogueLineSchema).parse([
     id: 'intro-theft',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'A teraz diabeł wrócił! Porwał duszę naszego regionu i ukrył siedem skarbów w różnych zakątkach województwa.',
+    text: 'Teraz diabeł wrócił. Porwał duszę naszego regionu i ukrył siedem skarbów w różnych zakątkach województwa.',
   },
   {
     id: 'intro-quest',
@@ -60,6 +60,6 @@ export const INTRO_DIALOGUE = z.array(dialogueLineSchema).parse([
     id: 'intro-go',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Gdy zbierzecie wszystkie pieczęcie, staniemy przed Trybunałem na wielkiej rozprawie z diabłem. Gotowi? To ruszamy!',
+    text: 'Gdy zbierzecie wszystkie pieczęcie, staniemy przed Trybunałem na rozprawie z diabłem. Gotowi? To ruszamy.',
   },
 ])

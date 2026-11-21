@@ -92,7 +92,7 @@ test(
     await page.screenshot({ path: testInfo.outputPath('bilgoraj-sift.png') })
     await skipConversation(page, 'Kasza czysta')
     await sift(page, 'fine')
-    await skipConversation(page, 'Puszysta mąka')
+    await skipConversation(page, 'Mąka puszysta')
 
     await skipConversation(page, 'swoje słodkości')
     const pierog = page.getByRole('region', { name: 'Pieróg biłgorajski' })
@@ -114,7 +114,7 @@ test(
     await expect(page.getByRole('img', { name: 'Pieczęć: Biłgoraj' })).toBeVisible({
       timeout: 30_000,
     })
-    await skipConversation(page, 'Sita uplecione')
+    await skipConversation(page, 'Cała zagroda pachnie')
     const passport = page.getByRole('dialog', { name: 'Paszport Lubelski' })
     await expect(passport.getByText('Zebrane pieczęcie: 2 / 11')).toBeVisible()
   },

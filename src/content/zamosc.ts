@@ -90,7 +90,7 @@ export const ZAMOSC_ARRIVAL = lines.parse([
     id: 'zamosc-arrival',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Oto Zamość, renesansowe miasto idealne! Zejdźmy niżej, coś mi tu nie pasuje...',
+    text: 'Oto Zamość, renesansowe miasto idealne. Zejdźmy niżej, coś mi tu nie pasuje...',
   },
 ])
 
@@ -99,13 +99,13 @@ export const ZAMOSC_PROLOGUE = lines.parse([
     id: 'zamosc-devil-plans',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Ha! Rozrzuciłem plany waszego architekta na cztery wiatry. Nikt już nie postawi tego miasta jak należy!',
+    text: 'Rozrzuciłem plany waszego architekta na cztery wiatry, ha! Nikt już nie postawi tego miasta jak należy.',
   },
   {
     id: 'zamosc-welcome',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Nie martwcie się, odbudujemy je razem! Zamość założył kanclerz Jan Zamoyski. Akt założenia miasta wystawiono 3 kwietnia 1580 roku.',
+    text: 'Nie martwcie się, odbudujemy je razem. Zamość założył kanclerz Jan Zamoyski. Akt założenia miasta wystawiono 3 kwietnia 1580 roku.',
     sources: [FORTRESS],
   },
   {
@@ -306,7 +306,7 @@ export const BUILD_STEPS = z.array(buildStepSchema).parse([
       id: 'task-fortress',
       speaker: 'koziol',
       gesture: 'think',
-      text: 'Obrona! Mury z bastionami muszą otoczyć całe miasto. Przeciągnijcie je na sam skraj planu.',
+      text: 'Teraz obrona. Mury z bastionami muszą otoczyć całe miasto. Przeciągnijcie je na sam skraj planu.',
     },
     wrongPlace: 'Mury biegną wokół całego miasta, po jego krawędzi.',
     facts: [
@@ -333,7 +333,7 @@ export const BUILD_FINALE = lines.parse([
     id: 'zamosc-city-done',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Udało się! Miasto idealne stoi jak za czasów Zamoyskiego.',
+    text: 'Udało się. Miasto idealne stoi jak za czasów Zamoyskiego.',
   },
   {
     id: 'zamosc-devil-tower',
@@ -352,7 +352,7 @@ export const BUILD_FINALE = lines.parse([
     id: 'zamosc-hejnal-three',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Dlatego hejnał w Zamościu rozbrzmiewa tylko na trzy strony świata. Pomóżcie trębaczowi!',
+    text: 'Dlatego hejnał w Zamościu rozbrzmiewa tylko na trzy strony świata. Pomóżcie trębaczowi.',
     sources: [NATIONAL_GEOGRAPHIC],
   },
   {
@@ -387,13 +387,13 @@ export const ZAMOSC_OUTRO = lines.parse([
     id: 'zamosc-hejnal-done',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Pięknie! Hejnał popłynął na północ, wschód i południe, tak jak trzeba.',
+    text: 'Pięknie. Hejnał popłynął na północ, wschód i południe, tak jak trzeba.',
   },
   {
     id: 'zamosc-hejnal-2020',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Ciekawostka na koniec: w 2020 roku wyjątkowo zagrano hejnał na wszystkie cztery strony, także w stronę Krakowa.',
+    text: 'W 2020 roku hejnał wyjątkowo zagrano na wszystkie cztery strony, także w stronę Krakowa.',
     sources: [TOWN_HALL],
   },
   {

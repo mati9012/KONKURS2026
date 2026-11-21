@@ -30,7 +30,7 @@ export const WLODAWA_ARRIVAL = lines.parse([
     id: 'wlodawa-arrival',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Witajcie we Włodawie! Miasto leży nad Bugiem i Włodawką, tuż przy granicy z Białorusią. Przejdziemy się od rynku aż nad rzekę.',
+    text: 'Witajcie we Włodawie. Miasto leży nad Bugiem i Włodawką, tuż przy granicy z Białorusią. Przejdziemy się od rynku aż nad rzekę.',
     sources: [TOWN],
   },
 ])
@@ -53,7 +53,7 @@ export const MARKET_PROLOGUE = lines.parse([
     id: 'market-devil',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Hehe! Pomieszałem wszystkie towary na rynku. Teraz kupcy nie wiedzą, co komu sprzedać!',
+    text: 'Pomieszałem wszystkie towary na rynku, hehe. Teraz kupcy nie wiedzą, co komu sprzedać.',
   },
   {
     id: 'market-history',
@@ -73,7 +73,7 @@ export const MARKET_PROLOGUE = lines.parse([
     id: 'market-how',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Pomóżmy kupcom! Klienci podchodzą do kramu i mówią, czego szukają. Przeciągnijcie właściwy towar z kart na dole do klienta.',
+    text: 'Pomóżmy kupcom. Klienci podchodzą do kramu i mówią, czego szukają. Przeciągnijcie właściwy towar z kart na dole do klienta.',
   },
 ])
 
@@ -99,7 +99,7 @@ export const MARKET_ROUNDS = z
           id: 'market-1-trade',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Brawo! Położenie nad wielką rzeką, Bugiem, pomogło Włodawie szybko wyrosnąć na miasto handlu i przejazdu.',
+          text: 'Udało się. Dzięki położeniu nad Bugiem Włodawa szybko wyrosła na miasto handlu i przejazdu.',
           sources: [TOWN],
         },
       ],
@@ -189,7 +189,7 @@ export const TEMPLE_PROLOGUE = lines.parse([
     id: 'temple-three',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Z rynku idziemy do świątyń trzech religii: judaizmu, prawosławia i katolicyzmu. To Wielka Synagoga, cerkiew i kościół św. Ludwika.',
+    text: 'Z rynku idziemy do świątyń trzech religii: judaizmu, prawosławia i katolicyzmu. To Wielka Synagoga, cerkiew i kościół świętego Ludwika.',
     sources: [TOWN],
   },
   {
@@ -243,14 +243,14 @@ export const TEMPLE_ROUNDS = z
           id: 'temple-1-iconostasis',
           speaker: 'koziol',
           gesture: 'talk',
-          text: 'W ikonostasie cerkwi ikony wiszą rzędami. Na dole są m.in. Chrystus Pantokrator i Matka Boża, wyżej rząd świąt.',
+          text: 'W ikonostasie cerkwi ikony wiszą rzędami. Na dole są między innymi Chrystus Pantokrator i Matka Boża, wyżej rząd świąt.',
           sources: [CERKIEW],
         },
         {
           id: 'temple-1-organ',
           speaker: 'koziol',
           gesture: 'present',
-          text: 'Organy w kościele św. Ludwika mają 19 głosów i 2 manuały, czyli klawiatury do grania rękami.',
+          text: 'Organy w kościele świętego Ludwika mają 19 głosów i 2 manuały, czyli klawiatury do grania rękami.',
           sources: [CHURCH],
         },
       ],
@@ -284,7 +284,7 @@ export const TEMPLE_ROUNDS = z
           id: 'temple-2-fontana',
           speaker: 'koziol',
           gesture: 'present',
-          text: 'Kościół św. Ludwika zaprojektował Paweł Antoni Fontana. Synagogę zbudowano w latach 1764–1774 prawdopodobnie według projektu tego samego architekta!',
+          text: 'Kościół świętego Ludwika zaprojektował Paweł Antoni Fontana. Synagogę zbudowano w latach 1764–1774 prawdopodobnie według projektu tego samego architekta.',
           sources: [CHURCH, SYNAGOGUE],
         },
         {
@@ -318,7 +318,7 @@ export const TEMPLE_ROUNDS = z
           id: 'temple-3-museum',
           speaker: 'koziol',
           gesture: 'present',
-          text: 'Od 1983 roku w synagodze działa muzeum. Są w nim m.in. zwoje Tory, chanukije i szofary.',
+          text: 'Od 1983 roku w synagodze działa muzeum. Są w nim między innymi zwoje Tory, chanukije i szofary.',
           sources: [SYNAGOGUE],
         },
         {
@@ -350,7 +350,7 @@ export const RIVER_PROLOGUE = lines.parse([
     id: 'river-bug',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Na koniec spływ kajakiem! Bug płynie wzdłuż wschodniej granicy miasta.',
+    text: 'Na koniec spływ kajakiem. Bug płynie wzdłuż wschodniej granicy miasta.',
     sources: [TOWN],
   },
   {
@@ -378,7 +378,7 @@ export const RIVER_LEGS = z
           id: 'river-1-length',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Pierwszy odcinek za nami! Bug ma 772 kilometry. To czwarta pod względem długości rzeka w Polsce.',
+          text: 'Pierwszy odcinek za nami. Bug ma 772 kilometry i jest czwartą co do długości rzeką w Polsce.',
           sources: [BUG],
         },
         {
@@ -418,7 +418,7 @@ export const RIVER_LEGS = z
           id: 'river-3-nature',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Meta! Od Gołębia do Terespola nad Bugiem żyje blisko 100 gatunków motyli dziennych i 44 gatunki ryb.',
+          text: 'Meta. Od Gołębia do Terespola nad Bugiem żyje blisko 100 gatunków motyli dziennych i 44 gatunki ryb.',
           sources: [BUG],
         },
         {
@@ -442,7 +442,7 @@ export const WLODAWA_OUTRO = lines.parse([
     id: 'wlodawa-done',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Kramy obsłużone, świątynie uporządkowane, a spływ Bugiem zakończony. Nie bez powodu Włodawa nazywa się Miastem Trzech Kultur!',
+    text: 'Kramy obsłużone, a spływ zakończony. Nie bez powodu Włodawę nazywa się Miastem Trzech Kultur.',
     sources: [TOWN],
   },
   {

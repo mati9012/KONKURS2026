@@ -47,7 +47,7 @@ export const ROZTOCZE_ARRIVAL = lines.parse([
     id: 'roztocze-arrival',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Witajcie na Roztoczu! Słońce już zachodzi, a z lasu dochodzą dziwne chichoty...',
+    text: 'Witajcie na Roztoczu. Słońce już zachodzi, a z lasu dochodzą dziwne chichoty...',
   },
 ])
 
@@ -56,7 +56,7 @@ export const STONES_PROLOGUE = lines.parse([
     id: 'stones-devil-feast',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Hehe! Dziś w nocy wielka zabawa na Czartowym Polu! A wy nie przeszkadzajcie, bo zamienię was w kamień jak te drzewa!',
+    text: 'Dziś w nocy wielka zabawa na Czartowym Polu! A wy nie przeszkadzajcie, bo zamienię was w kamień, jak te drzewa.',
   },
   {
     id: 'stones-czartowe-pole',
@@ -76,7 +76,7 @@ export const STONES_PROLOGUE = lines.parse([
     id: 'stones-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Jesteśmy w Kamiennym Lesie koło Siedlisk. Diabeł zakopał tu kawałki skamieniałego pnia. Odgarniajcie piasek z kopczyków i zbierajcie kamienne drewno, ale omijajcie czarcie węgle!',
+    text: 'Jesteśmy w Kamiennym Lesie koło Siedlisk. Diabeł zakopał tu kawałki skamieniałego pnia. Odgarniajcie piasek z kopczyków i zbierajcie kamienne drewno, ale omijajcie czarcie węgle.',
   },
 ])
 
@@ -87,7 +87,7 @@ export const STONE_PIECES = z.array(z.object({ facts: lines.min(1) })).parse([
         id: 'stones-1-siedliska',
         speaker: 'koziol',
         gesture: 'cheer',
-        text: 'Pierwszy kawałek! W Siedliskach jest największe w Polsce skupisko skamieniałych pni drzew z trzeciorzędu.',
+        text: 'Mamy pierwszy kawałek. W Siedliskach jest największe w Polsce skupisko skamieniałych pni drzew z trzeciorzędu.',
         sources: [SIEDLISKA],
       },
       {
@@ -112,7 +112,7 @@ export const STONE_PIECES = z.array(z.object({ facts: lines.min(1) })).parse([
         id: 'stones-2-florida',
         speaker: 'koziol',
         gesture: 'think',
-        text: 'Podobne drzewa rosną dziś na bagnach Florydy. Wyobraźcie sobie Roztocze pełne ciepłych mokradeł!',
+        text: 'Podobne drzewa rosną dziś na bagnach Florydy. Wyobraźcie sobie Roztocze pełne ciepłych mokradeł.',
         sources: [STONE_FOREST],
       },
     ],
@@ -140,7 +140,7 @@ export const STONE_PIECES = z.array(z.object({ facts: lines.min(1) })).parse([
         id: 'stones-4-dlugosz',
         speaker: 'koziol',
         gesture: 'cheer',
-        text: 'Cały pień złożony! Już Jan Długosz pisał, że drzewa koło Hrebennego po ścięciu zmieniają się w krzemień w kilka lat.',
+        text: 'Cały pień złożony. Już Jan Długosz pisał, że drzewa koło Hrebennego po ścięciu zmieniają się w krzemień w kilka lat.',
         sources: [STONE_FOREST],
       },
       {
@@ -193,7 +193,7 @@ export const TRACKS_PROLOGUE = lines.parse([
     id: 'tracks-how',
     speaker: 'koziol',
     gesture: 'think',
-    text: 'Weźcie latarkę! Świećcie po lesie, a gdy znajdziecie trop albo ślad, stuknijcie go i powiedzcie, czyj jest. Tylko nie dajcie się nabrać na kopyta diabła!',
+    text: 'Weźcie latarkę. Świećcie po lesie, a gdy znajdziecie trop albo ślad, stuknijcie go i powiedzcie, czyj jest. Tylko nie dajcie się nabrać na kopyta diabła.',
   },
 ])
 
@@ -227,7 +227,7 @@ export const TRACKS = z
           id: 'tracks-wolf-line',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Wilki! Wataha idąca truchtem zostawia zwykle jeden ślad, bo wilki stąpają trop w trop. Mówi się na to „sznurowanie”.',
+          text: 'To wilki. Wataha idąca truchtem zostawia zwykle jeden ślad, bo wilki stąpają trop w trop. Mówi się na to „sznurowanie”.',
           sources: [WOLF],
         },
         {
@@ -248,14 +248,14 @@ export const TRACKS = z
           id: 'tracks-deer-paint',
           speaker: 'koziol',
           gesture: 'present',
-          text: 'To jeleń! Byki ocierają się o drzewa, żeby pozbyć się pasożytów. Myśliwi mówią, że jelenie „malują”.',
+          text: 'To jeleń. Byki ocierają się o drzewa, żeby pozbyć się pasożytów. Myśliwi mówią, że jelenie „malują”.',
           sources: [DEER],
         },
         {
           id: 'tracks-deer-night',
           speaker: 'koziol',
           gesture: 'talk',
-          text: 'Jeleń zaczyna żerować po zmierzchu, a nad ranem wraca do kryjówki. Śpi tylko od 60 do 100 minut na dobę!',
+          text: 'Jeleń zaczyna żerować po zmierzchu, a nad ranem wraca do kryjówki. Śpi tylko od 60 do 100 minut na dobę.',
           sources: [DEER],
         },
       ],
@@ -269,7 +269,7 @@ export const TRACKS = z
           id: 'tracks-boar-dig',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Dzik! Szuka jedzenia, przekopując ziemię wydłużonym ryjem i zdzierając wierzchnią warstwę gleby.',
+          text: 'To dzik. Szukając jedzenia, przekopuje ziemię wydłużonym ryjem i zdziera wierzchnią warstwę gleby.',
           sources: [BOAR],
         },
         {
@@ -290,7 +290,7 @@ export const TRACKS = z
           id: 'tracks-beaver-biggest',
           speaker: 'koziol',
           gesture: 'present',
-          text: 'Bóbr, największy gryzoń Eurazji! Prowadzi nocny tryb życia i potrafi ściąć drzewo o średnicy nawet metra.',
+          text: 'To bóbr, największy gryzoń Eurazji. Prowadzi nocny tryb życia i potrafi ściąć drzewo o średnicy nawet metra.',
           sources: [BEAVER],
         },
         {
@@ -311,7 +311,7 @@ export const TRACKS = z
           id: 'tracks-owl-voice',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Puszczyk uralski! W Polsce jest bardzo rzadki, ale mieszka właśnie na Roztoczu. Odzywa się niemal wyłącznie w nocy.',
+          text: 'To puszczyk uralski. W Polsce jest bardzo rzadki, ale mieszka właśnie na Roztoczu. Odzywa się niemal wyłącznie w nocy.',
           sources: [OWL],
         },
         {
@@ -358,7 +358,7 @@ export const FOREST_PROLOGUE = lines.parse([
     id: 'forest-how',
     speaker: 'koziol',
     gesture: 'think',
-    text: 'Oddajmy drzewom ich nasiona i szyszki! Popatrzcie na znalezisko i stuknijcie drzewo, z którego spadło. Z każdym trafieniem słońce wzejdzie wyżej.',
+    text: 'Oddajmy drzewom ich nasiona i szyszki. Popatrzcie na znalezisko i stuknijcie drzewo, z którego spadło. Z każdym trafieniem słońce wzejdzie wyżej.',
   },
 ])
 
@@ -394,7 +394,7 @@ export const FOREST_FINDS = z
           id: 'forest-beech-nut',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'To buk! Jego orzeszki to bukiew. Kora buka jest gładka i popielatoszara, nigdy nie pęka i się nie łuszczy.',
+          text: 'To buk. Jego orzeszki to bukiew. Kora buka jest gładka i popielatoszara, nigdy nie pęka i się nie łuszczy.',
           sources: [BEECH],
         },
         {
@@ -416,14 +416,14 @@ export const FOREST_FINDS = z
           id: 'forest-fir-cone',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Jodła! Jej szyszki stoją na gałęziach, a po dojrzeniu rozpadają się i zostaje sama oś.',
+          text: 'To jodła. Jej szyszki stoją na gałęziach, a po dojrzeniu rozpadają się i zostaje sama oś.',
           sources: [FIR],
         },
         {
           id: 'forest-fir-needles',
           speaker: 'koziol',
           gesture: 'talk',
-          text: 'Igły jodły są tępe, a od spodu mają dwa białe paski. Najwyższa jodła w Polsce mierzy prawie 56 metrów!',
+          text: 'Igły jodły są tępe, a od spodu mają dwa białe paski. Najwyższa jodła w Polsce mierzy prawie 56 metrów.',
           sources: [FIR],
         },
       ],
@@ -438,7 +438,7 @@ export const FOREST_FINDS = z
           id: 'forest-sycamore-seed',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Jawor! Jego owoce to orzeszki ze skrzydełkami, które dojrzewają we wrześniu i październiku.',
+          text: 'To jawor. Jego owoce to orzeszki ze skrzydełkami, które dojrzewają we wrześniu i październiku.',
           sources: [SYCAMORE],
         },
         {
@@ -460,7 +460,7 @@ export const FOREST_FINDS = z
           id: 'forest-yew-aril',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Cis! Nie ma szyszek, a nasionko otacza czerwona osnówka. Uwaga: cis jest trujący, poza samą osnówką.',
+          text: 'To cis. Nie ma szyszek, a nasionko otacza czerwona osnówka. Uwaga, cis jest trujący, z wyjątkiem samej osnówki.',
           sources: [YEW],
         },
         {
@@ -482,7 +482,7 @@ export const FOREST_FINDS = z
           id: 'forest-spruce-cone',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Świerk! Jego szyszki zwisają i opadają w całości. Igły są krótkie, ostre i kwadratowe w przekroju.',
+          text: 'To świerk. Jego szyszki zwisają i opadają w całości. Igły są krótkie, ostre i kwadratowe w przekroju.',
           sources: [SPRUCE],
         },
         {
@@ -506,7 +506,7 @@ export const ROZTOCZE_OUTRO = lines.parse([
     id: 'roztocze-sunrise',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Wschód słońca nad Bukową Górą! Kamienny pień złożony, tropy policzone, a drzewa odzyskały nasiona. Brawo!',
+    text: 'Słońce wschodzi nad Bukową Górą, a drzewa mają z powrotem swoje nasiona. Udało się.',
   },
   {
     id: 'roztocze-mill',

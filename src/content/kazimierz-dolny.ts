@@ -30,7 +30,7 @@ export const KAZIMIERZ_ARRIVAL = lines.parse([
     id: 'kazimierz-arrival',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Witajcie w Kazimierzu Dolnym nad Wisłą! Miasto leży w Małopolskim Przełomie Wisły. Pomoże nam dziś kazimierski kogucik.',
+    text: 'Witajcie w Kazimierzu Dolnym. Miasto leży nad Wisłą, w Małopolskim Przełomie Wisły, a pomoże nam dziś kazimierski kogucik.',
     sources: [TOWN],
   },
 ])
@@ -40,7 +40,7 @@ export const CRANE_PROLOGUE = lines.parse([
     id: 'crane-devil',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Hehe! Kazimierz wzbogacił się na zbożu? To ja zatrzymam statki i ziarno nigdy nie dopłynie do Gdańska!',
+    text: 'Kazimierz wzbogacił się na zbożu? To ja zatrzymam statki i ziarno nigdy nie dopłynie do Gdańska, hehe.',
   },
   {
     id: 'crane-trade',
@@ -60,7 +60,7 @@ export const CRANE_PROLOGUE = lines.parse([
     id: 'crane-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Żuraw trzyma worek zboża. Stuknijcie albo naciśnijcie spację, gdy statek będzie pod workiem!',
+    text: 'Żuraw trzyma worek zboża. Stuknijcie albo naciśnijcie spację, gdy statek będzie pod workiem.',
   },
 ])
 
@@ -83,7 +83,7 @@ export const CRANE_ROUNDS = z
           id: 'crane-1-families',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Pierwsze statki płyną! Na handlu zbożem wyrosły kupieckie rody Przybyłów, Czarnotów i Celejów.',
+          text: 'Pierwsze statki płyną. Na handlu zbożem wyrosły kupieckie rody Przybyłów, Czarnotów i Celejów.',
           sources: [TOWN],
         },
         {
@@ -104,7 +104,7 @@ export const CRANE_ROUNDS = z
           id: 'crane-2-boats',
           speaker: 'koziol',
           gesture: 'think',
-          text: 'Zboże pływało m.in. na specjalnych statkach zwanych komięgami, a drewno spławiano jako tratwy.',
+          text: 'Zboże pływało między innymi na specjalnych statkach zwanych komięgami, a drewno spławiano jako tratwy.',
           sources: [RAFTING],
         },
         {
@@ -168,7 +168,7 @@ export const FACADE_PROLOGUE = lines.parse([
     id: 'facade-devil',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'A ja pozrywałem z nich wszystkie ozdoby! Hehe, teraz to zwykłe szare domy!',
+    text: 'A ja pozrywałem z nich wszystkie ozdoby. Teraz to zwykłe szare domy, hehe.',
   },
   {
     id: 'facade-how',
@@ -213,14 +213,14 @@ export const FACADE_ROUNDS = z
           id: 'facade-1-patrons',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Płaskorzeźby przedstawiają patronów właścicieli: św. Mikołaja w stroju biskupim i św. Krzysztofa, który przenosi Dzieciątko przez rzekę.',
+          text: 'Płaskorzeźby przedstawiają patronów właścicieli: świętego Mikołaja w stroju biskupim i świętego Krzysztofa, który przenosi Dzieciątko przez rzekę.',
           sources: [HOUSES],
         },
         {
           id: 'facade-1-pensive',
           speaker: 'koziol',
           gesture: 'talk',
-          text: 'Figurka Chrystusa Frasobliwego na kamienicy św. Krzysztofa przypomina rzeźby z przydrożnych kapliczek.',
+          text: 'Figurka Chrystusa Frasobliwego na kamienicy Świętego Krzysztofa przypomina rzeźby z przydrożnych kapliczek.',
           sources: [HOUSES],
         },
       ],
@@ -263,7 +263,7 @@ export const GORGE_PROLOGUE = lines.parse([
     id: 'gorge-devil',
     speaker: 'diabel',
     gesture: 'angry',
-    text: 'Statki popłynęły, kamienice błyszczą? To zgubicie się w wąwozach! Pozasypuję wam przejścia lessem!',
+    text: 'Statki popłynęły, kamienice błyszczą? To pozasypuję wam lessem przejścia w wąwozach i się zgubicie!',
   },
   {
     id: 'gorge-ravines',
@@ -276,7 +276,7 @@ export const GORGE_PROLOGUE = lines.parse([
     id: 'gorge-how',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Na każdym rozwidleniu zadam wam pytanie. Każde przejście ma inną odpowiedź. Wybierzcie dobrą, a kogucik znajdzie drogę. Zła odpowiedź prowadzi pod osuwisko.',
+    text: 'Na każdym rozwidleniu zadam wam pytanie, a każde przejście ma inną odpowiedź. Wybierzcie dobrą, to kogucik znajdzie drogę. Zła prowadzi pod osuwisko.',
   },
 ])
 
@@ -336,7 +336,7 @@ export const GORGE_LEGS = z
           id: 'gorge-1-loess',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Pierwszy wąwóz za nami! Less to pylasta skała osadowa, złożona głównie z drobniutkich ziarenek kwarcu.',
+          text: 'Pierwszy wąwóz za nami. Less to pylasta skała osadowa, złożona głównie z drobniutkich ziarenek kwarcu.',
           sources: [LOESS],
         },
       ],
@@ -410,7 +410,7 @@ export const GORGE_LEGS = z
           id: 'gorge-3-exit',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Wyszliśmy z labiryntu wąwozów! Diabeł nie zdołał nas zasypać.',
+          text: 'Wyszliśmy z labiryntu wąwozów, a diabeł nas nie zasypał.',
         },
       ],
     },
@@ -426,7 +426,7 @@ export const KAZIMIERZ_OUTRO = lines.parse([
     id: 'kazimierz-done',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Statki dopłynęły, kamienice odzyskały ozdoby, a wąwóz przeszliśmy bez szwanku. Kogucik pieje z radości!',
+    text: 'Wąwóz przeszliśmy bez szwanku, a kogucik pieje z radości.',
   },
   {
     id: 'kazimierz-rooster',

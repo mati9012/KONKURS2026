@@ -31,7 +31,7 @@ export const CHELM_ARRIVAL = lines.parse([
     id: 'chelm-arrival',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Witajcie w Chełmie! Pod miastem ciągną się jedyne w Europie podziemia kredowe, a strzeże ich duch Bieluch.',
+    text: 'Witajcie w Chełmie. Pod miastem ciągną się jedyne w Europie podziemia kredowe, a strzeże ich duch Bieluch.',
     sources: [TOWN],
   },
 ])
@@ -41,19 +41,19 @@ export const HILL_PROLOGUE = lines.parse([
     id: 'hill-devil',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Hehe! Ukradnę skarby Bielucha! A żeby nikt mi nie przeszkodził, rozrzuciłem kartki kroniki Chełma po całym wzgórzu!',
+    text: 'Skarby Bielucha będą moje! A żeby nikt mi nie przeszkadzał, rozrzuciłem kartki kroniki Chełma po całym wzgórzu.',
   },
   {
     id: 'hill-prince',
     speaker: 'koziol',
     gesture: 'think',
-    text: 'Bez kroniki nie trafimy do Bielucha. Wejdźmy na Górę Chełmską. To tu wszystko się zaczęło.',
+    text: 'Bez kroniki nie trafimy do Bielucha. Wejdźmy na Górę Chełmską, tu wszystko się zaczęło.',
   },
   {
     id: 'hill-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Na każdym zakręcie ścieżki przeczytajcie wskazówkę i wybierzcie kartkę, która do niej pasuje. Ułożymy historię po kolei!',
+    text: 'Na każdym zakręcie ścieżki przeczytajcie wskazówkę i wybierzcie kartkę, która do niej pasuje. Ułożymy historię po kolei.',
   },
 ])
 
@@ -115,7 +115,7 @@ export const HILL_ROUNDS = z
           id: 'hill-1-height',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Pierwsza część kroniki ułożona! To wzgórze to Góra Chełmska, nazywana też Wysoką Górką. Ma 237 metrów nad poziomem morza.',
+          text: 'Pierwsza część kroniki ułożona. To wzgórze to Góra Chełmska, zwana też Wysoką Górką. Ma 237 metrów nad poziomem morza.',
           sources: [TOWN],
         },
         {
@@ -157,7 +157,7 @@ export const HILL_ROUNDS = z
           id: 'hill-2-tower',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Kronika jest cała! Dzwonnicę otwarto dla turystów w czerwcu 2008 roku.',
+          text: 'Kronika jest cała. Dzwonnicę otwarto dla turystów w czerwcu 2008 roku.',
           sources: [TOWN],
         },
         {
@@ -180,20 +180,20 @@ export const ARMS_PROLOGUE = lines.parse([
     id: 'arms-devil',
     speaker: 'diabel',
     gesture: 'angry',
-    text: 'Za późno! Rozbiłem herb Chełma na kawałki. Bez herbu biały niedźwiedź straci siły, a Bieluch zniknie na zawsze!',
+    text: 'Za późno. Rozbiłem herb Chełma na kawałki, a bez herbu biały niedźwiedź straci siły i Bieluch zniknie na zawsze!',
   },
   {
     id: 'arms-spirit',
     speaker: 'koziol',
     gesture: 'think',
-    text: 'Bieluch to duch białego niedźwiedzia z herbu Chełma. Musimy szybko złożyć herb z powrotem!',
+    text: 'Bieluch to duch białego niedźwiedzia z herbu Chełma. Szybko, złóżmy herb z powrotem.',
     sources: [TOWN],
   },
   {
     id: 'arms-how',
     speaker: 'koziol',
     gesture: 'present',
-    text: 'Przeciągnijcie właściwe części na tarczę albo stuknijcie część, a potem tarczę. Uważajcie na diabelskie podróbki!',
+    text: 'Przeciągnijcie właściwe części na tarczę albo stuknijcie część, a potem tarczę. Uważajcie na diabelskie podróbki.',
   },
 ])
 
@@ -274,7 +274,7 @@ export const ARMS_ROUNDS = z
           id: 'arms-2-chalk',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Herb jest cały! Niedźwiedź kroczy w prawo, a biały jest podobno od kredy.',
+          text: 'Herb jest cały. Niedźwiedź kroczy w prawo, a biały jest podobno od kredy.',
           sources: [ARMS],
         },
         {
@@ -305,7 +305,7 @@ export const TUNNEL_PROLOGUE = lines.parse([
     id: 'tunnel-devil',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Hehe! W podziemiach jest ciemno jak w piekle. Będę wam zdmuchiwał latarkę i nigdy nie znajdziecie skarbów!',
+    text: 'W podziemiach jest ciemno jak w piekle. Będę wam zdmuchiwał latarkę, hehe, i nigdy nie znajdziecie skarbów.',
   },
   {
     id: 'tunnel-mine',
@@ -318,7 +318,7 @@ export const TUNNEL_PROLOGUE = lines.parse([
     id: 'tunnel-ghost',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Nie bójcie się Bielucha! To duch niegroźny, lubi dzieci i spełnia życzenia.',
+    text: 'Bielucha nie trzeba się bać. To duch niegroźny, lubi dzieci i spełnia życzenia.',
     sources: [GHOST],
   },
   {
@@ -386,7 +386,7 @@ export const TUNNEL_ROUNDS = z
           id: 'tunnel-1-cold',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Pierwszy poziom przeszukany! Czujecie chłód? W podziemiach zawsze jest około 9 stopni, bez względu na pogodę na górze.',
+          text: 'Pierwszy poziom przeszukany. Czujecie chłód? W podziemiach jest zawsze około 9 stopni, niezależnie od pogody na górze.',
           sources: [TUNNELS],
         },
       ],
@@ -450,7 +450,7 @@ export const TUNNEL_ROUNDS = z
           id: 'tunnel-3-saved',
           speaker: 'koziol',
           gesture: 'cheer',
-          text: 'Skarb jest bezpieczny! Bieluch przegonił diabła z podziemi.',
+          text: 'Skarb jest bezpieczny, a Bieluch przegonił diabła z podziemi.',
         },
         {
           id: 'tunnel-3-monument',
@@ -474,13 +474,13 @@ export const CHELM_OUTRO = lines.parse([
     id: 'chelm-done',
     speaker: 'koziol',
     gesture: 'cheer',
-    text: 'Kronika ułożona, herb cały, a skarby Bielucha bezpieczne. Chełm znów śpi spokojnie!',
+    text: 'Skarby Bielucha są bezpieczne i Chełm znów może spać spokojnie.',
   },
   {
     id: 'chelm-fools',
     speaker: 'koziol',
     gesture: 'talk',
-    text: 'Chełm bywa nazywany bajecznym miastem głupców. To za sprawą opowiadań Isaaca Bashevisa Singera o chełmskich mędrcach.',
+    text: 'Chełm bywa nazywany bajecznym miastem głupców. To za sprawą opowiadań Izaaka Baszewisa Singera o chełmskich mędrcach.',
     sources: [TOWN],
   },
 ])
