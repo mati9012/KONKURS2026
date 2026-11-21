@@ -17,6 +17,7 @@ test(
     })
 
     await page.goto('/')
+    await page.getByRole('button', { name: 'Zagraj' }).click({ timeout: 90_000 })
     const dialog = page.getByRole('dialog', { name: 'Szaro mówi' })
     await expect(dialog).toBeVisible({ timeout: 90_000 })
     await expect(dialog.getByText('Jestem Szaro')).toBeAttached()

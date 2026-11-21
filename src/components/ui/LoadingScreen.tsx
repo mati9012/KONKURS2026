@@ -1,5 +1,6 @@
 'use client'
 
+import { Howler } from 'howler'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import {
@@ -11,6 +12,7 @@ import {
 import { CloudCurtain } from '@/components/ui/CloudCurtain'
 import { ScrollRod } from '@/components/ui/ScrollRod'
 import { useSceneReady } from '@/components/ui/useSceneReady'
+import { useGameStore } from '@/store/game-store'
 
 const OPEN_EASE = [0.65, 0, 0.25, 1] as const
 const OPEN_MS = 2200
@@ -21,7 +23,17 @@ function statusFor(progress: number) {
   return 'Rozsuwamy chmury'
 }
 
-function Parchment({ progress }: { progress: number }) {
+function unlockAudio() {
+  Howler.volume()
+  void Howler.ctx?.resume()
+}
+
+type ParchmentProps = {
+  progress: number
+  onStart?: () => void
+}
+
+function Parchment({ progress, onStart }: ParchmentProps) {
   const percent = Math.round(progress * 100)
 
   return (
@@ -52,17 +64,33 @@ function Parchment({ progress }: { progress: number }) {
           <span className="size-2 rotate-45 bg-current" />
           <span className="h-px flex-1 bg-current" />
         </div>
-        <div className="mt-6 h-2.5 overflow-hidden rounded-full bg-[#d8bd8c] shadow-[inset_0_1px_3px_rgba(80,45,15,0.45)]">
-          <motion.div
-            className="h-full rounded-full bg-[linear-gradient(90deg,#c8964a,#9a5a26)]"
-            initial={{ width: '0%' }}
-            animate={{ width: `${percent}%` }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
-          />
-        </div>
-        <p className="mt-3 font-display text-sm font-semibold text-[#6b4a2e]">
-          {statusFor(progress)} · {percent}%
-        </p>
+        {onStart ? (
+          <motion.button
+            type="button"
+            autoFocus
+            className="mt-6 rounded-full bg-[#1f5c50] px-10 py-3 font-display text-2xl font-bold text-[#f6e7c8] shadow-[0_6px_18px_rgba(31,92,80,0.45)] hover:bg-[#2a7363]"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: OPEN_EASE }}
+            onClick={onStart}
+          >
+            Zagraj
+          </motion.button>
+        ) : (
+          <>
+            <div className="mt-6 h-2.5 overflow-hidden rounded-full bg-[#d8bd8c] shadow-[inset_0_1px_3px_rgba(80,45,15,0.45)]">
+              <motion.div
+                className="h-full rounded-full bg-[linear-gradient(90deg,#c8964a,#9a5a26)]"
+                initial={{ width: '0%' }}
+                animate={{ width: `${percent}%` }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+              />
+            </div>
+            <p className="mt-3 font-display text-sm font-semibold text-[#6b4a2e]">
+              {statusFor(progress)} · {percent}%
+            </p>
+          </>
+        )}
       </div>
       <ScrollRod />
     </motion.div>
@@ -72,13 +100,17 @@ function Parchment({ progress }: { progress: number }) {
 export function LoadingScreen() {
   const { progress, ready } = useSceneReady()
   const reduceMotion = useReducedMotion() ?? false
+  const introSeen = useGameStore((state) => state.introSeen)
+  const started = useGameStore((state) => state.started)
+  const start = useGameStore((state) => state.start)
   const [opened, setOpened] = useState(false)
+  const open = ready && (introSeen || started)
 
   useEffect(() => {
-    if (!ready) return
+    if (!open) return
     const timer = setTimeout(() => setOpened(true), OPEN_MS)
     return () => clearTimeout(timer)
-  }, [ready])
+  }, [open])
 
   if (opened) return null
 
@@ -87,17 +119,31 @@ export function LoadingScreen() {
       role="status"
       aria-label="Ładowanie gry"
       aria-busy={!ready}
-      className={`fixed inset-0 z-50 overflow-hidden ${ready ? 'pointer-events-none' : ''}`}
+      className={`fixed inset-0 z-50 overflow-hidden ${open ? 'pointer-events-none' : ''}`}
     >
       <motion.div
         className="absolute inset-0 bg-[radial-gradient(circle_at_80%_15%,rgba(255,214,170,0.85),transparent_45%),linear-gradient(180deg,#5d76c6_0%,#98a5de_45%,#e9c4c8_80%,#ffc79e_100%)]"
         initial={false}
-        animate={{ opacity: ready ? 0 : 1 }}
+        animate={{ opacity: open ? 0 : 1 }}
         transition={{ duration: 1.1, delay: 0.35, ease: 'easeOut' }}
       />
-      <CloudCurtain open={ready} reduceMotion={reduceMotion} />
+      <CloudCurtain open={open} reduceMotion={reduceMotion} />
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <AnimatePresence>{!ready && <Parchment progress={progress} />}</AnimatePresence>
+        <AnimatePresence>
+          {!open && (
+            <Parchment
+              progress={progress}
+              onStart={
+                ready
+                  ? () => {
+                      unlockAudio()
+                      start()
+                    }
+                  : undefined
+              }
+            />
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

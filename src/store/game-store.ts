@@ -19,8 +19,10 @@ type GameState = {
   stamps: Partial<Record<PlaceId, Stamp>>
   settings: Settings
   introSeen: boolean
+  started: boolean
   earnStamp: (placeId: PlaceId) => void
   markIntroSeen: () => void
+  start: () => void
   setQuality: (quality: Quality) => void
   setVolume: (channel: 'musicVolume' | 'sfxVolume', value: number) => void
   reset: () => void
@@ -64,6 +66,7 @@ export const useGameStore = create<GameState>()(
   persist(
     (set) => ({
       ...initialState,
+      started: false,
       earnStamp: (placeId) =>
         set((state) =>
           state.stamps[placeId]
@@ -71,6 +74,7 @@ export const useGameStore = create<GameState>()(
             : { stamps: { ...state.stamps, [placeId]: { earnedAt: new Date().toISOString() } } },
         ),
       markIntroSeen: () => set({ introSeen: true }),
+      start: () => set({ started: true }),
       setQuality: (quality) => set((state) => ({ settings: { ...state.settings, quality } })),
       setVolume: (channel, value) =>
         set((state) => ({
