@@ -1,10 +1,13 @@
 'use client'
 
+import { Howl } from 'howler'
 import dynamic from 'next/dynamic'
 import { motion } from 'motion/react'
 import { useCallback, useEffect, useState } from 'react'
 import { NARRATOR_NAME } from '@/content/intro'
 import type { DialogueLine } from '@/content/schema'
+import voicedLines from '@/content/voiced-lines.json'
+import { useGameStore } from '@/store/game-store'
 import { PAPER_GRAIN, PARCHMENT_FILL, PARCHMENT_SHADOW } from '@/components/ui/parchment'
 
 const NarratorPortrait = dynamic(
@@ -37,6 +40,22 @@ function useTypewriter(text: string) {
   }
 }
 
+const VOICED = new Set(voicedLines)
+
+function useVoice(lineId: string) {
+  useEffect(() => {
+    if (!VOICED.has(lineId)) return
+    const voice = new Howl({
+      src: [`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/audio/voice/${lineId}.mp3`],
+      volume: useGameStore.getState().settings.sfxVolume,
+    })
+    voice.play()
+    return () => {
+      voice.unload()
+    }
+  }, [lineId])
+}
+
 function useSettled(done: boolean, key: string) {
   const [settledKey, setSettledKey] = useState<string | null>(null)
 
@@ -61,6 +80,7 @@ export function NarratorConversation({ lines, doneLabel, onDone }: NarratorConve
   const last = index === lines.length - 1
   const { visible, done, finish } = useTypewriter(line.text)
   const settled = useSettled(done, line.id)
+  useVoice(line.id)
   const devil = line.speaker === 'diabel'
 
   const advance = useCallback(() => {
