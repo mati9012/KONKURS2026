@@ -65,7 +65,7 @@ export const PLAN_NAMES: Record<PlanShape, string> = {
 
 export const FACADE_PROLOGUE = lines.parse([
   {
-    id: 'facade-devil',
+    id: 'kock-facade-devil',
     speaker: 'diabel',
     gesture: 'laugh',
     text: 'Powyrywałem kolumny z pałacu księżnej i pomieszałem je z kolumnami z całego świata. Ciekawe, czy traficie, hehe.',
@@ -92,7 +92,7 @@ export const FACADE_PROLOGUE = lines.parse([
     sources: [PALACE],
   },
   {
-    id: 'facade-how',
+    id: 'kock-facade-how',
     speaker: 'koziol',
     gesture: 'present',
     text: 'Przeciągajcie kolumny z kart na dole na puste miejsca w portyku. Patrzcie na głowice, czyli górne zakończenia kolumn!',
