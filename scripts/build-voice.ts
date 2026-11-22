@@ -29,6 +29,7 @@ const DELIVERY: Record<string, string> = {
 
 const SPOKEN: Record<string, string> = {
   'W 1637 roku': 'W roku tysiąc sześćset trzydziestym siódmym',
+  Kleeberg: 'Kleberg',
 }
 
 const PLOSIVE_FILTER =
@@ -58,7 +59,7 @@ function collectConversations(value: unknown, found: DialogueLine[][]) {
 
 function spoken(line: DialogueLine) {
   const text = Object.entries(SPOKEN).reduce(
-    (result, [written, said]) => result.replace(written, said),
+    (result, [written, said]) => result.replaceAll(written, said),
     line.text,
   )
   return (DELIVERY[`${line.speaker}:${line.gesture}`] ?? '%s').replace('%s', text)
