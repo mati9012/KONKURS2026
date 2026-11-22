@@ -99,7 +99,7 @@ export const ZAMOSC_PROLOGUE = lines.parse([
     id: 'zamosc-devil-plans',
     speaker: 'diabel',
     gesture: 'laugh',
-    text: 'Rozrzuciłem plany waszego architekta na cztery wiatry, ha! Nikt już nie postawi tego miasta jak należy.',
+    text: 'Porozrzucałem plany waszego architekta na cztery wiatry, ha! Nikt już nie postawi tego miasta jak należy.',
   },
   {
     id: 'zamosc-welcome',

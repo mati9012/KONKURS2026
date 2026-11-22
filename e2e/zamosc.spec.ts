@@ -87,7 +87,7 @@ test(
     await expect(narrator.getByText('renesansowe miasto idealne')).toBeAttached()
     await narrator.getByRole('button', { name: 'Pomiń' }).click()
 
-    await expect(narrator.getByText('Rozrzuciłem plany')).toBeAttached({ timeout: 60_000 })
+    await expect(narrator.getByText('Porozrzucałem plany')).toBeAttached({ timeout: 60_000 })
     await narrator.getByRole('button', { name: 'Pomiń' }).click()
 
     const build = page.getByRole('region', { name: 'Budowa miasta' })
